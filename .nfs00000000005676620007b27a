@@ -1,9 +1,0 @@
-# Exclude the logs directory
-logs/
-
-# Exclude files ending in .tfrecord, .mp4, .avi, .mat, .png
-*.tfrecord
-*.mp4
-*.avi
-*.mat
-*.png

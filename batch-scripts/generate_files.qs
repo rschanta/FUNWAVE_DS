@@ -21,4 +21,4 @@
 
 ## Activate conda environment and compress
 conda activate tf_env
-python /work/thsu/rschanta/RTS/testbed/python-FW2/create_files.py "/lustre/scratch/rschanta" "dep_flat_2dpy2" 
+python /work/thsu/rschanta/RTS-PY/mains/generate_inputs.py "/lustre/scratch/rschanta" "FSPY2" 

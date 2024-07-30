@@ -45,6 +45,8 @@ def plot_bathy(dicta,ptr):
     plt.legend()
     plt.savefig(ptr['b_fig'], dpi=300, bbox_inches='tight')
     plt.show()
+    plt.close()
+
     return
 
 
@@ -69,7 +71,8 @@ def plot_TS_spectra(dicta,ptr):
     plt.grid()
     plt.xlabel('Period (s)')
     plt.ylabel('Magnitude')
-    plt.legend()
     plt.savefig(ptr['sp_fig'], dpi=300, bbox_inches='tight')
     plt.show()
+    plt.close()
+
     return
