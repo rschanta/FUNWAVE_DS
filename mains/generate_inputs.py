@@ -17,7 +17,7 @@ def main(super_path, run_name):
 
     
     # Run Function
-    trial_path = '../data/pub/Trial05.pkl'
+    trial_path = '../data/Trial05.pkl'
     ts.generate_in(super_path,run_name,trial_path)
     
     # print
