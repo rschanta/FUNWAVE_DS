@@ -44,8 +44,8 @@ def generate_in(super_path,run_name,trial_path):
         
         
         # Set Time parameters
-        inp['PLOT_INTV'] = 0.05
-        inp['TOTAL_TIME'] = 1450
+        inp['PLOT_INTV'] = 1.0
+        inp['TOTAL_TIME'] = 75.0
         
         # Get spectra 
         spectra = fp.get_TS_spectra(trial_dict['filtered_data']['t'],trial_dict['filtered_data']['eta'][:,0],0.1 ,2)
