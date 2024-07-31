@@ -28,7 +28,7 @@ def generate_in(super_path,run_name,trial_path):
     tri = 1
     all_inps = {}
     
-    for num in [1]:
+    for num in [50.0,75.0]:
         # Copy the template
         inp = copy.deepcopy(temp)
         
@@ -45,7 +45,7 @@ def generate_in(super_path,run_name,trial_path):
         
         # Set Time parameters
         inp['PLOT_INTV'] = 1.0
-        inp['TOTAL_TIME'] = 75.0
+        inp['TOTAL_TIME'] = num
         
         # Get spectra 
         spectra = fp.get_TS_spectra(trial_dict['filtered_data']['t'],trial_dict['filtered_data']['eta'][:,0],0.1 ,2)

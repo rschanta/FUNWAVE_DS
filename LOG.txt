@@ -1,0 +1,222 @@
+ -------------- LOG FILE -----------------
+ input_00002                                                                     
+  --------------input start --------------
+                                          
+ -------------- PARALLEL -----------------
+ PX   = 16 PY   =  2
+                                          
+ -------------- GRID INFO -----------------
+ Mglob=     398 Nglob=       3
+ DX=        0.21 DY=        0.21
+ DEPTH_TYPE:DATA                                              
+ DEPTH_FILE:/lustre/scratch/rschanta/FSPY2/bathy/bathy_00002.t
+                                          
+ -------------- TIME INFO -----------------
+                             StationOutputBuffer not specified, use default:1000
+ TOTAL_TIME=       75.00
+ PLOT_INTV=         1.00
+ SCREEN_INTV=      100.00
+                                          
+ -------------- HOT START -----------------
+                                          
+ -------------- STILL WATER INFO -----------------
+       WaterLevel =      0.00000
+                                          
+ -------------- WAVEMAKER -----------------
+ WAVEMAKER:WK_TIME_SERIES                                    
+                 Time_ramp Default:  0.0
+               Ywidth_WK Default:  LARGE
+ Xc_WK   =        0.00
+ Yc_WK   =        0.00
+ DEP_WK  =        1.94
+ Time_ramp=        0.00
+  Delta_WK=        3.00
+ Ywidth_WK=   999999.00
+          EqualEnergy NOT USED in frequency domain
+                                          
+ -------------- PERIODIC BC -----------------
+  PERIODIC: F
+                                          
+ -------------- SPONGE -----------------
+              No WavemakerCurrentBalance
+                                          
+ -------- OBSTACLE and BREAKWATER -----------------
+ OBSTACLE_FILE:   NO
+    BREAKWATER_FILE:   NO
+     BreakWaterAbsorbCoef Default:  10.0
+                                          
+ -------------- PHYSICS -----------------
+         DISPERSION Default:  DISPERSION
+        Gamma1 Default:  1.0: DISPERSION
+              Gamma2 Default:  1.0: Full nonlinear
+               Beta_ref Default:  -0.531
+                      Gamma3 Default:  1.0: NOT fully linear
+  Summary of Physics
+ Gamma1 =         1.00
+ Gamma2 =         1.00
+Beta_ref=        -0.53
+ Gamma3 =         1.00
+ VISCOSITY_BREAKING IS USED
+               SWE_ETA_DEP Default:  0.8
+             Friction_Matrix Default:  constant Cd
+  Cd_fixed (if you used fixed Cd) =        0.00
+                                          
+ -------------- NUMERICS -----------------
+       Time_Scheme Default:  Runge_Kutta
+ TIME_SCHEME:Runge_Kutta                                       
+  CONSTRUCTION                              NOT DEFINED, USE HLL
+ CONSTRUCTION:HLLC                                              
+  HIGH_ORDER                     NOT DEFINED, USE FOURTH-ORDER
+ HIGH_ORDER:FOURTH                                            
+ CFL=        0.50
+  FroudeCap=        3.00
+             MinDepthFrc Default:  0.1 m
+          USE MIN(MinDepthFrc, MinDepth)
+ MinDepth=    0.100000
+ MinDepthFrc=    0.100000
+                               Dont record wave arrival time
+                                          
+ --------- WAVE BREAKING -----------------
+                      ROLLER_EFFECT:  NO
+            SHOW_BREAKING Default:  TRUE
+ Cbrk1 =    0.650000
+ Cbrk2 =    0.350000
+            WAVEMAKER_Cbrk Default:  1.0
+  WAVEMAKER_Cbrk =         1.000000
+           WAVEMAKER_VIS Default:  FALSE
+                                          
+ -------- WAVE-AVERAGED PROPERTY -----------------
+                     C_smg Default:  0.0
+ T_INTV_mean =   20.000000
+ STEADY_TIME =   20.000000
+ C_smg =    0.000000
+                    nu_bkg Default:  0.0
+                                          
+ -------------- OUTPUT INFO -----------------
+ FIELD_IO_TYPE = BINARY                                                                          
+         OUTPUT_RES NOT FOUND, OUTPUT_RES=1: full resolution
+     OUTPUT_RES         1
+      EtaBlowVal Default:  100xmax_depth
+      OUT_DEPTH T
+          OUT_U F
+          OUT_V F
+        OUT_ETA T
+       OUT_Hmax F
+       OUT_Hmin F
+       OUT_Umax F
+      OUT_MFmax F
+     OUT_VORmax F
+       OUT_MASK T
+      OUT_MASK9 F
+      OUT_Umean F
+      OUT_Vmean F
+    OUT_ETAmean F
+ OUT_WaveHeight T
+        OUT_SXL F
+        OUT_SXR F
+        OUT_SYL F
+        OUT_SYR F
+    OUT_SourceX F
+    OUT_SourceY F
+          OUT_P F
+          OUT_Q F
+         OUT_Fx F
+         OUT_Fy F
+         OUT_Gx F
+         OUT_Gy F
+        OUT_AGE F
+     OUT_ROLLER F
+   OUT_UNDERTOW F
+         OUT_NU F
+        OUT_TMP F
+       OUT_TIME F
+                                          
+  --------------input end --------------
+                                          
+                                            TIDAL_BC not defined, Default: False
+ ----------------- STATISTICS ----------------
+  TIME        DT
+  0.0000E+00  0.0000E+00
+  MassVolume  Energy      MaxEta      MinEta      Max U       Max V 
+  0.0000E+00  0.4544E+03  0.2131E+01  0.0000E+00  0.0000E+00  0.0000E+00
+  MaxTotalU   PhaseS      Froude      WetDryMass
+  0.0000E+00  0.9905E+00  0.0000E+00  0.0000E+00
+   PRINTING FILE NO.     0  TIME/TOTAL:        0.000 /      75.000
+   PRINTING FILE NO.     1  TIME/TOTAL:        1.004 /      75.000
+   PRINTING FILE NO.     2  TIME/TOTAL:        2.006 /      75.000
+   PRINTING FILE NO.     3  TIME/TOTAL:        3.009 /      75.000
+   PRINTING FILE NO.     4  TIME/TOTAL:        4.012 /      75.000
+   PRINTING FILE NO.     5  TIME/TOTAL:        5.015 /      75.000
+   PRINTING FILE NO.     6  TIME/TOTAL:        6.013 /      75.000
+   PRINTING FILE NO.     7  TIME/TOTAL:        7.005 /      75.000
+   PRINTING FILE NO.     8  TIME/TOTAL:        8.020 /      75.000
+   PRINTING FILE NO.     9  TIME/TOTAL:        9.015 /      75.000
+   PRINTING FILE NO.    10  TIME/TOTAL:       10.012 /      75.000
+   PRINTING FILE NO.    11  TIME/TOTAL:       11.010 /      75.000
+   PRINTING FILE NO.    12  TIME/TOTAL:       12.009 /      75.000
+   PRINTING FILE NO.    13  TIME/TOTAL:       13.008 /      75.000
+   PRINTING FILE NO.    14  TIME/TOTAL:       14.005 /      75.000
+   PRINTING FILE NO.    15  TIME/TOTAL:       15.022 /      75.000
+   PRINTING FILE NO.    16  TIME/TOTAL:       16.016 /      75.000
+   PRINTING FILE NO.    17  TIME/TOTAL:       17.011 /      75.000
+   PRINTING FILE NO.    18  TIME/TOTAL:       18.007 /      75.000
+   PRINTING FILE NO.    19  TIME/TOTAL:       19.005 /      75.000
+   PRINTING FILE NO.    20  TIME/TOTAL:       20.004 /      75.000
+   PRINTING FILE NO.    21  TIME/TOTAL:       21.005 /      75.000
+   PRINTING FILE NO.    22  TIME/TOTAL:       22.002 /      75.000
+   PRINTING FILE NO.    23  TIME/TOTAL:       23.022 /      75.000
+   PRINTING FILE NO.    24  TIME/TOTAL:       24.019 /      75.000
+   PRINTING FILE NO.    25  TIME/TOTAL:       25.018 /      75.000
+   PRINTING FILE NO.    26  TIME/TOTAL:       26.016 /      75.000
+   PRINTING FILE NO.    27  TIME/TOTAL:       27.016 /      75.000
+   PRINTING FILE NO.    28  TIME/TOTAL:       28.012 /      75.000
+   PRINTING FILE NO.    29  TIME/TOTAL:       29.007 /      75.000
+   PRINTING FILE NO.    30  TIME/TOTAL:       30.003 /      75.000
+   PRINTING FILE NO.    31  TIME/TOTAL:       31.002 /      75.000
+   PRINTING FILE NO.    32  TIME/TOTAL:       32.003 /      75.000
+   PRINTING FILE NO.    33  TIME/TOTAL:       33.003 /      75.000
+   PRINTING FILE NO.    34  TIME/TOTAL:       34.003 /      75.000
+   PRINTING FILE NO.    35  TIME/TOTAL:       35.000 /      75.000
+   PRINTING FILE NO.    36  TIME/TOTAL:       36.015 /      75.000
+   PRINTING FILE NO.    37  TIME/TOTAL:       37.011 /      75.000
+   PRINTING FILE NO.    38  TIME/TOTAL:       38.005 /      75.000
+   PRINTING FILE NO.    39  TIME/TOTAL:       39.001 /      75.000
+  PRINTING MEAN FILE     1
+   PRINTING FILE NO.    40  TIME/TOTAL:       40.021 /      75.000
+   PRINTING FILE NO.    41  TIME/TOTAL:       41.021 /      75.000
+   PRINTING FILE NO.    42  TIME/TOTAL:       42.017 /      75.000
+   PRINTING FILE NO.    43  TIME/TOTAL:       43.014 /      75.000
+   PRINTING FILE NO.    44  TIME/TOTAL:       44.007 /      75.000
+   PRINTING FILE NO.    45  TIME/TOTAL:       45.002 /      75.000
+   PRINTING FILE NO.    46  TIME/TOTAL:       46.018 /      75.000
+   PRINTING FILE NO.    47  TIME/TOTAL:       47.017 /      75.000
+   PRINTING FILE NO.    48  TIME/TOTAL:       48.022 /      75.000
+   PRINTING FILE NO.    49  TIME/TOTAL:       49.013 /      75.000
+   PRINTING FILE NO.    50  TIME/TOTAL:       50.019 /      75.000
+   PRINTING FILE NO.    51  TIME/TOTAL:       51.001 /      75.000
+   PRINTING FILE NO.    52  TIME/TOTAL:       52.022 /      75.000
+   PRINTING FILE NO.    53  TIME/TOTAL:       53.007 /      75.000
+   PRINTING FILE NO.    54  TIME/TOTAL:       54.016 /      75.000
+   PRINTING FILE NO.    55  TIME/TOTAL:       55.014 /      75.000
+   PRINTING FILE NO.    56  TIME/TOTAL:       56.016 /      75.000
+   PRINTING FILE NO.    57  TIME/TOTAL:       57.001 /      75.000
+   PRINTING FILE NO.    58  TIME/TOTAL:       58.020 /      75.000
+   PRINTING FILE NO.    59  TIME/TOTAL:       59.018 /      75.000
+  PRINTING MEAN FILE     2
+   PRINTING FILE NO.    60  TIME/TOTAL:       60.014 /      75.000
+   PRINTING FILE NO.    61  TIME/TOTAL:       61.014 /      75.000
+   PRINTING FILE NO.    62  TIME/TOTAL:       62.012 /      75.000
+   PRINTING FILE NO.    63  TIME/TOTAL:       63.007 /      75.000
+   PRINTING FILE NO.    64  TIME/TOTAL:       64.014 /      75.000
+   PRINTING FILE NO.    65  TIME/TOTAL:       65.016 /      75.000
+   PRINTING FILE NO.    66  TIME/TOTAL:       66.007 /      75.000
+   PRINTING FILE NO.    67  TIME/TOTAL:       67.012 /      75.000
+   PRINTING FILE NO.    68  TIME/TOTAL:       68.020 /      75.000
+   PRINTING FILE NO.    69  TIME/TOTAL:       69.010 /      75.000
+   PRINTING FILE NO.    70  TIME/TOTAL:       70.018 /      75.000
+   PRINTING FILE NO.    71  TIME/TOTAL:       71.001 /      75.000
+   PRINTING FILE NO.    72  TIME/TOTAL:       72.005 /      75.000
+   PRINTING FILE NO.    73  TIME/TOTAL:       73.007 /      75.000
+   PRINTING FILE NO.    74  TIME/TOTAL:       74.011 /      75.000
+ Simulation takes   308.000000     seconds
+ Normal Termination!

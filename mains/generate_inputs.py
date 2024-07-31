@@ -2,9 +2,6 @@ import argparse
 import sys
 import os
 
-## Directories of custom modules
-
-
 ## Import module with generation function
 
 ## Main: Generate the function

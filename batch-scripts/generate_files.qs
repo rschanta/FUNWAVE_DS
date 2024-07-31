@@ -6,8 +6,8 @@
 #SBATCH --job-name=generate_files
 #SBATCH --partition=standard
 #SBATCH --time=7-00:00:00
-#SBATCH --output=/work/thsu/rschanta/RTS-PY/logs/gen/gen_out.out
-#SBATCH --error=/work/thsu/rschanta/RTS-PY/logs/gen/err_out.out
+#SBATCH --output=/work/thsu/rschanta/RTS-PY/logs/gen/gen_out%a.out
+#SBATCH --error=/work/thsu/rschanta/RTS-PY/logs/gen/err_out%a.out
 #SBATCH --mail-user=rschanta@udel.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
