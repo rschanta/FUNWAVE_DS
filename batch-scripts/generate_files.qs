@@ -3,11 +3,11 @@
 #
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=32
-#SBATCH --job-name=generate_files
+#SBATCH --job-name=Trial4gen
 #SBATCH --partition=standard
 #SBATCH --time=7-00:00:00
-#SBATCH --output=/work/thsu/rschanta/RTS-PY/logs/gen/gen_out%a.out
-#SBATCH --error=/work/thsu/rschanta/RTS-PY/logs/gen/err_out%a.out
+#SBATCH --output=/work/thsu/rschanta/RTS-PY/logs/gen/gen6_out.out
+#SBATCH --error=/work/thsu/rschanta/RTS-PY/logs/gen/err6_out.out
 #SBATCH --mail-user=rschanta@udel.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
@@ -21,4 +21,4 @@
 
 ## Activate conda environment and compress
 conda activate tf_env
-python /work/thsu/rschanta/RTS-PY/mains/generate_inputs.py "/lustre/scratch/rschanta" "FSPY2" 
+python /work/thsu/rschanta/RTS-PY/mains/generate_inputs.py "/lustre/scratch/rschanta" "FSPY4" 

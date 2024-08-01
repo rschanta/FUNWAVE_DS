@@ -71,7 +71,6 @@ def parse_function(tf_record_files,feature_description,tensors,out_type='dataset
                 
             all_parsed_dict[parsed_dict['TITLE'].decode('utf-8')] = parsed_dict
             
-            
         # Deal with case of just 1 in the dataset 
         if len(tf_record_files) == 1:
             all_parsed_dict = all_parsed_dict[0]
@@ -80,6 +79,7 @@ def parse_function(tf_record_files,feature_description,tensors,out_type='dataset
     else:
         raise ValueError("Specify either dataset or dict for out_type")
     
+
     return all_parsed_dict
 
 
@@ -100,3 +100,4 @@ def get_tfrecord_as_dict(tensors_3d,tensors_2d,others,In_d,keys_to_ignore,tri_nu
     # Parse and return dict
     tensors = tensors_3d + tensors_2d
     return parse_function(paths,feature_description_filt,tensors,out_type='dict')
+

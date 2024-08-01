@@ -3,11 +3,10 @@ import pickle
 import numpy as np
 import sys
 from itertools import product
-sys.path.append(r'C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\Local Workspace\Python-6')
-import funwave_py as fp
+import python_code as fp
 from scipy.interpolate import interp1d
 
-def prep_D3_bathy_trial_5(trial_dict,DX):
+def prep_D3_bathy_trial_5(trial_dict,DX,L):
     # Get variables needed
     bathy = trial_dict['filtered_data']['bed_num_before']
     WG_x = trial_dict['raw_data']['WG_loc_x']
@@ -15,13 +14,18 @@ def prep_D3_bathy_trial_5(trial_dict,DX):
     bathyX = bathy[:,0]
     bathyh = bathy[:,1]
 
+    # Add propagation room
+    bathyX = bathyX + 3*L
+    bathyX = np.insert(bathyX, 0, 0)
+    bathyh = np.insert(bathyh, 0, bathyh[0])
+
     # Convert to depth values
     MWL_mean = np.nanmean(MWL)
-    Z_raw = MWL_mean - bathyh;
+    Z_raw = MWL_mean - bathyh
     
     # Interpolate values
-    X_out = np.arange(0, np.max(bathyX)+0.001, DX)
-    f = interp1d(bathyX, Z_raw, kind='linear')
+    X_out = np.arange(0, np.max(bathyX)+0.1, DX)
+    f = interp1d(bathyX, Z_raw, kind='linear', fill_value="extrapolate")
     Z_out = f(X_out)
     
     # Arrange outputs
@@ -42,7 +46,7 @@ def get_stability_limits(trial_dict,peak_period):
     h = MWL_mean - bathyh[0];
     
     # Calculate dispersion relation
-    k, L = fp.dispersion(peak_period, h)
+    k, L = fp.py.dispersion(peak_period, h)
     
     # DX Limits
     DX_lo = h/15;

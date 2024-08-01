@@ -10,6 +10,7 @@ def main(super_path, run_name,tri_num):
     sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
     import python_code as fp
     
+
     ## Construct path
     paths= [f'{super_path}/{run_name}/outputs-proc/out_{tri_num:05}']
     
@@ -34,7 +35,7 @@ def main(super_path, run_name,tri_num):
                                              tri_num,
                                              paths)
     
-    
+
     ## ML Preprocessing
     vars_required = ['AMP_WK','Tperiod','Xc_WK','DX','bathy','eta','time_dt']
     vars_requied_dict = fp.tf.filter_dict(parsed_dict,vars_required)
@@ -47,6 +48,7 @@ def main(super_path, run_name,tri_num):
     
     
     # Save out
+
     feature_dict_ML = fp.tf.serialize_tensor({},'AMP_WK' ,AMP_WK)
     feature_dict_ML = fp.tf.serialize_tensor(feature_dict_ML,'Tperiod',Tperiod)
     feature_dict_ML = fp.tf.serialize_tensor(feature_dict_ML,'bathyZ' ,bathyZ)
@@ -54,7 +56,7 @@ def main(super_path, run_name,tri_num):
     feature_dict_ML = fp.tf.serialize_tensor(feature_dict_ML,'asy' ,asy)
     
     fp.tf.save_tfrecord(feature_dict_ML,f'{super_path}/{run_name}/inputs-ML/MLin_{tri_num:05}.tfrecord')
-    
+
     print(f'Successfully made: MLin_{tri_num:05}.tfrecord')
     return
 

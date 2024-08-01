@@ -8,9 +8,11 @@ from .hydro import *
 from .spectra import *
 from .plots import *
 from .utils import *
+
 from .animation import *
 
 __all__ = ['directories', 'templates', 'print_files','hydro','input_processing','spectra','plots','utils', 'animation']
+
 
 
 import importlib
@@ -25,6 +27,7 @@ modules_to_import = [
     'spectra',
     'plots',
     'animation'
+
     
 ]
 

@@ -18,7 +18,7 @@ def main(super_path, run_name,tri_num):
     tri_str = fp.tf.get_numbers(filepath=out_XXXXX)['tri']
     
     # Inputs
-    In_d = fp.tf.load_In_d('local_lustre/FSPY2/inputs-proc/In_d.pkl')
+    In_d = fp.tf.load_In_d(f'{super_path}/{run_name}/inputs-proc/In_d.pkl')
     # Outputs
     tensor_dict = fp.tf.load_and_stack_to_tensors(var_paths,In_d,tri_str)
     
