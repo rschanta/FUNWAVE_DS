@@ -12,7 +12,6 @@ def create_model():
     
     # Combine all branches
     combined = layers.concatenate([x, AMP_WK, Tperiod])
-
     # Fully connected layer
     z = layers.Dense(64, activation='relu')(combined)
     z = layers.Dense(128, activation='relu')(z)
@@ -22,4 +21,20 @@ def create_model():
 
     # Create the model
     model = models.Model(inputs=[AMP_WK, bathyZ, Tperiod], outputs=skew)
+    return model
+
+
+def create_model_dummy2():
+    # Read in Vector
+    bathyZ = Input(shape=(100, 1), name='bathyZ')
+    x = layers.Flatten()(bathyZ)
+
+    # Read in Scalar
+    AMP_WK = Input(shape=(1,), name='AMP_WK')
+    Tperiod = Input(shape=(1,), name='Tperiod')
+    
+    # Combine
+    dummy_output = layers.concatenate([AMP_WK,x, Tperiod])
+    # Output without modifying
+    model = models.Model(inputs=[AMP_WK, bathyZ, Tperiod], outputs=dummy_output)
     return model
