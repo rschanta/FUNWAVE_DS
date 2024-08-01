@@ -6,23 +6,18 @@ import os
 
 ## Main: Generate the function
 def main(super_path, run_name):
-    # Path Setup
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../model_runs')))
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../packages')))
-    import time_spectra_a_f as ts
+    # Path Commands
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
+    import python_code as fp
 
-    
     # Run Function
     trial_path = '../data/Trial05.pkl'
-    ts.generate_in(super_path,run_name,trial_path)
-    
-    # print
+    fp.mr.test1.generate_in(super_path,run_name,trial_path)
     print('File Generation Script Run!')
     return
-#%% Test out
 
-
+#%%
 if __name__ == "__main__":
     # Define the parser
     parser = argparse.ArgumentParser(description="Process variables for compression")

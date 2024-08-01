@@ -8,3 +8,6 @@
 *.mat
 *.avi
 *.pyc
+*.h5
+*.keras
+*.tfrecord
