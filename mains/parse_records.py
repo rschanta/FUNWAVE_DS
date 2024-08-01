@@ -51,6 +51,7 @@ def main(super_path, run_name,tri_num):
 
     feature_dict_ML = fp.tf.serialize_tensor({},'AMP_WK' ,AMP_WK)
     feature_dict_ML = fp.tf.serialize_tensor(feature_dict_ML,'Tperiod',Tperiod)
+    feature_dict_ML = fp.tf.serialize_tensor(feature_dict_ML,'bathyX' ,bathyX)
     feature_dict_ML = fp.tf.serialize_tensor(feature_dict_ML,'bathyZ' ,bathyZ)
     feature_dict_ML = fp.tf.serialize_tensor(feature_dict_ML,'skew' ,skew)
     feature_dict_ML = fp.tf.serialize_tensor(feature_dict_ML,'asy' ,asy)
