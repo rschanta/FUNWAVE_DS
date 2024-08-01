@@ -12,16 +12,16 @@ def main(super_path, run_name,tri_num):
     
 
     ## Construct path
-    paths= [f'{super_path}/{run_name}/outputs-proc/out_{tri_num:05}']
+    paths= [f'{super_path}/{run_name}/outputs-proc/out_{tri_num:05}.tfrecord']
     
     ## Inputs
     In_d = fp.tf.load_In_d(f'{super_path}/{run_name}/inputs-proc/In_d.pkl')
     
     ## Specify tensor shapes
-    tensors_3d = ['eta']
-    tensors_2d = ['bathy','dep','time_dt']
+    tensors_3d = ['eta','dep']
+    tensors_2d = ['bathy','time_dt']
     
-    ## Any other keys to add?
+    ## Any other keys to add/modify?
     keys_to_add = {'TOTAL_TIME':tf.io.FixedLenFeature([], tf.int64)}
 
     ## Any other keys to ignore/remove?
@@ -39,12 +39,12 @@ def main(super_path, run_name,tri_num):
     ## ML Preprocessing
     vars_required = ['AMP_WK','Tperiod','Xc_WK','DX','bathy','eta','time_dt']
     vars_requied_dict = fp.tf.filter_dict(parsed_dict,vars_required)
-    bathyX, bathyZ, skew, asy =  fp.ml.ska_conv.preprocessing_pipeline(vars_requied_dict[0],0)
+    bathyX, bathyZ, skew, asy =  fp.ml.ska_conv.preprocessing_pipeline(vars_requied_dict,0)
     
     
     ## Make sure that AMP_WK and Tperiod are also [1,1]
-    AMP_WK = tf.reshape(vars_requied_dict[0]['AMP_WK'], [1,1])
-    Tperiod = tf.reshape(vars_requied_dict[0]['Tperiod'], [1,1])
+    AMP_WK = tf.reshape(vars_requied_dict['AMP_WK'], [1,1])
+    Tperiod = tf.reshape(vars_requied_dict['Tperiod'], [1,1])
     
     
     # Save out

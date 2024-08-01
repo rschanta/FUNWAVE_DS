@@ -73,7 +73,7 @@ def parse_function(tf_record_files,feature_description,tensors,out_type='dataset
             
         # Deal with case of just 1 in the dataset 
         if len(tf_record_files) == 1:
-            all_parsed_dict = all_parsed_dict[0]
+            all_parsed_dict = all_parsed_dict[parsed_dict['TITLE'].decode('utf-8')]
             
         return all_parsed_dict
     else:
