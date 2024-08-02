@@ -12,29 +12,28 @@ def main(super_path, run_name,model_name):
     
     # Get feature description needed (note: all are 2D for this model)
     tensors_2D = ['bathyZ','skew','asy','AMP_WK','Tperiod']
-    feature_description = construct_feature_descr(tensors_2D = tensors_2D)
+    feature_description = fp.tf.construct_feature_descr(tensors_2D = tensors_2D, strings = [])
 
-    
     # Get path to all files
     files = fp.py.get_all_paths_in_dir(f'{super_path}/{run_name}/inputs-ML')
 
     # Split file paths into train/test/validation sets
-    train_set, val_set = split_paths(0.8,files)
+    train_set, val_set = fp.tf.split_paths(0.8,files)
     
     # Parse both sets
-    train_set = fp.ml.ska_conv.parse_function3(tf_record_files_train,feature_description)
-    val_set = fp.ml.ska_conv.parse_function3(tf_record_files_val,feature_description)
+    train_set = fp.ml.ska_conv.parse_function_asy(train_set,feature_description)
+    val_set = fp.ml.ska_conv.parse_function_asy(val_set,feature_description)
     
     # Shuffle the set
-    train_set = training_set.shuffle(buffer_size=1000)
+    train_set = train_set.shuffle(buffer_size=1000)
     val_set = val_set.shuffle(buffer_size=1000)
     
     # Batching 
-    train_set = training_set.batch(32)
+    train_set = train_set.batch(32)
     val_set = val_set.batch(32)
     
     # Prebatch
-    training_set = training_set.prefetch(buffer_size=tf.data.AUTOTUNE)
+    train_set = train_set.prefetch(buffer_size=tf.data.AUTOTUNE)
     val_set = val_set.prefetch(buffer_size=tf.data.AUTOTUNE)
     
     # Create the model
@@ -43,11 +42,11 @@ def main(super_path, run_name,model_name):
     model.summary()
     
     # Fit the model
-    history = model.fit(training_set, epochs = 100,validation_data=val_set)
+    history = model.fit(train_set, epochs = 100,validation_data=val_set)
     
     # Save the model
-    model.save('f{super_path}/{run_name}/{model_names}.keras')
-    model.save('f{super_path}/{run_name}/{model_names}.h5')
+    model.save(f'{super_path}/{run_name}/ML-models/{model_name}.keras')
+    model.save(f'{super_path}/{run_name}/ML-models/{model_name}.h5')
     
     return model
 
@@ -58,10 +57,11 @@ if __name__ == "__main__":
     # Add arguments and descriptions
     parser.add_argument("super_path", type=str, help="Path to super directory")
     parser.add_argument("run_name", type=str, help="Name of the run")
-    parser.add_argument("model_name", type=int, help="Name to save the ML model as")
+    parser.add_argument("model_name", type=str, help="Name to save the ML model as")
     
     # Call the parser
     args = parser.parse_args()
 
     # Call the main function with parsed arguments
-    main(super_path, run_name, model_name )
+    main(args.super_path, args.run_name, args.model_name)
+
