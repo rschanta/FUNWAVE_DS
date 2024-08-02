@@ -21,7 +21,7 @@ def main(super_path,run_name):
     tensors_2D = ['bathyX','bathyZ','skew','AMP_WK','Tperiod','asy']
     parsed_dict = fp.tf.parse_spec_var(paths,
                 tensors_2D = tensors_2D,
-                strings = ['TITLE'])
+                strings = ['ALT_TITLE'])
     
 
     ## Save out

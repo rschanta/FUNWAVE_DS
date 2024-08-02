@@ -21,4 +21,4 @@
 
 ## Activate conda environment and compress
 conda activate tf_env
-python /work/thsu/rschanta/RTS-PY/mains/ML_main.py
+python /work/thsu/rschanta/RTS-PY/mains/m04_ML_model.py "/lustre/scratch/rschanta" "FSPY4" "new_asy_model"
