@@ -15,4 +15,6 @@ def save_tfrecord(feature_dict,file_name: str):
     with tf.io.TFRecordWriter(file_name) as writer:
         example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
         writer.write(example.SerializeToString())
+
+    print(f'Successfully made: {file_name}')
     return

@@ -1,5 +1,5 @@
 import numpy as np
-
+import os
 #%% Basic Cutting Function
 
 def cut_between(arrays: list[np.array], cutting_array: np.array, lower: float = None, upper: float = None, mode: str = "between", axis: int = 0):
@@ -46,4 +46,5 @@ def cut_between(arrays: list[np.array], cutting_array: np.array, lower: float = 
                 cut_arrays.append(arr[:,start_i:end_i])
     return cut_arrays
 
-
+def get_all_paths_in_dir(path):
+    return [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]

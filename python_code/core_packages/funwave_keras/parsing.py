@@ -4,6 +4,7 @@ from .feature_descriptions import *
 
 
 def deserialize_tensor(parsed_features,var:str):
+    print(var)
     shape = tf.cast(parsed_features[f'{var}_shape'], tf.int64)
     tensor = tf.io.parse_tensor(parsed_features[var], out_type=tf.float32)
     parsed_features[var] = tf.reshape(tensor, shape)
@@ -69,11 +70,13 @@ def parse_function(tf_record_files,feature_description,tensors,out_type='dataset
                 numpy_value = value.numpy()
                 parsed_dict[key] = numpy_value
                 
-            all_parsed_dict[parsed_dict['TITLE'].decode('utf-8')] = parsed_dict
+            #all_parsed_dict[parsed_dict['TITLE'].decode('utf-8')] = parsed_dict
+            all_parsed_dict[parsed_dict[idx].decode('utf-8')] = parsed_dict
             
         # Deal with case of just 1 in the dataset 
         if len(tf_record_files) == 1:
-            all_parsed_dict = all_parsed_dict[parsed_dict['TITLE'].decode('utf-8')]
+            #all_parsed_dict = all_parsed_dict[parsed_dict['TITLE'].decode('utf-8')]
+            all_parsed_dict = all_parsed_dict[parsed_dict[idx].decode('utf-8')]
             
         return all_parsed_dict
     else:
@@ -81,6 +84,45 @@ def parse_function(tf_record_files,feature_description,tensors,out_type='dataset
     
 
     return all_parsed_dict
+
+
+## GOOD ONE: KEEP
+def parse_spec_var(paths,
+                tensors_4D = [],
+                tensors_3D = [],
+                tensors_2D = [],
+                floats = [],
+                strings = [],
+                ints = []):
+
+
+    # Build up the feature description
+    feature_description = construct_feature_descr(tensors_4D, tensors_3D, tensors_2D, floats, strings, ints)
+    print(feature_description)
+    # Specify the tensors
+    tensors = tensors_4D + tensors_3D + tensors_2D
+    
+    # Transform into dataset and parse
+    dataset = tf.data.TFRecordDataset(paths)
+    dataset = dataset.map(lambda proto: _parse_function(proto,feature_description,tensors))
+    
+    # Loop through all returns in the dataset
+    all_records_dictionary = {}
+    for idx, parsed_features in enumerate(dataset):
+        # Loop through the features in one record 
+        record_dictionary = {}
+        for key, value in parsed_features.items():
+            print(key)
+            record_dictionary[key] = value.numpy()
+
+        # Use record's title as key in the larger dictionary
+        #all_records_dictionary[record_dictionary['TITLE'].decode('utf-8')] = record_dictionary
+        all_records_dictionary[idx] = record_dictionary
+    # If there's only one record, un-nest the list
+    if len(paths) == 1:
+        #all_records_dictionary = all_records_dictionary[record_dictionary['TITLE'].decode('utf-8')]
+        all_records_dictionary = all_records_dictionary[idx]
+    return all_records_dictionary
 
 
 

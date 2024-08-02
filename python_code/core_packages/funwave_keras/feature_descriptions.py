@@ -21,6 +21,26 @@ def get_feature_desc_tensors(tensor_vars, dimensions,feature_description):
 
     return feature_description
 
+def get_feature_desc_strings(string_vars,feature_description):
+    
+    '''
+    Returns the feature description dictionary for all of the arrays/tensors
+    specified in the list `tensor_vars`, as a string (bytes). Also returns
+    the shape assuming {var}_shape notation for `dimensions` 
+    
+    ARGUMENTS:
+        - string_vars (List[str]): lists of string variables
+        - dimensions (int): number of dimensions for ALL tensors in tensor_vars
+        - feature_description (dict): feature description dictionary to add to
+    RETURNS:
+        - feature_description (dict): feature description dict 
+    
+    '''
+    for name in string_vars:
+        feature_description[f'{name}'] = tf.io.FixedLenFeature([], tf.string)
+
+    return feature_description
+
 
 def get_feature_desc_floats(float_vars,feature_description):
     
@@ -40,6 +60,44 @@ def get_feature_desc_floats(float_vars,feature_description):
         feature_description[f'{name}'] =  tf.io.FixedLenFeature([],tf.float32)
 
     return feature_description
+
+def get_feature_desc_ints(int_vars,feature_description):
+    
+    '''
+    Returns the feature description dictionary for all of the floats
+    specified in the list `float_vars`, as a string (bytes). 
+    
+    ARGUMENTS:
+        - int_vars (List[str]): lists of int variables
+        - dimensions (int): number of dimensions for ALL tensors in tensor_vars
+        - feature_description (dict): feature description dictionary to add to
+    RETURNS:
+        - feature_description (dict): feature description dict 
+    
+    '''
+    for name in int_vars:
+        feature_description[f'{name}'] =  tf.io.FixedLenFeature([],tf.float32)
+
+    return feature_description
+
+
+def construct_feature_descr(tensors_4D = [],
+                            tensors_3D = [],
+                            tensors_2D = [],
+                            floats = [],
+                            strings = ['TITLE'],
+                            ints = []):
+    
+    feature_descriptions = get_feature_desc_tensors(tensors_4D, 4,{})
+    feature_descriptions = get_feature_desc_tensors(tensors_3D, 3,feature_descriptions)
+    feature_descriptions = get_feature_desc_tensors(tensors_2D, 2,feature_descriptions)
+    feature_descriptions = get_feature_desc_floats(floats,feature_descriptions)
+    feature_descriptions = get_feature_desc_strings(strings,feature_descriptions)
+    feature_descriptions = get_feature_desc_ints(ints,feature_descriptions)
+    # Ensure that title is there
+    #feature_descriptions = get_feature_desc_strings(['TITLE'],feature_descriptions)
+
+    return feature_descriptions
 
 def get_feature_desc_inputs(In_di,feature_description):
     '''

@@ -2,7 +2,7 @@ import numpy as np
 from scipy.ndimage import uniform_filter1d
 from scipy.interpolate import CubicSpline
 import python_code as fp
-
+import tensorflow as tf
 
 def calculate_gradients_and_cut(array_list, cutting_array,DX, threshold):
     grad = np.diff(cutting_array) / DX
@@ -33,39 +33,52 @@ def interpolate_cubic_splines(arr_list,grid_arr):
 def preprocessing_pipeline(small_dict,steady_time):
     
     # Unpack Variables
-    #Make sure to adjust this back
-    #eta = small_dict['eta'][:,1,:]
     eta = np.squeeze(small_dict['eta'][:,1,:])
     time = small_dict['time_dt'][:,0]
     bathyX = small_dict['bathy'][:,0]
     bathyZ = small_dict['bathy'][:,1]
     Xc_WK = small_dict['Xc_WK']
     DX = small_dict['DX']
+    AMP_WK = tf.reshape(small_dict['AMP_WK'], [1,1]) 
+    Tperiod = tf.reshape(small_dict['Tperiod'], [1,1]) 
 
     # Slice to steady time
     [time, eta] = fp.py.cut_between([time, eta],time,steady_time,mode="end",axis = 0)
-    #print(time)
-    #print(eta)
+
     ## Slice to wet beach
     [bathyX, bathyZ, eta] = fp.py.cut_between([bathyX, bathyZ, eta],bathyZ,upper=0,mode="start",axis = 1)
+    
     ## Slice to Wavemaker
     [bathyX, bathyZ, eta] = fp.py.cut_between([bathyX, bathyZ, eta],bathyX,lower=Xc_WK,mode="end",axis = 1)
+    
     ## Calculate skew and asyemmetry
     skew, asy =  np.apply_along_axis(fp.pp.calculate_ska_1D, 0, eta)
     skew = np.nan_to_num(skew, nan=0.1)
     asy = np.nan_to_num(asy, nan=0.1)
     arrays = [bathyX, bathyZ, skew, asy]
+
     ## Cut off extreme gradients
     [bathyX, bathyZ, skew, asy] = calculate_gradients_and_cut(arrays, skew,DX, 1.5)
     [bathyX, bathyZ, skew, asy] = calculate_gradients_and_cut(arrays, asy,DX, 1.5)
+
     ## Moving average smoothing
     skew = movmean(skew, 25)
     asy = movmean(asy, 25)
+
     ## Interpolation
     arr_list = [bathyX,bathyZ,skew,asy]
     [bathyX,bathyZ,skew,asy] = interpolate_cubic_splines(arr_list,bathyX)
+    
     bathyX = bathyX.reshape(1,-1).astype(np.float32)
     skew = skew.reshape(1,-1).astype(np.float32)
     bathyZ = bathyZ.reshape(1,-1).astype(np.float32)
     asy = asy.reshape(1, -1).astype(np.float32)
-    return bathyX,bathyZ,skew,asy
+    
+    ## Form dictionary output
+    out_dict = {'bathyX':bathyX,
+               'bathyZ': bathyZ,
+               'skew':  skew,
+               'asy': asy,
+               'AMP_WK': AMP_WK,
+                'Tperiod': Tperiod}
+    return out_dict

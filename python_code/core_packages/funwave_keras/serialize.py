@@ -80,3 +80,20 @@ def serialize_bathy_array(In_d,tri_str,feature_dict):
     except Exception:
         'Bathy Array Not Found!'
     return feature_dict
+
+def serialize_all(dicta):
+    feature_dict = {}
+    for key, value in dicta.items():
+        # Check if tensor
+        if isinstance(value, (np.ndarray, tf.Tensor)):
+            serialize_tensor(feature_dict,key,value)
+        # Check if float
+        if isinstance(value, float): 
+            serialize_float(feature_dict,key,value)
+        # Check if string
+        if isinstance(value, int):
+            serialize_string(feature_dict,key,value)
+        # Check if int
+        if isinstance(value, float):
+            serialize_int(feature_dict,key,value)
+    return feature_dict

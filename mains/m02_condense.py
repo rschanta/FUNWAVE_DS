@@ -12,25 +12,30 @@ def main(super_path, run_name,tri_num):
     sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
     import python_code as fp
     
+    # Assemble path to out_XXXXX RESULT_FOLDER
     out_XXXXX = Path(f'{super_path}/{run_name}/outputs-raw/out_{tri_num:05}/')
+    
+    # Variables to search for and their paths
     var_list = ['eta_','dep','time_dt']
     var_paths = fp.tf.get_list_var_output_paths(out_XXXXX, var_list)
     tri_str = fp.tf.get_numbers(filepath=out_XXXXX)['tri']
-    
-    # Inputs
-    In_d = fp.tf.load_In_d(f'{super_path}/{run_name}/inputs-proc/In_d.pkl')
-    # Outputs
+
+    # Compress all the outputs to tensors in a dictionary
     tensor_dict = fp.tf.load_and_stack_to_tensors(var_paths,In_d,tri_str)
     
-    # Serialize
-    serialized_features = {}
-    serialized_features = fp.tf.serialize_inputs(In_d, tri_str, serialized_features)
+    # Load in inputs from In_d
+    In_d = fp.tf.load_In_d(f'{super_path}/{run_name}/inputs-proc/In_d.pkl')
+    
+    
+    # Serialize everything
+    serialized_features = fp.tf.serialize_inputs({}, tri_str, serialized_features)
     serialized_features = fp.tf.serialize_outputs(tensor_dict, serialized_features)
     serialized_features = fp.tf.serialize_bathy_array(In_d, tri_str, serialized_features)
     
     # Save Out
     save_name = f'{super_path}/{run_name}/outputs-proc/out_{tri_num:05}.tfrecord'
     fp.tf.save_tfrecord(serialized_features,save_name)
+    
     print(f'Successfully saved out_{tri_num:05}.tfrecord')
     return
 

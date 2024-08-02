@@ -9,7 +9,8 @@ from .serialize_type import *
 from .save_tf_record import *
 from .feature_descriptions import *
 from .parsing import *
-__all__ = ['condense', 'save_tensors', 'utils', 'serialize', 'serialize_type', 'feature_descriptions', 'parsing']
+from .ml_utils import *
+__all__ = ['condense', 'save_tensors', 'utils', 'serialize', 'serialize_type', 'feature_descriptions', 'parsing','ml_utils']
 
 
 
@@ -22,7 +23,8 @@ modules_to_import = [
     'serialize_type',
     'save_tf_record',
     'feature_descriptions',
-    'parsing'
+    'parsing',
+    'ml_utils'
 ]
 
 # Initialize the prefix namespace
