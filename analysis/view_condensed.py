@@ -57,4 +57,6 @@ plt.title(f'FUNWAVE outputs vs ML outputs')
 plt.tight_layout()
 plt.savefig('FW_vs_ML.png', dpi=300, bbox_extra_artists=[legend])
 plt.show()
-
+from sklearn.metrics import r2_score
+r2_skew = r2_score(skew, skew_pred.reshape(-1))
+r2_asy = r2_score(asy, asy_pred.reshape(-1))
