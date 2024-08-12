@@ -4,6 +4,8 @@ from itertools import product
 import numpy as np
 from scipy.optimize import fsolve
 
+
+#%% Linear Dispersion Relation
 def dispersion(T, h):
     sigma = 2 * np.pi / T
     g = 9.81
@@ -18,37 +20,34 @@ def dispersion(T, h):
 
     return k, L
 
-#%% Standard Variables
-def compute_D(vars):
-    A = vars['A']
-    B = vars['B']
-    return A * B
+#%% Dependent Variable functions
 
+    
 ## Calculate stability for regular waves
-def compute_E(vars):
-    # Pull out period and offshore depth
+def stability_vars(vars):
+    # Unpack vars needed
     T = vars['Tperiod']
     h = vars['DEPTH_FLAT']
-    
-    # Solve the linear dispersion relation
     k, L = dispersion(T, h)
     
-    # Use Torres et al (2022) stability relation
+    # Use Torres stability limits for DX/DY amd Sponge
+    DX_lo = h/15;
+    DX_hi = L/60;
+    DX = np.mean([DX_hi,DX_lo]);
+    DY = DX
+    Sponge_west_width = 2*L
     
     
-    # solve the linear dispersion relation
-    
-    return A ** 2
-
-# Mapping functions to variable names
-functions_to_apply = {
-    'D': compute_D,
-    'E': compute_E,
-}
+    # Returning multiple variables and bonus variables
+    return {'k_': k, 
+            'L_': L,
+            'DX': DX,
+            'DY': DY,
+            'Sponge_west_width': Sponge_west_width}
 
 
-#%% Loop through table
-def write_files(matrix, functions_to_apply,super_path,run_name):
+# Modify the write_files function
+def write_files(matrix, functions_to_apply, super_path, run_name):
     
     # List to store ranges or constants for each variable
     variable_ranges = []
@@ -61,9 +60,7 @@ def write_files(matrix, functions_to_apply,super_path,run_name):
         
         # Set constant value
         if pd.notna(row['CON']):
-            # Check constant value
             variable_ranges.append([row['CON']])
-        # Set range of values
         else:
             values = np.linspace(row['LO'], row['HI'], int(row['NUM']))
             variable_ranges.append(values)
@@ -81,7 +78,10 @@ def write_files(matrix, functions_to_apply,super_path,run_name):
         var_dict['TITLE'] = f'input_{i:05}'
 
         # Apply dependent functions
-        dependent_vars = {key: func(var_dict) for key, func in functions_to_apply.items()}
+        dependent_vars = {}
+        for func in functions_to_apply:
+            result = func(var_dict)
+            dependent_vars.update(result)
         
         # Merge with original variables
         all_vars = {**var_dict, **dependent_vars}
@@ -93,19 +93,25 @@ def write_files(matrix, functions_to_apply,super_path,run_name):
                 f.write(f"{var_name} = {value}\n")
         print(f"Generated file: {filename}")
 
-# Example DataFrame
-matrix = pd.DataFrame({
-    'VAR': ['A', 'B', 'C'],
-    'CON': [10, None, None],  # Use None for variables with ranges
-    'LO': [None, 1, 5],
-    'HI': [None, 10, 15],
-    'NUM': [None, 5, 3]  # Number of points for linspace
-})
 
-# Define functions to apply
-functions_to_apply = {
-    'D': compute_D,
-    'E': compute_E,
-}
+def convert_to_number(value):
+    try:
+        # Convert to float to check if it can be a number
+        float_value = float(value)
+        # Convert float_value back to string to check if it contains a decimal
+        value_str = str(value).strip()
+        if '.' in value_str:
+            # If the original string had a decimal point, keep it as a float
+            return float_value
+        return int(float_value)
+    except ValueError:
+        # Return the original value if it's not a number
+        return value
+    
 
-generate_permutations(matrix, functions_to_apply)
+matrix = pd.read_csv('matrix3.csv', na_values=[''])
+matrix['CON'] = matrix['CON'].apply(convert_to_number)
+# Define functions to apply as a list
+functions_to_apply = [stability_vars]
+write_files(matrix, functions_to_apply, '', '')
+
