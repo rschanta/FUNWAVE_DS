@@ -18,13 +18,16 @@ def plot_bathy(dicta,ptr):
     if 'WAVEMAKER' in dicta:
         plt.axvline(x=Xc_WK, color='red', linestyle='--', label='Wavemaker')
     # Check sponge
+    count = 0
     for key in ['DIRECT_SPONGE','FRICTION_SPONGE','DIFFUSION_SPONGE']:
-            if key in dicta and dicta[key] == 'T':
+            if key in dicta and dicta[key] == 'T' and count ==0:
                 Sponge_W = dicta['Sponge_west_width']
                 Sponge_E = dicta['Sponge_east_width']
-                plt.axvline(x=Sponge_W, color='darkgreen', linestyle='--', label='West Sponge')
-                plt.axvline(x=Sponge_E, color='lightgreen', linestyle='--', label='East Sponge')
-                
+                if Sponge_W != 0:
+                    plt.axvline(x=Sponge_W, color='darkgreen', linestyle='--', label='West Sponge')
+                if Sponge_E != 0:
+                    plt.axvline(x=Sponge_E, color='lightgreen', linestyle='--', label='East Sponge')
+                count = count + 1
     # Check if the key exists
     if 'ALT_TITLE' in dicta:
         plt.title('INPUT BATHYMETRY: ' + dicta['ALT_TITLE'] + '\n' + dicta['TITLE'] )

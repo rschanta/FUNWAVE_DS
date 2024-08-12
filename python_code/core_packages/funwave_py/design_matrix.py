@@ -1,108 +1,13 @@
-import pandas as pd
-import numpy as np
-from itertools import product
-import numpy as np
-from scipy.optimize import fsolve
-from scipy.interpolate import interp1d
 import pickle
 import os
 import sys
+import pandas as pd
+import numpy as np
+from itertools import product
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
 import python_code as fp
-#import tensorflow as tf
-
-
-
-#%% GENERAL UTILITY
-def dispersion(T, h):
-    sigma = 2 * np.pi / T
-    g = 9.81
-
-    # Define the function for fsolve
-    def disp_relation(k):
-        return sigma**2 - g * k * np.tanh(k * h)
-
-    # Find the root of the equation numerically
-    k = fsolve(disp_relation, 0)[0]
-    L = 2 * np.pi / k
-
-    return k, L
-
-def print_bathy(data, path):
-
-    print('Started printing Bathymetry file...')
-    np.savetxt(path, data, delimiter=' ', fmt='%f')
-    print(f'Bathymetry file successfully saved to: {path}')
-    
-    return
-
-#%% RUN SPECIFIC FUNCTIONS
-
-## Give D3 Alt name
-def set_alt_title(vars):
-    trial_path = vars['bathy_path']
-    return {'ALT_TITLE': os.path.splitext(os.path.basename(trial_path))[0]}
-
-## Calculate stability for regular waves
-def stability_vars(vars):
-    # Unpack vars needed
-    T = vars['Tperiod']
-    h = vars['DEPTH_FLAT']
-    k, L = dispersion(T, h)
-    
-    # Use Torres stability limits for DX/DY amd Sponge
-    DX_lo = h/15;
-    DX_hi = L/60;
-    DX = np.mean([DX_hi,DX_lo]);
-    DY = DX
-    Sponge_west_width = 2*L
-    
-    
-    # Returning multiple variables and bonus variables
-    return {'k_': k, 
-            'L_': L,
-            'DX': DX,
-            'DY': DY,
-            'Sponge_west_width': Sponge_west_width}
-
-def get_bathy2(vars):
-    data_path = vars['bathy_path']
-    with open(data_path, 'rb') as file:
-        bathy_raw = pickle.load(file)
-        
-    # Get variables needed
-    bathy = bathy_raw['filtered_data']['bed_num_before']
-    WG_x = bathy_raw['raw_data']['WG_loc_x']
-    MWL = bathy_raw['raw_data']['MWL']
-    bathyX = bathy[:,0]
-    bathyh = bathy[:,1]
-    
-    L = vars['L_']
-    DX = vars['DX']
-    # Add propagation room
-    bathyX = bathyX + 3*L
-    bathyX = np.insert(bathyX, 0, 0)
-    bathyh = np.insert(bathyh, 0, bathyh[0])
-    
-    # Convert to depth values
-    MWL_mean = np.nanmean(MWL)
-    Z_raw = MWL_mean - bathyh
-    
-    # Interpolate values
-    X_out = np.arange(0, np.max(bathyX)+0.1, DX)
-    f = interp1d(bathyX, Z_raw, kind='linear', fill_value="extrapolate")
-    Z_out = f(X_out)
-    
-    # Arrange outputs
-    bathy_out = {}
-    bathy_out['array'] = np.stack((X_out, Z_out), axis=1)
-    bathy_out['file'] = np.stack((Z_out,Z_out,Z_out),axis=0)
-    bathy_out['WG_x'] = WG_x
-    
-    bathy_dict = {'bathy': bathy_out}
-    
-    return {'files': bathy_dict} 
 
 
 #%% KEY HELPER FUNCTIONS
@@ -133,9 +38,12 @@ def load_FW_design_matrix(path):
 
 
 def group_variables(design_matrix):
-    grouped_vars = design_matrix.groupby('VAR')
+    print(design_matrix)
+    grouped_vars = design_matrix.groupby('VAR',sort=False)
     variable_ranges = {}
+    print(grouped_vars)
     for var_name, group in grouped_vars:
+        print(group)
         # Case 1: there are multiple rows for a variable (ie- CFL = 0.5, CFL = 0.3)
         if pd.notna(group['CON']).all():  
             variable_ranges[var_name] = group['CON'].tolist()
@@ -150,8 +58,9 @@ def group_variables(design_matrix):
                 # Case 2b: range of parameters specified by LO, HI, NUM
                 else:
                     values.extend(np.linspace(row['LO'], row['HI'], int(row['NUM'])))
-            variable_ranges[var_name] = sorted(set(values))  # Remove duplicates and sort
-            
+            #variable_ranges[var_name] = list(set(values))  # Remove duplicates and sort
+            variable_ranges[var_name] = list(dict.fromkeys(values))
+    print(variable_ranges)
     return variable_ranges     
             
 
@@ -159,10 +68,11 @@ def add_extra_values(variable_ranges,extra_values):
     for var_name, extra in extra_values.items():
         if var_name in variable_ranges:
             # Ensure extra values are unique and combined with existing values
-            variable_ranges[var_name] = sorted(set(variable_ranges[var_name] + extra))
+            #variable_ranges[var_name] = list(set(variable_ranges[var_name] + extra))
+            variable_ranges[var_name] = list(dict.fromkeys(variable_ranges[var_name] + extra))
         else:
             # If variable not already in ranges, add it directly
-            variable_ranges[var_name] = sorted(extra)
+            variable_ranges[var_name] = list(extra)
     return variable_ranges
 
 def add_dependent_values(var_dict,functions_to_apply):
@@ -189,7 +99,7 @@ def print_supporting(all_vars,ptr):
         if 'bathy' in all_vars['files']:
             path = ptr['b_file']
             data = all_vars['files']['bathy']['file']
-            print_bathy(data,path)
+            fp.py.print_bathy(data,path)
 
 def plot_supporting(all_vars,ptr):
     # Check for bathymetry and spectra
@@ -211,12 +121,8 @@ def save_input_file(var_dict,ptr):
     print(f"Generated file: {ptr['i_file']}")
     return        
             
-#%% WRITE FILES FUNCTION
+#%% MAIN PRINT FILES FUNCTION
 def write_files(matrix, functions_to_apply, super_path, run_name, extra_values=None):
-    
-    # Make directories
-    fp.py.mk_FW_dir( super_path, run_name)
-    
     
     all_dicts = {}
     # Group together variables
@@ -225,8 +131,9 @@ def write_files(matrix, functions_to_apply, super_path, run_name, extra_values=N
     ## Get paths needed
     variable_ranges['super_path'] = [super_path]
     variable_ranges['run_name'] = [run_name]
+    fp.py.mk_FW_dir(super_path, run_name)
     p = fp.py.list_FW_dirs(super_path, run_name)
-    print(p)
+
     # Add on extra values if provided
     if extra_values:
         variable_ranges = add_extra_values(variable_ranges,extra_values)
@@ -251,7 +158,7 @@ def write_files(matrix, functions_to_apply, super_path, run_name, extra_values=N
         ## Writing Out Files
         # Paths for trial files
         ptr = fp.py.list_FW_tri_dirs(i, p)
-        
+        print(ptr['b_file'])
         # Print supporting files if found (ie- bathy, spectra)
         print_supporting(var_dict,ptr)
                 
@@ -271,13 +178,5 @@ def write_files(matrix, functions_to_apply, super_path, run_name, extra_values=N
 
 
 
-#%% Where stuff actually happens
-matrix = load_FW_design_matrix('matrix3.csv')
-functions_to_apply = [stability_vars,get_bathy2,set_alt_title]
-extra_values = {'bathy_path': ['Trial05.pkl','Trial06.pkl']}
-fp.py.mk_FW_dir('superr', 'runn')
-dicta = write_files(matrix, functions_to_apply, 'superr', 'runn',extra_values)
-
-foo = fp.py.list_FW_dirs('superr', 'runn')
 
 
