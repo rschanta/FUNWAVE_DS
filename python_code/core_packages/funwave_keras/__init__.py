@@ -1,41 +1,13 @@
-# Import all submodules here
-import importlib
+# Import specific functions or classes if needed
 from .condense import *
+from .feature_descriptions import *
+from .ml_utils import *
+from .parsing import *
 from .save_tensors import *
-from .utils import *
+from .save_tf_record import *
 from .serialize import *
 from .serialize_type import *
-from .serialize_type import *
-from .save_tf_record import *
-from .feature_descriptions import *
-from .parsing import *
-from .ml_utils import *
-__all__ = ['condense', 'save_tensors', 'utils', 'serialize', 'serialize_type', 'feature_descriptions', 'parsing','ml_utils']
-
-
-
-# List of modules and submodules to import from
-modules_to_import = [
-    'condense',
-    'save_tensors',
-    'utils',
-    'serialize',
-    'serialize_type',
-    'save_tf_record',
-    'feature_descriptions',
-    'parsing',
-    'ml_utils'
-]
-
-# Initialize the prefix namespace
-pre = type('', (), {})()
-
-# Import all functions dynamically
-for module_name in modules_to_import:
-    module = importlib.import_module(f'.{module_name}', package=__package__)
-    for func_name in dir(module):
-        if callable(getattr(module, func_name)):
-            setattr(pre, func_name, getattr(module, func_name))
-
-# Optional: Define __all__ to control what gets imported when using from package import *
-__all__ = list(set(dir(pre)) - {'__dict__', '__doc__', '__module__', '__weakref__'})
+from .utils import *
+# Define __all__ for the subpackage
+__all__ = ['condense', 'feature_descriptions','ml_utils','parsing', 'save_tensors',
+           'save_tf_records','serialize','serialize_type','utils']

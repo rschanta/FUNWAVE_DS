@@ -1,48 +1,14 @@
-# Import submodules
-
-from .directories import *
-from .templates import *
-from .print_files import *
-from .input_processing import *
-from .hydro import *
-from .spectra import *
-from .plots import *
-from .utils import *
-from .design_matrix import *
+# Import specific functions or classes if needed
 from .animation import *
-
-__all__ = ['directories', 'templates', 'print_files','hydro','input_processing','spectra','plots','utils', 'animation','design_matrix']
-
-
-
-import importlib
-
-# List of modules and submodules to import from
-modules_to_import = [
-    'directories',
-    'templates',
-    'print_files',
-    'hydro',
-    'input_processing',
-    'spectra',
-    'plots',
-    'animation',
-    'design_matrix'
-
-    
-]
-
-# Initialize the prefix namespace
-pre = type('', (), {})()
-
-# Import all functions dynamically
-for module_name in modules_to_import:
-    module = importlib.import_module(f'.{module_name}', package=__package__)
-    for func_name in dir(module):
-        if callable(getattr(module, func_name)):
-            setattr(pre, func_name, getattr(module, func_name))
-
-# Optional: Define __all__ to control what gets imported when using from package import *
-__all__ = list(set(dir(pre)) - {'__dict__', '__doc__', '__module__', '__weakref__'})
-
-
+from .design_matrix import *
+from .directories import *
+from .hydro import *
+from .input_processing import *
+from .plots import *
+from .print_files import *
+from .spectra import *
+from .templates import *
+from .utils import *
+# Define __all__ for the subpackage
+__all__ = ['animation', 'design_matrix','directories','hydro', 'input_processing',
+           'plots','print_files','spectra','templates','utils']

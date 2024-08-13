@@ -7,7 +7,7 @@ from itertools import product
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
-import python_code as fp
+import python_code as pc
 
 
 #%% KEY HELPER FUNCTIONS
@@ -99,7 +99,7 @@ def print_supporting(all_vars,ptr):
         if 'bathy' in all_vars['files']:
             path = ptr['b_file']
             data = all_vars['files']['bathy']['file']
-            fp.py.print_bathy(data,path)
+            pc.co.py.print_bathy(data,path)
 
 def plot_supporting(all_vars,ptr):
     # Check for bathymetry and spectra
@@ -107,7 +107,7 @@ def plot_supporting(all_vars,ptr):
         
         # Bathymetry
         if 'bathy' in all_vars['files']:
-            fp.py.plot_bathy(all_vars,ptr)
+            pc.co.py.plot_bathy(all_vars,ptr)
 
 def save_input_file(var_dict,ptr):
     with open(ptr['i_file'], 'w') as f:
@@ -122,7 +122,7 @@ def save_input_file(var_dict,ptr):
     return        
             
 #%% MAIN PRINT FILES FUNCTION
-def write_files(matrix, functions_to_apply, super_path, run_name, extra_values=None):
+def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
     
     all_dicts = {}
     # Group together variables
@@ -131,8 +131,8 @@ def write_files(matrix, functions_to_apply, super_path, run_name, extra_values=N
     ## Get paths needed
     variable_ranges['super_path'] = [super_path]
     variable_ranges['run_name'] = [run_name]
-    fp.py.mk_FW_dir(super_path, run_name)
-    p = fp.py.list_FW_dirs(super_path, run_name)
+    pc.co.py.mk_FW_dir(super_path, run_name)
+    p = pc.co.py.list_FW_dirs(super_path, run_name)
 
     # Add on extra values if provided
     if extra_values:
@@ -142,34 +142,38 @@ def write_files(matrix, functions_to_apply, super_path, run_name, extra_values=N
     # Get all permutations of variables
     permutations = list(product(*[variable_ranges[var] for var in variable_ranges]))
     
-    # Loop through each permutation
-    for i, perm in enumerate(permutations, start=1):
-        
-        ## Getting the dictionaries
-        # Create dictionary of variable/value pairs
-        var_dict = dict(zip(variable_ranges.keys(), perm))
-        
-        # Add on a title for the permutation
-        var_dict['TITLE'] = f'input_{i:05}'
-        
-        # Calculate any parameters dependent on other ones         
-        var_dict = add_dependent_values(var_dict,functions_to_apply)
-        
-        ## Writing Out Files
-        # Paths for trial files
-        ptr = fp.py.list_FW_tri_dirs(i, p)
-        print(ptr['b_file'])
-        # Print supporting files if found (ie- bathy, spectra)
-        print_supporting(var_dict,ptr)
-                
-        # Plot supporting
-        plot_supporting(var_dict,ptr)
-        
-        # Plot input.txt file
-        save_input_file(var_dict,ptr)
-
-        # Add to larger dictionary
-        all_dicts[f'tri_{i:05}'] = var_dict
+    k = 1
+    for set_name, function_set in function_sets.items():
+        # Loop through each permutation
+        for i, perm in enumerate(permutations, start=1):
+            
+            ## Getting the dictionaries
+            # Create dictionary of variable/value pairs
+            var_dict = dict(zip(variable_ranges.keys(), perm))
+            
+            # Add on a title for the permutation
+            var_dict['TITLE'] = f'input_{i:05}'
+            var_dict['FUNCTION_SET'] = set_name
+            
+            # Calculate any parameters dependent on other ones         
+            var_dict = add_dependent_values(var_dict,function_set)
+            
+            ## Writing Out Files
+            # Paths for trial files
+            ptr = pc.co.py.list_FW_tri_dirs(k, p)
+            print(ptr['b_file'])
+            # Print supporting files if found (ie- bathy, spectra)
+            print_supporting(var_dict,ptr)
+                    
+            # Plot supporting
+            plot_supporting(var_dict,ptr)
+            
+            # Plot input.txt file
+            save_input_file(var_dict,ptr)
+    
+            # Add to larger dictionary
+            all_dicts[f'tri_{k:05}'] = var_dict
+            k = k + 1 
         
     # Save larger dictionary
     with open(p['Id'], 'wb') as f:

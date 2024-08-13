@@ -2,42 +2,47 @@ import argparse
 import sys
 import os
 
-#test2.stability_vars({})
 #%%
 ## Import module with generation function
 
 ## Main: Generate the function
 def main(super_path, run_name):
     # Path Commands
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
-    import python_code as fp
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)))
+    
+    # Import needed functions
+    import python_code as pc
+    import python_code.model_runs.test2 as tri
 
     # Load in Design Matrix
     matrix_path = r"C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\FUNWAVE_PY\data\matrices\matrix3.csv"
-    matrix = fp.py.load_FW_design_matrix(matrix_path)
-    
+    matrix = pc.co.py.load_FW_design_matrix(matrix_path)
+
     # Define functions to apply
-    functions_to_apply = [fp.mr.t2.stability_vars,
-                          fp.mr.t2.get_bathy2,
-                          fp.mr.t2.set_alt_title]
+    function_set = {'Regular' : [tri.stability_vars,
+                          tri.get_bathy2,
+                          tri.set_alt_title],
+                    'Modified' : [tri.stability_vars,
+                        tri.get_bathy2,
+                        tri.set_alt_title]}
+
     
     # Extra values to add (paths of the Dune3 data files)
     data_path = r"C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\FUNWAVE_PY\data\Dune3"
-    extra_values = {'bathy_path': fp.py.get_all_paths_in_dir(data_path)}
+    extra_values = {'bathy_path': pc.co.py.get_all_paths_in_dir(data_path)}
     
     # Write the files
-    fp.py.write_files(matrix, functions_to_apply, super_path, run_name,extra_values)
+    pc.co.py.write_files(matrix, function_set, super_path, run_name,extra_values)
     
-
     print('File Generation Script Run!')
     return
-
+'''
 super_path = '../local_lustre/'
 run_name = 'test_matrix'
 main(super_path,run_name)
 #%%
 '''
+
 if __name__ == "__main__":
     # Define the parser
     parser = argparse.ArgumentParser(description="Process variables for compression")
@@ -51,4 +56,4 @@ if __name__ == "__main__":
 
     # Call the main function with parsed arguments
     main(args.super_path, args.run_name)
-'''
+
