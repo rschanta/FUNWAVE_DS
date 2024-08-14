@@ -73,27 +73,30 @@ def serialize_bathy_array(In_d,tri_str,feature_dict):
     '''
     numbers = get_numbers(string=tri_str)
     input_dict = In_d[numbers['tri']]
-    
+    print(input_dict.keys())
     try:
+    
         bathy = input_dict['files']['bathy']['array'].astype(np.float32)
+        print(bathy)
         feature_dict = serialize_tensor(feature_dict,'bathy',bathy)
     except Exception:
-        'Bathy Array Not Found!'
+        print('Bathy Array Not Found!')
     return feature_dict
 
 def serialize_all(dicta):
     feature_dict = {}
     for key, value in dicta.items():
+        print(value)
         # Check if tensor
         if isinstance(value, (np.ndarray, tf.Tensor)):
             serialize_tensor(feature_dict,key,value)
         # Check if float
-        if isinstance(value, float): 
+        elif isinstance(value, float): 
             serialize_float(feature_dict,key,value)
         # Check if string
-        if isinstance(value, int):
+        elif isinstance(value, str):
             serialize_string(feature_dict,key,value)
         # Check if int
-        if isinstance(value, float):
+        elif isinstance(value, int):
             serialize_int(feature_dict,key,value)
     return feature_dict

@@ -17,8 +17,8 @@ def calculate_ska_1D(eta):
     hnn = hn - np.mean(hn)
     asy_num = np.mean(hnn ** 3)
     # Calculate and output
-    skew = sk_num/denom;
-    asy = asy_num/denom;
+    skew = sk_num/denom
+    asy = asy_num/denom
     return skew, asy
 
 

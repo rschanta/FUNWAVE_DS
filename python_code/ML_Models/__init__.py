@@ -1,13 +1,22 @@
-import pkgutil
+import os
 import importlib
 
-# Automatically import all submodules and subpackages
-__all__ = []
+def import_all_modules(package_dir):
+    for filename in os.listdir(package_dir):
+        # Check case of .py files
+        if filename.endswith('.py') and filename != '__init__.py':
+            module_name = filename[:-3]  # Remove .py extension
+            importlib.import_module(f'.{module_name}', package=__package__)
+            globals()[module_name] = importlib.import_module(f'.{module_name}', package=__package__)
+        # Check case of modules
+        elif os.path.isdir(os.path.join(package_dir, filename)) and \
+             '__init__.py' in os.listdir(os.path.join(package_dir, filename)):
+            subpackage_name = filename
+            importlib.import_module(f'.{subpackage_name}', package=__package__)
+            globals()[subpackage_name] = importlib.import_module(f'.{subpackage_name}', package=__package__)
 
-# Discover and import subpackages
-for _, module_name, is_pkg in pkgutil.iter_modules(__path__):
-    if is_pkg:
-        # Import subpackage and add it to __all__
-        module = importlib.import_module(f'.{module_name}', package=__name__)
-        locals()[module_name] = module
-        __all__.append(module_name)
+# Directory of the current package
+current_dir = os.path.dirname(__file__)
+
+# Import all modules and submodules
+import_all_modules(current_dir)

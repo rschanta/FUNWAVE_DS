@@ -12,7 +12,7 @@ def main(super_path, run_name):
     import python_code as fp
 
     # Run Function
-    trial_path = '../data/'  
+    trial_path = '../data/Trial05.pkl'
     fp.mr.test1.generate_in(super_path,run_name,trial_path)
     print('File Generation Script Run!')
     return

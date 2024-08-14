@@ -3,11 +3,11 @@
 #
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=32
-#SBATCH --job-name=Condense_Matrix
+#SBATCH --job-name=MATRIX_TEST
 #SBATCH --partition=standard
 #SBATCH --time=7-00:00:00
-#SBATCH --output=/work/thsu/rschanta/RTS-PY/logs/ML/matr_con2.out
-#SBATCH --error=/work/thsu/rschanta/RTS-PY/logs/ML/matr_con2_err.out
+#SBATCH --output=/work/thsu/rschanta/RTS-PY/logs/gen/matrix_out.out
+#SBATCH --error=/work/thsu/rschanta/RTS-PY/logs/gen/matrixe_out.out
 #SBATCH --mail-user=rschanta@udel.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
@@ -21,4 +21,4 @@
 
 ## Activate conda environment and compress
 conda activate tf_env
-python /work/thsu/rschanta/RTS-PY/mains/m03b_post_condense.py "/lustre/scratch/rschanta" "test_matrix"
+python /work/thsu/rschanta/RTS-PY/mains/m01b_design_matrix.py "/lustre/scratch/rschanta" "test_matrix" 
