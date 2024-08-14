@@ -5,7 +5,7 @@ import tensorflow as tf
 
 
 def main(super_path, run_name,tri_num):
-    # Get necessary packages
+    # Path Commands
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)))
     
     # Import needed functions

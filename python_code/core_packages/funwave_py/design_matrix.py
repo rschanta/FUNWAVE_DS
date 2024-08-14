@@ -1,6 +1,7 @@
 import pickle
 import os
 import sys
+import copy
 import pandas as pd
 import numpy as np
 from itertools import product
@@ -38,12 +39,10 @@ def load_FW_design_matrix(path):
 
 
 def group_variables(design_matrix):
-    print(design_matrix)
     grouped_vars = design_matrix.groupby('VAR',sort=False)
     variable_ranges = {}
     print(grouped_vars)
     for var_name, group in grouped_vars:
-        print(group)
         # Case 1: there are multiple rows for a variable (ie- CFL = 0.5, CFL = 0.3)
         if pd.notna(group['CON']).all():  
             variable_ranges[var_name] = group['CON'].tolist()
@@ -60,7 +59,6 @@ def group_variables(design_matrix):
                     values.extend(np.linspace(row['LO'], row['HI'], int(row['NUM'])))
             #variable_ranges[var_name] = list(set(values))  # Remove duplicates and sort
             variable_ranges[var_name] = list(dict.fromkeys(values))
-    print(variable_ranges)
     return variable_ranges     
             
 
@@ -94,12 +92,13 @@ def add_dependent_values(var_dict,functions_to_apply):
 def print_supporting(all_vars,ptr):
     # Check for bathymetry and spectra
     if 'files' in all_vars:
-        
+    
         # Bathymetry
         if 'bathy' in all_vars['files']:
             path = ptr['b_file']
             data = all_vars['files']['bathy']['file']
             pc.co.py.print_bathy(data,path)
+    return
 
 def plot_supporting(all_vars,ptr):
     # Check for bathymetry and spectra
@@ -109,16 +108,18 @@ def plot_supporting(all_vars,ptr):
         if 'bathy' in all_vars['files']:
             pc.co.py.plot_bathy(all_vars,ptr)
 
+    return
+
 def save_input_file(var_dict,ptr):
+    var_dict_copy = copy.deepcopy(var_dict)
     with open(ptr['i_file'], 'w') as f:
         # Remove files
-        if 'files' in var_dict:
-            del var_dict['files']
-            
-        for var_name, value in var_dict.items():
+        if 'files' in var_dict_copy:
+            del var_dict_copy['files']
+        for var_name, value in var_dict_copy.items():
             f.write(f"{var_name} = {value}\n")
     
-    print(f"Generated file: {ptr['i_file']}")
+    print(f"Generated file: {ptr['i_file']}", flush=True)
     return        
             
 #%% MAIN PRINT FILES FUNCTION
@@ -151,28 +152,28 @@ def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
             # Create dictionary of variable/value pairs
             var_dict = dict(zip(variable_ranges.keys(), perm))
             
+            # Paths for trial files
+            ptr = pc.co.py.list_FW_tri_dirs(k, p)
+
             # Add on a title for the permutation
             var_dict['TITLE'] = f'input_{i:05}'
             var_dict['FUNCTION_SET'] = set_name
-            
+            var_dict['RESULT_FOLDER'] = ptr['RESULT_FOLDER']
             # Calculate any parameters dependent on other ones         
             var_dict = add_dependent_values(var_dict,function_set)
-            
+            all_dicts[f'tri_{k:05}'] = var_dict
+            print(var_dict.keys())
             ## Writing Out Files
-            # Paths for trial files
-            ptr = pc.co.py.list_FW_tri_dirs(k, p)
-            print(ptr['b_file'])
             # Print supporting files if found (ie- bathy, spectra)
             print_supporting(var_dict,ptr)
-                    
-            # Plot supporting
-            plot_supporting(var_dict,ptr)
+            
+            # Add to larger dictionary
+            #all_dicts[f'tri_{k:05}'] = var_dict
             
             # Plot input.txt file
             save_input_file(var_dict,ptr)
     
-            # Add to larger dictionary
-            all_dicts[f'tri_{k:05}'] = var_dict
+            
             k = k + 1 
         
     # Save larger dictionary

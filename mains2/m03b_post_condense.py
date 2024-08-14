@@ -6,22 +6,20 @@ import pickle
 
 def main(super_path,run_name):
     ## Get modules
-    # Path Commands
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)))
-    
-    # Import needed functions
-    import python_code as pc
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
+    import python_code as fp
     
     # Directory where all the inputs are store
     directory = f'{super_path}/{run_name}/inputs-ML'
 
     # Get all files in the directory
-    files = pc.co.py.get_all_paths_in_dir(directory)
+    files = fp.py.get_all_paths_in_dir(directory)
     paths = sorted(files)
 
     ## Parse in features to dictionary
     tensors_2D = ['bathyX','bathyZ','skew','AMP_WK','Tperiod','asy']
-    parsed_dict = pc.co.ke.parse_spec_var(paths,
+    parsed_dict = fp.tf.parse_spec_var(paths,
                 tensors_2D = tensors_2D,
                 strings = ['ALT_TITLE'])
     
