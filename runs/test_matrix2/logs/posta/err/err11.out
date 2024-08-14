@@ -1,3 +1,0 @@
-slurmstepd: error: Unable to create TMPDIR [/tmp/job_28249934/step_0.0]: No such file or directory
-slurmstepd: error: Setting TMPDIR to /tmp
-python: can't open file '/work/thsu/rschanta/RTS-PY/runs/test_matrix2/model_pipeline/p03a_condense.py': [Errno 2] No such file or directory
