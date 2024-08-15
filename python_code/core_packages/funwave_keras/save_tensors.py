@@ -26,6 +26,20 @@ def get_MNglob(tri_str: str, In_d):
     
     return Mglob, Nglob
 
+def get_MNglob2(In_d_i):
+    # Get Mglob and Nglob and ensure they are ints
+    try:
+        Mglob = In_d_i['Mglob']
+        Nglob = In_d_i['Nglob']
+        assert isinstance(Mglob, int), "Mglob should be an integer"
+        assert isinstance(Nglob, int), "Nglob should be an integer"
+        return Mglob, Nglob
+    except KeyError as e:
+        raise KeyError(f"Missing key: {e.args[0]}")
+    except AssertionError as e:
+        raise ValueError(str(e))
+    
+    
 
 def load_array(var_XXXXX: Path, Mglob: int, Nglob: int):
     '''
@@ -56,6 +70,39 @@ def load_and_stack_to_tensors(all_var_dict,In_d,tri_str: str):
     
     # Get Mglob and Nglob
     Mglob, Nglob = get_MNglob(tri_str, In_d)
+    tri_tensor_dict = {}
+    # Loop through all variables
+    for var, file_list in all_var_dict.items(): 
+        var_arrays = []
+        # Loop through all files of this variable
+        for file_path in file_list:
+            var_array = load_array(file_path,Mglob,Nglob)
+            var_arrays.append(var_array)
+        # Form into tensor, squeeze out any extra dimensions
+        var_tensor = np.squeeze(np.stack(var_arrays, axis=0))
+        tri_tensor_dict[var] = var_tensor
+    
+    return tri_tensor_dict
+
+
+def load_and_stack_to_tensors2(all_var_dict,In_d_i):
+    '''
+    Loads in an all the variable var_XXXXX as specified by the all_var_dict
+    that was output from `get_list_var_output_paths` gor a given trial
+    
+    ARGUMENTS: 
+        - all_var_dict (dict): output of `get_list_var_output_paths`
+        - In_d (dict): master input dictionary
+        - tri (str): string of the form `tri_XXXXX`
+        
+    RETURNS:
+        - tri_tensor_dict (dict[np.array]): dictionary of compressed tensors
+            for the trial specified
+            
+    '''
+    Mglob, Nglob = get_MNglob2(In_d_i)
+    
+
     tri_tensor_dict = {}
     # Loop through all variables
     for var, file_list in all_var_dict.items(): 

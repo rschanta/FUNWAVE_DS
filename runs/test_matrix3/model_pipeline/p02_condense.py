@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 import os
 import sys
-
+import numpy as np
 
 #%%
 def main(super_path, run_name,tri_num):

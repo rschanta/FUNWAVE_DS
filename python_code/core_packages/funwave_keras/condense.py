@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import  Dict, Any, Optional
-
+from pathlib import Path
 
 def list_all_trial_subdirectories(outputs_raw_str: str)-> list[Path]:
     '''
@@ -29,7 +29,7 @@ def get_var_outputh_paths(out_XXXXX_path: Path, var: str) -> list[Path]:
             searched for
 
     '''
-    
+    out_XXXXX_path = Path(out_XXXXX_path)
     var_files = []
     for file in out_XXXXX_path.iterdir():
         if file.name.startswith(var):

@@ -73,7 +73,6 @@ def serialize_bathy_array(In_d,tri_str,feature_dict):
     '''
     numbers = get_numbers(string=tri_str)
     input_dict = In_d[numbers['tri']]
-    print(input_dict.keys())
     try:
     
         bathy = input_dict['files']['bathy']['array'].astype(np.float32)
@@ -85,6 +84,23 @@ def serialize_bathy_array(In_d,tri_str,feature_dict):
 
 def serialize_all(dicta):
     feature_dict = {}
+    for key, value in dicta.items():
+        print(value)
+        # Check if tensor
+        if isinstance(value, (np.ndarray, tf.Tensor)):
+            serialize_tensor(feature_dict,key,value)
+        # Check if float
+        elif isinstance(value, float): 
+            serialize_float(feature_dict,key,value)
+        # Check if string
+        elif isinstance(value, str):
+            serialize_string(feature_dict,key,value)
+        # Check if int
+        elif isinstance(value, int):
+            serialize_int(feature_dict,key,value)
+    return feature_dict
+
+def serialize_all2(dicta,feature_dict):
     for key, value in dicta.items():
         print(value)
         # Check if tensor

@@ -15,6 +15,8 @@ def main(super_path, run_name,tri_num):
     paths= [f'{super_path}/{run_name}/outputs-proc/out_{tri_num:05}.tfrecord']
     
     ## Parse in features to dictionary
+
+    # TODO: Come up with a way to automatically get dimensionality, and all inputs/outputs
     parsed_dict = pc.co.ke.parse_spec_var(paths,
                 tensors_3D = ['eta'],
                 tensors_2D = ['bathy','time_dt'],

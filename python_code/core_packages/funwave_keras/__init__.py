@@ -6,6 +6,7 @@ from .parsing import *
 from .save_tensors import *
 from .save_tf_record import *
 from .serialize import *
+from .serialize2 import *
 from .serialize_type import *
 from .utils import *
 # Define __all__ for the subpackage
