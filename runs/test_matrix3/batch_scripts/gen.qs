@@ -14,4 +14,4 @@
 
 ## Activate conda environment and compress
 conda activate tf_env
-python /work/thsu/rschanta/RTS-PY/runs/test_matrix3/model_pipeline/p01_gen_files.py /lustre/scratch/rschanta test_matrix3 
+python /work/thsu/rschanta/RTS-PY/runs/test_matrix3/model_pipelines/p01_gen_files.py /lustre/scratch/rschanta test_matrix3 

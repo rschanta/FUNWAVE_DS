@@ -1,9 +1,14 @@
+import sys
+import os
 import numpy as np
+import tensorflow as tf
 from scipy.ndimage import uniform_filter1d
 from scipy.interpolate import CubicSpline
-import python_code as pc
-import tensorflow as tf
-import python_code as pc
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from funwave_ds.fw_py.utils import cut_between
+from postprocessing.skew_asymmetry.skew_asymmetry import calculate_ska_1D
+
 
 
 def calculate_gradients_and_cut(array_list, cutting_array,DX, threshold):
@@ -15,7 +20,7 @@ def calculate_gradients_and_cut(array_list, cutting_array,DX, threshold):
     if idx is None:
         cut_arrays = array_list
     else:
-        cut_arrays = pc.co.py.cut_between(array_list,cutting_array,upper=loc,mode="start",axis = 0)
+        cut_arrays = cut_between(array_list,cutting_array,upper=loc,mode="start",axis = 0)
     return cut_arrays
 
 def movmean(data, window_size):
@@ -42,20 +47,21 @@ def preprocessing_pipeline3(small_dict,steady_time):
     Xc_WK = small_dict['Xc_WK']
     DX = small_dict['DX']
     ALT_TITLE = small_dict['ALT_TITLE']
+    TITLE = small_dict['TITLE']
     AMP_WK = tf.reshape(small_dict['AMP_WK'], [1,1]) 
     Tperiod = tf.reshape(small_dict['Tperiod'], [1,1]) 
 
     # Slice to steady time
-    [time, eta] = pc.co.py.cut_between([time, eta],time,steady_time,mode="end",axis = 0)
+    [time, eta] = cut_between([time, eta],time,steady_time,mode="end",axis = 0)
 
     ## Slice to wet beach
-    [bathyX, bathyZ, eta] = pc.co.py.cut_between([bathyX, bathyZ, eta],bathyZ,upper=0,mode="start",axis = 1)
+    [bathyX, bathyZ, eta] = cut_between([bathyX, bathyZ, eta],bathyZ,upper=0,mode="start",axis = 1)
     
     ## Slice to Wavemaker
-    [bathyX, bathyZ, eta] = pc.co.py.cut_between([bathyX, bathyZ, eta],bathyX,lower=Xc_WK,mode="end",axis = 1)
+    [bathyX, bathyZ, eta] = cut_between([bathyX, bathyZ, eta],bathyX,lower=Xc_WK,mode="end",axis = 1)
     
     ## Calculate skew and asyemmetry
-    skew, asy =  np.apply_along_axis(pc.pp.calculate_ska_1D, 0, eta)
+    skew, asy =  np.apply_along_axis(calculate_ska_1D, 0, eta)
     skew = np.nan_to_num(skew, nan=0.1)
     asy = np.nan_to_num(asy, nan=0.1)
     arrays = [bathyX, bathyZ, skew, asy]
@@ -76,7 +82,7 @@ def preprocessing_pipeline3(small_dict,steady_time):
     skew = skew.reshape(1,-1).astype(np.float32)
     bathyZ = bathyZ.reshape(1,-1).astype(np.float32)
     asy = asy.reshape(1, -1).astype(np.float32)
-    print(ALT_TITLE)
+
     ## Form dictionary output
     out_dict = {'bathyX':bathyX,
                'bathyZ': bathyZ,
@@ -84,5 +90,7 @@ def preprocessing_pipeline3(small_dict,steady_time):
                'asy': asy,
                'AMP_WK': AMP_WK,
                 'Tperiod': Tperiod,
-                'ALT_TITLE': ALT_TITLE.decode('utf-8')}
+                'ALT_TITLE': ALT_TITLE,
+                'TITLE': TITLE}
+
     return out_dict

@@ -6,7 +6,7 @@ from scipy.interpolate import interp1d
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
-import python_code as pc
+import funwave_ds.fw_py as fpy
 
 ## Give D3 Alt name
 def set_alt_title(vars):
@@ -18,7 +18,7 @@ def stability_vars(vars):
     # Unpack vars needed
     T = vars['Tperiod']
     h = vars['DEPTH_FLAT']
-    k, L = pc.co.py.dispersion(T, h)
+    k, L = fpy.dispersion(T, h)
     
     # Use Torres stability limits for DX/DY amd Sponge
     DX_lo = h/15;

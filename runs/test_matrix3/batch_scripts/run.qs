@@ -11,6 +11,7 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
 #SBATCH --array=1-40
+#SBATCH --dependency=afterany:28257982
 #
 
 . /opt/shared/slurm/templates/libexec/openmpi.sh
@@ -23,4 +24,4 @@
 
 ## COMPRESS
 conda activate tf_env
-python /work/thsu/rschanta/RTS-PY/runs/test_matrix3/model_pipeline/p02_condense.py /lustre/scratch/rschanta test_matrix3  $SLURM_ARRAY_TASK_ID
+python /work/thsu/rschanta/RTS-PY/runs/test_matrix3/model_pipelines/p02_condense.py /lustre/scratch/rschanta test_matrix3  $SLURM_ARRAY_TASK_ID

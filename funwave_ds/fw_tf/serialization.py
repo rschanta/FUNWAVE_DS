@@ -14,7 +14,7 @@ from .tensor_stacking import load_and_stack_to_tensors, load_array
 
 # Out-of-module imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from funwave_py.path_tools import find_prefixes_path, get_vars_out_paths
+from fw_py.path_tools import find_prefixes_path, get_vars_out_paths
 
 
 def serialize_dictionary(dicta,feature_dict):

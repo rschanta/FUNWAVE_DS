@@ -10,29 +10,30 @@ def main(super_path, run_name,tri_num):
     # Path Commands
     sys.path.append("/work/thsu/rschanta/RTS-PY")
     
-    # Import needed functions
-    import python_code as pc
+    # Import needed modules
+    import funwave_ds.fw_py as fpy
+    import funwave_ds.fw_tf as ftf
 
     # Get relevant paths
-    p = pc.co.py.get_FW_paths(super_path, run_name)
-    ptr = pc.co.py.get_FW_tri_paths(tri_num, p)
+    p = fpy.get_FW_paths(super_path, run_name)
+    ptr = fpy.get_FW_tri_paths(tri_num, p)
 
     # Get input dictionary
-    In_d_i = pc.co.py.load_input_dict(p['Id'], tri_num)
+    In_d_i = fpy.load_input_dict(p['Id'], tri_num)
 
     # Compress/Serialize the outputs
-    serialized_features = pc.co.tf.serialize_outputs(ptr['RESULT_FOLDER'],In_d_i)
+    serialized_features = ftf.serialize_outputs(ptr['RESULT_FOLDER'],In_d_i)
     
     # Compress/Serialize the inputs
-    serialized_features = pc.co.tf.serialize_inputs(In_d_i,feature_dict = serialized_features)
+    serialized_features = ftf.serialize_inputs(In_d_i,feature_dict = serialized_features)
     
     # Compress/Serialize supplemental variables
     supplemental_vars = {'bathy': In_d_i['files']['bathy']['array'].astype(np.float32)}
-    serialized_features = pc.co.tf.serialize_dictionary(supplemental_vars,feature_dict = serialized_features)
+    serialized_features = ftf.serialize_dictionary(supplemental_vars,feature_dict = serialized_features)
 
     
     # Save Out
-    pc.co.tf.save_tfrecord(serialized_features,ptr['out_record'])
+    ftf.save_tfrecord(serialized_features,ptr['out_record'])
     
     print(f'\nSuccessfully saved out_{tri_num:05}.tfrecord')
     return

@@ -14,4 +14,4 @@
 #
 
 conda activate tf_env
-python /work/thsu/rschanta/RTS-PY/runs/test_matrix3/model_pipeline/p03a_postprocess.py /lustre/scratch/rschanta test_matrix3  $SLURM_ARRAY_TASK_ID
+python /work/thsu/rschanta/RTS-PY/runs/test_matrix3/model_pipelines/p03a_postprocess.py /lustre/scratch/rschanta test_matrix3  $SLURM_ARRAY_TASK_ID

@@ -4,7 +4,6 @@ from .feature_description import *
 
 
 def deserialize_tensor(parsed_features,var:str):
-    print(var)
     shape = tf.cast(parsed_features[f'{var}_shape'], tf.int64)
     tensor = tf.io.parse_tensor(parsed_features[var], out_type=tf.float32)
     parsed_features[var] = tf.reshape(tensor, shape)
@@ -99,37 +98,44 @@ def parse_spec_var(paths,
                 ints = []):
 
 
-    # Build up the feature description
-    print(floats)
+
+    # Ensure that Title is there
+    strings = strings + ['TITLE']
+    
+    # Build up Feature Description
     feature_description = construct_feature_descr(tensors_4D, tensors_3D, tensors_2D, floats, strings, ints)
-    #print(feature_description)
     
     # Specify the tensors
     tensors = tensors_4D + tensors_3D + tensors_2D
-    # Ensure that Title is there
-    strings = strings + ['TITLE']
+    
     # Transform into dataset and parse
     dataset = tf.data.TFRecordDataset(paths)
     dataset = dataset.map(lambda proto: _parse_function(proto,feature_description,tensors))
     
     # Loop through all returns in the dataset
     all_records_dictionary = {}
+    k = 1
     for idx, parsed_features in enumerate(dataset):
         # Loop through the features in one record 
+
         record_dictionary = {}
         for key, value in parsed_features.items():
+
             value = value.numpy()
             record_dictionary[key] = value
             if isinstance(value, bytes):
-                print(value)
+
+                value = value.decode('UTF-8')
                 record_dictionary[key] = value
 
         # Get title
         title = record_dictionary['TITLE']
-        new_key = title[-5:].decode('UTF-8')
+        
+        #new_key = title[-5:].decode('UTF-8')
+        new_key = title[-5:]
         new_key = f'tri_{new_key}'
         all_records_dictionary[new_key] = record_dictionary
-
+        k + 1
     return all_records_dictionary
 
 
