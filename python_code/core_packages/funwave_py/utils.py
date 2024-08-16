@@ -46,5 +46,5 @@ def cut_between(arrays: list[np.array], cutting_array: np.array, lower: float = 
                 cut_arrays.append(arr[:,start_i:end_i])
     return cut_arrays
 
-def get_all_paths_in_dir(path):
-    return [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+# Actually it is lol, bathy
+

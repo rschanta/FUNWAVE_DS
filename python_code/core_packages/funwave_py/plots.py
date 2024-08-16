@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# TODO Also make a bit moe general, yknow?
 def plot_bathy(dicta,ptr):
     # Pull out params
     X = dicta['files']['bathy']['array'][:,0]

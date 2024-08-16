@@ -1,7 +1,8 @@
 ###
 
 import copy
-
+## TODO: Just remove entirely?
+'''
 def FW_in_SLP():
     FW = {
         # TITLE
@@ -144,3 +145,4 @@ def FW_in_bathy():
     print('Successfully created FW_in_bathy template dictionary!')
     
     return FW
+'''

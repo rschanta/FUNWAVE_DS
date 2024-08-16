@@ -12,13 +12,12 @@ def main(super_path, run_name,tri_num):
     import python_code as pc
     
     ## Get paths
-    p = pc.co.py.list_FW_dirs(super_path, run_name)
-    ptr = pc.co.py.list_FW_tri_dirs(tri_num, p)
+    p = pc.co.py.get_FW_paths(super_path, run_name)
+    ptr = pc.co.py.get_FW_tri_paths(tri_num, p)
     paths = ptr['out_record']
 
     ## Parse in features to dictionary
-    # TODO: Come up with a way to automatically get dimensionality, and all inputs/outputs
-    parsed_dict = pc.co.ke.parse_spec_var(paths,
+    parsed_dict = pc.co.tf.parse_spec_var(paths,
                 tensors_3D = ['eta'],
                 tensors_2D = ['bathy','time_dt'],
                 floats = ['DX','Xc_WK','AMP_WK','Tperiod'],
@@ -28,10 +27,10 @@ def main(super_path, run_name,tri_num):
     out_dict =  pc.ml.ska_conv.preprocessing_pipeline3(parsed_dict[f'tri_{tri_num:05}'],0)
 
     ## Serialize the post-processed features
-    feature_dict_ML = pc.co.ke.serialize_all2(out_dict,{})
+    feature_dict_ML = pc.co.tf.serialize_dictionary(out_dict,{})
     
     ## Save out 
-    pc.co.ke.save_tfrecord(feature_dict_ML,f'/work/thsu/rschanta/RTS-PY/runs/test_matrix3/processed_outputs/ML_inputs/MLin_{tri_num:05}.tfrecord')
+    pc.co.tf.save_tfrecord(feature_dict_ML,f'/work/thsu/rschanta/RTS-PY/runs/test_matrix3/processed_outputs/ML_inputs/MLin_{tri_num:05}.tfrecord')
 
     
     return

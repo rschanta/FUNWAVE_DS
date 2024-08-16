@@ -11,7 +11,6 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
 #SBATCH --array=1-40
-#SBATCH --dependency=afterany:28255375
 #
 
 . /opt/shared/slurm/templates/libexec/openmpi.sh

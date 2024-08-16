@@ -1,6 +1,6 @@
 import tensorflow as tf
 from typing import  Dict, Any
-from .feature_descriptions import *
+from .feature_description import *
 
 
 def deserialize_tensor(parsed_features,var:str):
@@ -33,7 +33,10 @@ def _parse_function(proto,feature_description,tensors):
     return parsed_features
 
 
-def parse_function(tf_record_files,feature_description,tensors,out_type='dataset',parse_fx = _parse_function):
+def parse_function(tf_record_files,
+                    feature_description,
+                    tensors,out_type='dataset',
+                    parse_fx = _parse_function):
     '''
     Wrapper function for a parsing function: parses all the files in 
     tf_record_files. Defaults to _parse_function, but can specify others.
@@ -130,7 +133,8 @@ def parse_spec_var(paths,
     return all_records_dictionary
 
 
-
+'''
+This might still be useful one day?
 def get_tfrecord_as_dict(tensors_3d,tensors_2d,others,In_d,keys_to_ignore,tri_num,paths):
     # Construct feature description
     feature_description = get_feature_desc_tensors(tensors_3d, 3,{})
@@ -147,4 +151,4 @@ def get_tfrecord_as_dict(tensors_3d,tensors_2d,others,In_d,keys_to_ignore,tri_nu
     # Parse and return dict
     tensors = tensors_3d + tensors_2d
     return parse_function(paths,feature_description_filt,tensors,out_type='dict')
-
+'''

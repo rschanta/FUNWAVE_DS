@@ -24,7 +24,7 @@ def main(super_path, run_name):
     
     # Extra values to add (paths of the Dune3 data files)
     data_path = "/work/thsu/rschanta/RTS-PY/data/D3Data"
-    extra_values = {'bathy_path': pc.co.py.get_all_paths_in_dir(data_path)}
+    extra_values = {'bathy_path': pc.co.py.get_all_paths_in_path(data_path)}
     
     # Write the files
     pc.co.py.write_files(matrix, function_set, super_path, run_name,extra_values)

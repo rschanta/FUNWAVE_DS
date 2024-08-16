@@ -71,23 +71,3 @@ def serialize_string(feature_dict,var: str,value: str):
     feature_dict[var] =  tf.train.Feature(bytes_list=tf.train.BytesList(value=[value.encode()]))
     return feature_dict
 
-def serialize_boolean(feature_dict,var,value):
-    '''
-    Serializes an boolean string of either 'T' or 'F' (as a BytesList) to the 
-    feature_dict. Will NOT accept booleans! 
-    
-    ARGUMENTS
-        - feature_dict (dict): dictionary we're storing serialized features to,
-            can be empty or contain others
-        - var (str): name of the variable being serialized (ie- 'VISCOSITY_BREAKING')
-        - value (string): either 'T' or 'F'
-    RETURNS
-        - feature_dict (dict): feature dictionary with the serialized string
-            added
-    '''
-    if isinstance(var, bool):
-        raise TypeError("The value must be a string, either 'T' or 'F.")
-    else:
-        feature_dict[var] =  tf.train.Feature(bytes_list=tf.train.BytesList(value=[value.encode()]))
-    return feature_dict
-

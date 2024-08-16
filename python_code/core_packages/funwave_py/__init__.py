@@ -1,9 +1,9 @@
 # Import specific functions or classes if needed
 from .animation import *
 from .design_matrix import *
-from .directories import *
+from .path_tools import *
 from .hydro import *
-from .input_processing import *
+from .load_files import *
 from .plots import *
 from .print_files import *
 from .spectra import *

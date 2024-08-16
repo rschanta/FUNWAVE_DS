@@ -6,12 +6,9 @@ import pandas as pd
 import numpy as np
 from itertools import product
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.abspath(os.path.join(current_dir, os.pardir)))
-import python_code as pc
-
-
-#%% KEY HELPER FUNCTIONS
+from .path_tools import get_FW_paths, make_FW_paths,get_FW_tri_paths
+from .print_files import print_bathy_file, print_input_file
+#%% FUNCTION
 def load_FW_design_matrix(path):
     design_matrix = pd.read_csv(path, na_values=[''])
     
@@ -97,9 +94,11 @@ def print_supporting(all_vars,ptr):
         if 'bathy' in all_vars['files']:
             path = ptr['b_file']
             data = all_vars['files']['bathy']['file']
-            pc.co.py.print_bathy(data,path)
+            print_bathy_file(data,path)
     return
 
+
+# TODO: Make this a bit more general, yknow?
 def plot_supporting(all_vars,ptr):
     # Check for bathymetry and spectra
     if 'files' in all_vars:
@@ -110,17 +109,9 @@ def plot_supporting(all_vars,ptr):
 
     return
 
-def save_input_file(var_dict,ptr):
-    var_dict_copy = copy.deepcopy(var_dict)
-    with open(ptr['i_file'], 'w') as f:
-        # Remove files
-        if 'files' in var_dict_copy:
-            del var_dict_copy['files']
-        for var_name, value in var_dict_copy.items():
-            f.write(f"{var_name} = {value}\n")
-    
-    print(f"Generated file: {ptr['i_file']}", flush=True)
-    return        
+
+## TODO: Generalize to deal with different fields, move to print
+   
             
 #%% MAIN PRINT FILES FUNCTION
 def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
@@ -132,8 +123,8 @@ def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
     ## Get paths needed
     variable_ranges['super_path'] = [super_path]
     variable_ranges['run_name'] = [run_name]
-    pc.co.py.mk_FW_dir(super_path, run_name)
-    p = pc.co.py.list_FW_dirs(super_path, run_name)
+    make_FW_paths(super_path, run_name)
+    p = get_FW_paths(super_path, run_name)
 
     # Add on extra values if provided
     if extra_values:
@@ -153,25 +144,24 @@ def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
             var_dict = dict(zip(variable_ranges.keys(), perm))
             
             # Paths for trial files
-            ptr = pc.co.py.list_FW_tri_dirs(k, p)
+            ptr = get_FW_tri_paths(k, p)
 
             # Add on a title for the permutation
             var_dict['TITLE'] = f'input_{i:05}'
             var_dict['FUNCTION_SET'] = set_name
             var_dict['RESULT_FOLDER'] = ptr['RESULT_FOLDER']
+            
             # Calculate any parameters dependent on other ones         
             var_dict = add_dependent_values(var_dict,function_set)
             all_dicts[f'tri_{k:05}'] = var_dict
-            print(var_dict.keys())
+            
             ## Writing Out Files
             # Print supporting files if found (ie- bathy, spectra)
             print_supporting(var_dict,ptr)
             
-            # Add to larger dictionary
-            #all_dicts[f'tri_{k:05}'] = var_dict
             
             # Plot input.txt file
-            save_input_file(var_dict,ptr)
+            print_input_file(var_dict,ptr)
     
             
             k = k + 1 

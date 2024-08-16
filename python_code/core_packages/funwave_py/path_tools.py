@@ -1,7 +1,24 @@
-import os
+'''
+    path_tools
+        - Any function that deals with the getting of paths, the making of
+            directories, finding what is in a directory, and similar 
+            operations
+            - All function names end with "path(s)" and begin with either:
+                - "get"
+                - "make"
+                - "find"
+                or something similarly descriptive
 
-#%% LIST_FW_DIRS
-def list_FW_dirs(super_path, run_name):
+'''
+
+import os
+from pathlib import Path
+from typing import  Dict, Any, Optional
+from pathlib import Path
+
+
+
+def get_FW_paths(super_path, run_name):
     """
     Returns a dictionary with all the paths associated with a FUNWAVE run within the super_path directory.
 
@@ -68,12 +85,10 @@ def list_FW_dirs(super_path, run_name):
 
     return p
 
-#%% MK_FW_DIR
-def mk_FW_dir(super_path,run_name):
-    
-    
+
+def make_FW_paths(super_path,run_name):
     # Get list of directories from list_FW_dirs
-        p = list_FW_dirs(super_path,run_name);
+        p = get_FW_paths(super_path,run_name);
         
         # RUN_NAME
         os.makedirs(p['RN'], exist_ok=True)
@@ -108,9 +123,9 @@ def mk_FW_dir(super_path,run_name):
         os.makedirs(p['aniVU'], exist_ok=True)
         
         print('Directories successfully created!')
- 
-#%% LIST_FW_TRI_DIRS
-def list_FW_tri_dirs(tri_num, p):
+
+
+def get_FW_tri_paths(tri_num, p):
     """
     Arguments:
     - tri_num: (int) trial number
@@ -157,4 +172,69 @@ def list_FW_tri_dirs(tri_num, p):
 
     return ptr
         
+
+
+def find_prefixes_path(directory):
+        prefixes = []
+        for filename in os.listdir(directory):
+            # Split at extension
+            name, _ = os.path.splitext(filename)
+            
+            # Identify time step files (ends in XXXXX)
+            if name[-5:].isdigit() and len(name) > 5:
+                variable_ = name[:-5]
+            # Identify non time-step files
+            else:
+                variable_ = name
+            # Append to list
+            prefixes.append(variable_)
+
+        # Remove duplicates
+        prefix_list = list(set(prefixes))
+        return prefix_list
+
+
+def get_var_out_paths(RESULT_FOLDER: Path, var: str) -> list[Path]:
+    '''
+    Gets a list of paths to all of the output files in RESULT_FOLDER that have 
+    names that begin with the string specified by `var`. For example, use `eta_` 
+    to get the eta files.
     
+    ARGUMENTS:
+        - var (str): substring to search for at the beginning of file names. 
+            Best to use up to last underscore (ie- `eta_`, `U_undertow`) to 
+            avoid issues with similarly named variables
+    RETURNS: 
+        -path_of_vars (List(Path)): all the paths to the variables 
+            searched for
+
+    '''
+    out_XXXXX_path = Path(RESULT_FOLDER)
+    var_files = []
+    for file in out_XXXXX_path.iterdir():
+        if file.name.startswith(var):
+                var_files.append(file)
+                
+    path_of_vars = sorted(var_files, key=lambda p: p.name)            
+    return path_of_vars
+
+def get_vars_out_paths(RESULT_FOLDER: Path, var_search: list[str])-> Dict[str,list[Path]]:
+    '''
+    Applies `get_var_in_path` to the path specified for the variables 
+    specified in var_search to output a dictionary of path lists. Cleans up 
+    name a bit (trailing _)
+    
+    ARGUMENTS:
+        - out_XXXXX (Path): Path to out_XXXXX file
+    RETURNS: 
+        - var_search (List[str]): list of substrings for `get_var_output_paths`
+    '''
+    
+    all_var_paths = {}
+    for var in var_search:
+        varname = var[:-1] if var.endswith('_') else var  # Remove trailing _ if they exist
+        all_var_paths[varname] = get_var_out_paths(RESULT_FOLDER,var)
+    return all_var_paths
+
+def get_all_paths_in_path(path):
+    return [os.path.join(path, f) for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
