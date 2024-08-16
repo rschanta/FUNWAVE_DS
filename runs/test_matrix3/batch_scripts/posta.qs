@@ -10,9 +10,9 @@
 #SBATCH --mail-user=rschanta@udel.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
-#SBATCH --array=1-80
-#SBATCH --dependency=afterany:28252471
+#SBATCH --array=1-40
+#SBATCH --dependency=afterany:28255376
 #
 
 conda activate tf_env
-python /work/thsu/rschanta/RTS-PY/runs/test_matrix3/model_pipeline/p03a_condense.py /lustre/scratch/rschanta test_matrix3  $SLURM_ARRAY_TASK_ID
+python /work/thsu/rschanta/RTS-PY/runs/test_matrix3/model_pipeline/p03a_postprocess.py /lustre/scratch/rschanta test_matrix3  $SLURM_ARRAY_TASK_ID

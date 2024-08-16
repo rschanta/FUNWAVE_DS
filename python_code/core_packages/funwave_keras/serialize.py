@@ -56,21 +56,9 @@ def serialize_outputs(tri_tensor_dict,feature_dict: Dict[str,tf.train.Feature]):
         feature_dict = serialize_tensor(feature_dict,var,tensor)
     return feature_dict
 
-
+'''
 def serialize_bathy_array(In_d,tri_str,feature_dict):
-    '''
-    Serializes the bathy array defined for a trial and adds it to feature_dict,
-    should it exist in [files][bathy]
-    
-    ARGUMENTS:
-        - In_d (dict): master input dictionary 
-        - tri (str): string of the form `tri_XXXXX`
-        - feature_dict (dict): dictionary we're storing serialized features to,
-            can be empty or contain others
-    RETURNS:
-        - feature_dict (dict): feature dictionary with the bathy array 
-        added
-    '''
+
     numbers = get_numbers(string=tri_str)
     input_dict = In_d[numbers['tri']]
     try:
@@ -82,7 +70,7 @@ def serialize_bathy_array(In_d,tri_str,feature_dict):
         print('Bathy Array Not Found!')
     return feature_dict
 
-def serialize_all(dicta):
+def serialize_all_old(dicta):
     feature_dict = {}
     for key, value in dicta.items():
         print(value)
@@ -100,9 +88,9 @@ def serialize_all(dicta):
             serialize_int(feature_dict,key,value)
     return feature_dict
 
-def serialize_all2(dicta,feature_dict):
+'''
+def serialize_all24(dicta,feature_dict):
     for key, value in dicta.items():
-        print(value)
         # Check if tensor
         if isinstance(value, (np.ndarray, tf.Tensor)):
             serialize_tensor(feature_dict,key,value)

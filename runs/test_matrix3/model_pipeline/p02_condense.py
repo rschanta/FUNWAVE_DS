@@ -34,7 +34,7 @@ def main(super_path, run_name,tri_num):
     # Save Out
     pc.co.ke.save_tfrecord(serialized_features,ptr['out_record'])
     
-    print(f'Successfully saved out_{tri_num:05}.tfrecord')
+    print(f'\nSuccessfully saved out_{tri_num:05}.tfrecord')
     return
 
 #%%

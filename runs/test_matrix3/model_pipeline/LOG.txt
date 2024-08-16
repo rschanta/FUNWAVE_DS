@@ -1,5 +1,5 @@
  -------------- LOG FILE -----------------
- input_00034                                                                     
+ input_00038                                                                     
   --------------input start --------------
                                           
  -------------- PARALLEL -----------------
@@ -567,5 +567,5 @@ Beta_ref=        -0.53
   MaxTotalU   PhaseS      Froude      WetDryMass
   0.9023E-01  0.7065E+01  0.1277E-01  0.0000E+00
    PRINTING FILE NO.    49  TIME/TOTAL:       49.030 /      50.000
- Simulation takes   7.00000000     seconds
+ Simulation takes   6.50000000     seconds
  Normal Termination!

@@ -85,27 +85,14 @@ def load_and_stack_to_tensors(all_var_dict,In_d,tri_str: str):
     return tri_tensor_dict
 
 
-def load_and_stack_to_tensors2(all_var_dict,In_d_i):
-    '''
-    Loads in an all the variable var_XXXXX as specified by the all_var_dict
-    that was output from `get_list_var_output_paths` gor a given trial
-    
-    ARGUMENTS: 
-        - all_var_dict (dict): output of `get_list_var_output_paths`
-        - In_d (dict): master input dictionary
-        - tri (str): string of the form `tri_XXXXX`
-        
-    RETURNS:
-        - tri_tensor_dict (dict[np.array]): dictionary of compressed tensors
-            for the trial specified
-            
-    '''
+def load_and_stack_to_tensors3(all_var_dict,In_d_i):
+
     Mglob, Nglob = get_MNglob2(In_d_i)
-    
 
     tri_tensor_dict = {}
     # Loop through all variables
     for var, file_list in all_var_dict.items(): 
+        print(f'Compressing: {var}')
         var_arrays = []
         # Loop through all files of this variable
         for file_path in file_list:

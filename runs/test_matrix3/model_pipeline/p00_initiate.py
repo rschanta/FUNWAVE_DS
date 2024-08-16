@@ -40,13 +40,15 @@ gen_script = ba.write_slurm_script(tags2,work_dir,run_name,text_content)
 # Run .qs script and get ID
 gen_ID = ba.submit_slurm_job(gen_script)
 
+
+
 ##########################################################
 #%% Run File
 ##########################################################
 tags = ba.create_sbatch_dict(work_dir,run_name,
                             email=email,
                             job_name="run",
-                            array="1-80",
+                            array="1-40",
                             dependency=f"afterany:{gen_ID}")
 
 
@@ -72,15 +74,17 @@ run_script = ba.write_slurm_script(tags,work_dir,run_name,text_content)
 # Run .qs script and get ID
 run_ID = ba.submit_slurm_job(run_script)
 
+
+
 ##########################################################
 #%% Postprocessing
 ##########################################################
 tags = ba.create_sbatch_dict(work_dir,run_name,
                             email=email,
                             job_name="posta",
-                            array="1-80",
+                            array="1-40",
                             dependency=f"afterany:{run_ID}")
-postproc_file = "p03a_condense.py"
+postproc_file = "p03a_postprocess.py"
 
 # Text to include under slurm tags
 text_content = f"""

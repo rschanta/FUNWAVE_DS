@@ -32,8 +32,8 @@ def interpolate_cubic_splines(arr_list,grid_arr):
         interp_arr_list.append(cubic_spline_fit)
     return interp_arr_list
 
-def preprocessing_pipeline(small_dict,steady_time):
-    
+def preprocessing_pipeline3(small_dict,steady_time):
+
     # Unpack Variables
     eta = np.squeeze(small_dict['eta'][:,1,:])
     time = small_dict['time_dt'][:,0]

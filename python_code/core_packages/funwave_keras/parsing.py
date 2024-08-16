@@ -97,11 +97,14 @@ def parse_spec_var(paths,
 
 
     # Build up the feature description
+    print(floats)
     feature_description = construct_feature_descr(tensors_4D, tensors_3D, tensors_2D, floats, strings, ints)
-    print(feature_description)
+    #print(feature_description)
+    
     # Specify the tensors
     tensors = tensors_4D + tensors_3D + tensors_2D
-    
+    # Ensure that Title is there
+    strings = strings + ['TITLE']
     # Transform into dataset and parse
     dataset = tf.data.TFRecordDataset(paths)
     dataset = dataset.map(lambda proto: _parse_function(proto,feature_description,tensors))
@@ -112,16 +115,18 @@ def parse_spec_var(paths,
         # Loop through the features in one record 
         record_dictionary = {}
         for key, value in parsed_features.items():
-            print(key)
-            record_dictionary[key] = value.numpy()
+            value = value.numpy()
+            record_dictionary[key] = value
+            if isinstance(value, bytes):
+                print(value)
+                record_dictionary[key] = value
 
-        # Use record's title as key in the larger dictionary
-        #all_records_dictionary[record_dictionary['TITLE'].decode('utf-8')] = record_dictionary
-        all_records_dictionary[idx] = record_dictionary
-    # If there's only one record, un-nest the list
-    if len(paths) == 1:
-        #all_records_dictionary = all_records_dictionary[record_dictionary['TITLE'].decode('utf-8')]
-        all_records_dictionary = all_records_dictionary[idx]
+        # Get title
+        title = record_dictionary['TITLE']
+        new_key = title[-5:].decode('UTF-8')
+        new_key = f'tri_{new_key}'
+        all_records_dictionary[new_key] = record_dictionary
+
     return all_records_dictionary
 
 

@@ -10,8 +10,8 @@
 #SBATCH --mail-user=rschanta@udel.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
-#SBATCH --array=1-80
-#SBATCH --dependency=afterany:28252470
+#SBATCH --array=1-40
+#SBATCH --dependency=afterany:28255375
 #
 
 . /opt/shared/slurm/templates/libexec/openmpi.sh
