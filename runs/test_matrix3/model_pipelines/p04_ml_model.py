@@ -5,9 +5,9 @@ import random
 import tensorflow as tf
 
 def main(super_path, run_name,model_name):
-
-    #%% Get modules
+    # Add to system path
     sys.path.append("/work/thsu/rschanta/RTS-PY")
+    # Get modules
     import funwave_ds.fw_py as fpy
     import funwave_ds.fw_tf as ftf
     import funwave_ds.fw_ml as fml

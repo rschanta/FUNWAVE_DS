@@ -9,13 +9,14 @@ sys.path.append("/work/thsu/rschanta/RTS-PY")
 import funwave_ds.fw_ba as fba
 
 
-#%% Key slurm parameters
+#%% Key Input parameters
 email = "rschanta@udel.edu"
 work_dir = "/work/thsu/rschanta/RTS-PY"
 run_name = "test_matrix3"
 env_name = "tf_env"
 super_path = "/lustre/scratch/rschanta"
 FW_ex = "/work/thsu/rschanta/RTS/funwave/v3.6H/exec/FW-REG"
+
 '''
 ##########################################################
 #%% Generation File

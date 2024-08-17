@@ -6,11 +6,9 @@ import numpy as np
 
 #%%
 def main(super_path, run_name,tri_num):
-    
-    # Path Commands
+    # Add to system path
     sys.path.append("/work/thsu/rschanta/RTS-PY")
-    
-    # Import needed modules
+    # Get modules
     import funwave_ds.fw_py as fpy
     import funwave_ds.fw_tf as ftf
 

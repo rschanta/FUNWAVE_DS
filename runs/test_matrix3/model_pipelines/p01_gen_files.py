@@ -5,11 +5,11 @@ import os
 
 ## Main: Generate the function
 def main(super_path, run_name):
-    # Path Commands
+
+    # Add to system path
     sys.path.append("/work/thsu/rschanta/RTS-PY")
     sys.path.append(f"/work/thsu/rschanta/RTS-PY/runs/{run_name}")
-
-    # Import needed modules
+    # Get modules
     import funwave_ds.fw_py as fpy
     import model_code as mod
 

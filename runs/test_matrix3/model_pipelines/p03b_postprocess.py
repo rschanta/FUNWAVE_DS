@@ -5,11 +5,10 @@ import tensorflow as tf
 import pickle
 
 def main(super_path,run_name):
-    ## Get modules
+    # Add to system path
     sys.path.append("/work/thsu/rschanta/RTS-PY")
     sys.path.append(f"/work/thsu/rschanta/RTS-PY/runs/{run_name}")
-    
-    # Import needed functions
+    # Get modules
     import funwave_ds.fw_py as fpy
     import funwave_ds.fw_tf as ftf
     import ml_models as ml
