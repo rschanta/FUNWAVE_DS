@@ -9,7 +9,7 @@
 #SBATCH --export=ALL
 #SBATCH --array=1-40
 #SBATCH --job-name=postprocessa
-#SBATCH --dependency=28262819
+#SBATCH --dependency=28263616
 #SBATCH --output=/work/thsu/rschanta/RTS-PY/runs/test_matrix3/logs/postprocessa/out/out%a.out
 #SBATCH --error=/work/thsu/rschanta/RTS-PY/runs/test_matrix3/logs/postprocessa/err/err%a.out
 #

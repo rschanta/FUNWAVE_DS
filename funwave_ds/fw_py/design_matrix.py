@@ -8,6 +8,7 @@ from itertools import product
 
 from .path_tools import get_FW_paths, make_FW_paths,get_FW_tri_paths
 from .print_files import print_bathy_file, print_input_file
+from .plots import plot_bathy2
 #%% FUNCTION
 def load_FW_design_matrix(path):
     design_matrix = pd.read_csv(path, na_values=[''])
@@ -109,6 +110,12 @@ def plot_supporting(all_vars,ptr):
 
     return
 
+def plot_bathymetry(var_dict, ptr):
+    
+
+    return
+
+
 
 ## TODO: Generalize to deal with different fields, move to print
    
@@ -157,8 +164,7 @@ def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
             
             ## Writing Out Files
             # Print supporting files if found (ie- bathy, spectra)
-            print_supporting(var_dict,ptr)
-            
+            plot_bathy2(var_dict,ptr)
             
             # Plot input.txt file
             print_input_file(var_dict,ptr)

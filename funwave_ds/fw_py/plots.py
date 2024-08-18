@@ -53,6 +53,55 @@ def plot_bathy(dicta,ptr):
 
     return
 
+def plot_bathy2(var_dict,ptr):
+    # Pull out params
+    X = var_dict['bathy'][:,0]
+    Z = -var_dict['bathy'][:,1]
+    Xc_WK = var_dict['Xc_WK']
+    DX = var_dict['DX']
+    DY = var_dict['DY']
+    Mglob = var_dict['Mglob']
+    Nglob = var_dict['Nglob']
+        
+    
+    plt.plot(X,Z,label='Bathymetry',color='black')
+    # Add wavemaker
+    if 'WAVEMAKER' in var_dict:
+        plt.axvline(x=Xc_WK, color='red', linestyle='--', label='Wavemaker')
+    # Check sponge
+    count = 0
+    for key in ['DIRECT_SPONGE','FRICTION_SPONGE','DIFFUSION_SPONGE']:
+            if key in var_dict and var_dict[key] == 'T' and count ==0:
+                Sponge_W = var_dict['Sponge_west_width']
+                Sponge_E = var_dict['Sponge_east_width']
+                if Sponge_W != 0:
+                    plt.axvline(x=Sponge_W, color='darkgreen', linestyle='--', label='West Sponge')
+                if Sponge_E != 0:
+                    plt.axvline(x=Sponge_E, color='lightgreen', linestyle='--', label='East Sponge')
+                count = count + 1
+    # Check if the key exists
+    if 'ALT_TITLE' in var_dict:
+        plt.title('INPUT BATHYMETRY: ' + var_dict['ALT_TITLE'] + '\n' + var_dict['TITLE'] )
+    else:
+        plt.title('INPUT BATHYMETRY: ' +  var_dict['TITLE'])
+        
+    plt.text(1.05, 0.5, f'DX = {DX:.2f} DY = {DY:.2f}\nMglob = {Mglob} Nglob = {Nglob}', 
+             fontsize=12, 
+             bbox=dict(facecolor='lightyellow', edgecolor='black', boxstyle='round,pad=0.5'),
+             transform=plt.gca().transAxes,
+             verticalalignment='center')
+    
+    # Adjust the plot's x and y limits to make space for the textbox
+    #plt.xlim(x.min(), x.max() + 2)
+    plt.grid()
+    plt.xlabel('Cross-shore Position (x)')
+    plt.ylabel('Depth (z)')
+    plt.legend()
+    plt.savefig(ptr['b_fig'], dpi=300, bbox_inches='tight')
+    plt.show()
+    plt.close()
+
+    return
 
 def plot_TS_spectra(dicta,ptr):
     # Pull out params
