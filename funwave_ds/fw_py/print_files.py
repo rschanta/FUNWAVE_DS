@@ -3,13 +3,13 @@ import numpy as np
 
 
 def print_input_file(var_dict,ptr):
+    # Changed 8/19 to remove 'file' check and check by type instead
     var_dict_copy = copy.deepcopy(var_dict)
     with open(ptr['i_file'], 'w') as f:
         # Remove files
-        if 'files' in var_dict_copy:
-            del var_dict_copy['files']
         for var_name, value in var_dict_copy.items():
-            f.write(f"{var_name} = {value}\n")
+            if isinstance(value, (str, int, float)):
+                f.write(f"{var_name} = {value}\n")
     
     print(f"Generated file: {ptr['i_file']}", flush=True)
     return     

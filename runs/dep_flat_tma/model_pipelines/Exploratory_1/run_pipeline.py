@@ -18,13 +18,13 @@ slurm_defaults = {
 }
 
 work_dir = "/work/thsu/rschanta/RTS-PY"
-run_name = "dep_flat_reg"
+run_name = "dep_flat_tma"
 env_name = "tf_env"
 super_path = "/lustre/scratch/rschanta"
-matrix = "matrix_1"
+matrix = "Exploratory_1"
 
 os.environ['WORK_DIR'] = "/work/thsu/rschanta/RTS-PY"
-os.environ['RUN_NAME'] = "dep_flat_reg"
+os.environ['RUN_NAME'] = "dep_flat_tma"
 os.environ['SUPER_PATH'] = "/lustre/scratch/rschanta"
 os.environ['ENV_NAME'] = "tf_env"
 os.environ['MATRIX'] = "matrix"
@@ -41,7 +41,8 @@ from pipeline import generate_files, run_files
 # Define the steps with their respective arguments and optional SLURM edits
 #generate_files: {"file": "p01_generate_files.py"},
 steps = {
-    run_files: {"FW_ex": FW_ex, "file": "p02_run_condense.py", "slurm_edit": {"array": "4500-8910"}},
+    generate_files: {"file": "p01_generate_files.py"},
+    run_files: {"FW_ex": FW_ex, "file": "p02_run_condense.py", "slurm_edit": {"array": "1-48"}},
 }
 
 # Run the pipeline

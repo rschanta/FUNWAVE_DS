@@ -154,9 +154,10 @@ def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
             ptr = get_FW_tri_paths(k, p)
 
             # Add on a title for the permutation
-            var_dict['TITLE'] = f'input_{i:05}'
+            var_dict['TITLE'] = f'input_{k:05}'
             var_dict['FUNCTION_SET'] = set_name
             var_dict['RESULT_FOLDER'] = ptr['RESULT_FOLDER']
+            var_dict['ITER'] = k
             
             # Calculate any parameters dependent on other ones         
             var_dict = add_dependent_values(var_dict,function_set)
@@ -164,7 +165,7 @@ def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
             
             ## Writing Out Files
             # Print supporting files if found (ie- bathy, spectra)
-            plot_bathy2(var_dict,ptr)
+            #plot_bathy2(var_dict,ptr)
             
             # Plot input.txt file
             print_input_file(var_dict,ptr)
