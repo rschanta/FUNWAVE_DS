@@ -28,7 +28,7 @@ def run_files(file=None,FW_ex=None):
 
     ## COMPRESS
     conda activate {env_name}
-    python RTS-PY/runs/Dune3/model_pipelines/Validate_1/{file}" {super_path} {run_name} $SLURM_ARRAY_TASK_ID
+    python "RTS-PY/runs/Dune3/model_pipelines/Validate_1/{file}" {super_path} {run_name} $SLURM_ARRAY_TASK_ID
 
     ## Remove Raw Folder
     rm -rf "{super_path}/{run_name}/outputs-raw/out_${{task_id}}"

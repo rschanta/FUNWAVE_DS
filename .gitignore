@@ -13,3 +13,4 @@
 *.tfrecord
 *superr*
 *logs*
+*.egg-info*

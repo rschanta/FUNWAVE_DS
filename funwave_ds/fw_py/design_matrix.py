@@ -6,11 +6,51 @@ import pandas as pd
 import numpy as np
 from itertools import product
 
+import funwave_ds.fw_ba as fwb
+import funwave_ds.fw_py as fpy
+
 from .path_tools import get_FW_paths, make_FW_paths,get_FW_tri_paths
+from .path_tools import get_FW_paths2, make_FW_paths2,get_FW_tri_paths2
 from .print_files import print_bathy_file, print_input_file
 from .plots import plot_bathy2
+
 #%% FUNCTION
 def load_FW_design_matrix(path):
+    design_matrix = pd.read_csv(path, na_values=[''])
+    
+    # Helper function to convert to valid FORTRAN
+    def convert_to_number(value):
+        try:
+            # Try conversion to float (will work for ints/floats)
+            float_value = float(value)
+            
+            # Case to return float: if a decimal point is provided
+            if '.' in str(value).strip():
+                return float_value
+            # Case to return int: if no decimal point is provided
+            else: 
+                return int(float_value)
+            
+        # Case to return string: if conversion to float fails
+        except ValueError:
+            return value
+        
+    # Apply to constant column
+    design_matrix['CON'] = design_matrix['CON'].apply(convert_to_number)
+
+    return design_matrix
+
+import funwave_ds.fw_ba as fba
+def load_FW_design_matrix2():
+
+    d = fba.get_directories()
+
+    path = os.path.join(d['WORK_DIR'], 
+                        'fw_models', 
+                        d['FW_MODEL'], 
+                        'design_matrices', 
+                        f"{d['RUN_NAME']}.csv")
+
     design_matrix = pd.read_csv(path, na_values=[''])
     
     # Helper function to convert to valid FORTRAN
@@ -166,6 +206,66 @@ def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
             ## Writing Out Files
             # Print supporting files if found (ie- bathy, spectra)
             #plot_bathy2(var_dict,ptr)
+            
+            # Plot input.txt file
+            print_input_file(var_dict,ptr)
+    
+            
+            k = k + 1 
+        
+    # Save larger dictionary
+    with open(p['Id'], 'wb') as f:
+        pickle.dump(all_dicts, f)
+    return all_dicts
+
+
+def write_files2(matrix, 
+                function_sets = None, 
+                print_sets = None, 
+                plot_sets = None, 
+                extra_values = {}):
+    
+    # Get Environment Variables
+    d = fba.get_directories()
+
+    all_dicts = {}
+
+    # Group together variables
+    variable_ranges = group_variables(matrix)
+
+    ## Get paths needed
+    make_FW_paths2()
+    p = get_FW_paths2()
+
+    # Add on extra values if provided
+    if extra_values:
+        variable_ranges = add_extra_values(variable_ranges,extra_values)
+            
+
+    # Get all permutations of variables
+    permutations = list(product(*[variable_ranges[var] for var in variable_ranges]))
+    
+    k = 1
+    for set_name, pipeline in function_sets.items():
+        # Loop through each permutation
+        for i, perm in enumerate(permutations, start=1):
+            
+            ## Getting the dictionaries
+            # Create dictionary of variable/value pairs
+            var_dict = dict(zip(variable_ranges.keys(), perm))
+            
+            # Paths for trial files
+            ptr = fpy.get_FW_tri_paths(k, p)
+
+            # Add on a title for the permutation
+            var_dict['TITLE'] = f'input_{k:05}'
+            var_dict['DEP_PARAM_PIPELINE'] = set_name
+            var_dict['RESULT_FOLDER'] = ptr['RESULT_FOLDER']
+            var_dict['ITER'] = k
+            
+            # Calculate any parameters dependent on other ones         
+            var_dict = add_dependent_values(var_dict,pipeline)
+            all_dicts[f'tri_{k:05}'] = var_dict
             
             # Plot input.txt file
             print_input_file(var_dict,ptr)
