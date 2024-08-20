@@ -3,6 +3,7 @@ import pickle
 import numpy as np
 
 def get_spectra(vars):
+    print('\tStarted processing spectra data...')
     # Unpack Variables
     lo = vars['lo']
     hi = vars['hi']
@@ -77,9 +78,12 @@ def get_spectra(vars):
         },
         'loc_x': loc_x,
         'NumWaveComp': int(NumWaveComp),
-        'PeakPeriod': PeakPeriod
+        'PeakPeriod': PeakPeriod,
+        'array': np.column_stack((per, cnn, enn))
     }
-    
+
+    print('\tSuccessfully processed spectra data!\n')
     return {'spectra': spectra,
             'PeakPeriod': PeakPeriod,
-            'NumWaveComp': int(NumWaveComp)}
+            'NumWaveComp': int(NumWaveComp),
+            'spectra_array': np.column_stack((per, cnn, enn))}

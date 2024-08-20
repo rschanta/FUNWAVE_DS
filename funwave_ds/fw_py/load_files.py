@@ -11,7 +11,10 @@ def load_input_dict(path,tri_num):
 def load_input_dict2():
     p = fpy.get_FW_paths2()
     tri_num = os.getenv('TRI_NUM')
-    print(tri_num)
-    with open(p['Id'], 'rb') as file:
+
+    file = open(p['Id'], 'rb')
+    try:
         In_d = pickle.load(file)
+    finally:
+        file.close()  # Ensure the file is closed
     return In_d[f'tri_{int(tri_num):05}']

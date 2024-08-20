@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 # Add to system path
 sys.path.append("/work/thsu/rschanta/RTS-PY")
 # Get modules
@@ -16,9 +17,8 @@ serialized_features = ftf.serialize_inputs(In_d_i,
                                            feature_dict = serialized_features)
 
 # Compress/Serialize supplemental variables
-supplemental_vars = {'bathy': In_d_i['bathy']['bathy_array'].astype(np.float32),
-                     'spectra': In_d_i['spectra']['spectra_array'].astype(np.float32)}
-                     
+supplemental_vars = {'bathy': In_d_i['bathy']['array'].astype(np.float32),
+                     'spectra': In_d_i['spectra_array'].astype(np.float32)}
 serialized_features = ftf.serialize_dictionary(supplemental_vars,feature_dict = serialized_features)
 
 ftf.save_tfrecord2(serialized_features)

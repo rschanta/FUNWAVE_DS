@@ -79,11 +79,12 @@ def load_FW_design_matrix2():
 def group_variables(design_matrix):
     grouped_vars = design_matrix.groupby('VAR',sort=False)
     variable_ranges = {}
-    print(grouped_vars)
     for var_name, group in grouped_vars:
+
         # Case 1: there are multiple rows for a variable (ie- CFL = 0.5, CFL = 0.3)
         if pd.notna(group['CON']).all():  
             variable_ranges[var_name] = group['CON'].tolist()
+
         # Case 2: there is only one row specified for a variable
         else:
             # List of value(s) for the variable
@@ -127,38 +128,25 @@ def add_dependent_values(var_dict,functions_to_apply):
             var_dict = {**var_dict, **dependent_vars}
     return var_dict
 
-def print_supporting(all_vars,ptr):
-    # Check for bathymetry and spectra
-    if 'files' in all_vars:
-    
-        # Bathymetry
-        if 'bathy' in all_vars['files']:
-            path = ptr['b_file']
-            data = all_vars['files']['bathy']['file']
-            print_bathy_file(data,path)
-    return
+def print_supporting_file(var_dict,functions_to_apply):
+    print_path_vars = {}
+    for func in functions_to_apply:
+        print(f'\tApplying PRINT function: {func.__name__}')
+        print_paths = func(var_dict)
+        # Merge path variables back into input
+        print_path_vars.update(print_paths)
+        var_dict = {**var_dict, **print_path_vars}
+    return var_dict
 
 
-# TODO: Make this a bit more general, yknow?
-def plot_supporting(all_vars,ptr):
-    # Check for bathymetry and spectra
-    if 'files' in all_vars:
-        
-        # Bathymetry
-        if 'bathy' in all_vars['files']:
-            pc.co.py.plot_bathy(all_vars,ptr)
-
-    return
-
-def plot_bathymetry(var_dict, ptr):
-    
-
+def plot_supporting_file(var_dict,functions_to_apply):
+    for func in functions_to_apply:
+        print(f'\tApplying PLOT function: {func.__name__}')
+        func(var_dict)
     return
 
 
 
-## TODO: Generalize to deal with different fields, move to print
-   
             
 #%% MAIN PRINT FILES FUNCTION
 def write_files(matrix, function_sets, super_path, run_name, extra_values=None):
@@ -282,3 +270,71 @@ def write_files2(matrix,
 
 
 
+def write_files3(matrix, 
+                print_inputs = True,
+                function_sets = None, 
+                print_sets = None, 
+                plot_sets = None, 
+                extra_values = None):
+    
+    ## Get paths needed
+    make_FW_paths2()
+    p = get_FW_paths2()
+
+    # Initialize large dictionary
+    all_dicts = {}
+
+    # Get the range of all parameters provided in the matrix
+    variable_ranges = group_variables(matrix)
+
+    # Add on extra values if provided
+    if extra_values is not None:
+        variable_ranges = add_extra_values(variable_ranges,extra_values)
+            
+    # Get all permutations of input variables
+    permutations = list(product(*[variable_ranges[var] for var in variable_ranges]))
+    
+    k = 1
+    # Loop through each pipeline in the function set
+    for set_name, pipeline in function_sets.items():
+
+        # Loop through each permutation of variables in the design matrix
+        for i, perm in enumerate(permutations, start=1):
+            print(f'\nSTARTED PRINTING FILES FOR TRIAL: {k:05}')
+            ## Getting the dictionaries
+            # Create dictionary of variable/value pairs
+            var_dict = dict(zip(variable_ranges.keys(), perm))
+            
+            # Paths for trial files
+            ptr = fpy.get_FW_tri_paths(k, p)
+
+            # Add on iteration-dependent values
+            var_dict['TITLE'] = f'input_{k:05}'
+            var_dict['DEP_PARAM_PIPELINE'] = set_name
+            var_dict['RESULT_FOLDER'] = ptr['RESULT_FOLDER']
+            var_dict['ITER'] = k
+            
+            # Add on dependent parameters        
+            var_dict = add_dependent_values(var_dict,pipeline)
+    
+            # Print supporting files if given
+            if print_sets is not None:
+                var_dict = print_supporting_file(var_dict,print_sets)
+
+            # Plot supporting plots if given
+            if plot_sets is not None:
+                plot_supporting_file(var_dict,plot_sets)
+
+            # Print input.txt files if indicated
+            if print_inputs == True:
+                print_input_file(var_dict,ptr)
+
+            # Update the larger summary dictionary, move on to next trial
+            all_dicts[f'tri_{k:05}'] = var_dict
+            print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
+            k = k + 1 
+        
+    # Save larger dictionary
+    with open(p['Id'], 'wb') as f:
+        pickle.dump(all_dicts, f)
+    return all_dicts

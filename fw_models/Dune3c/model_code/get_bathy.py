@@ -1,6 +1,7 @@
 import numpy as np
 
 def get_bathy(vars):
+    print('\tStarted processing bathymetry data...')
     # Unpack Variables (note choice of bathy set by stability)
     DX = vars['DX']
     bathyX = vars['bathyX']
@@ -23,6 +24,7 @@ def get_bathy(vars):
     # Output
     bathy = {'array': bathy_array,
             'file': bathy_file}
-    print('Sucessfully processed bathymetry...')
+    print('\tSuccessfully processed bathymetry data!\n')
+
     return {'bathy': bathy,
             'Mglob': int(len(X_out))}

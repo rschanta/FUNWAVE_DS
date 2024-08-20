@@ -8,6 +8,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def plot_bathy(vars):
+    print('\tStarted plotting bathymetry file...')
+
     # Unpack variables
     bathy_array = vars['bathy']['array']
     ITER = vars['ITER']
@@ -19,61 +21,74 @@ def plot_bathy(vars):
     #Sponge_W = vars['Sponge_W']
     D3_trial = vars['D3_trial']
 
+    # Get directories
     d = fwb.get_directories()
     p = fpy.get_FW_paths2()
     ptr = fpy.get_FW_tri_paths(ITER, p)
 
-    print('Started plotting Bathymetry file...')
-    # Plot
+    
+    
+    # Get X and Z, plot
     X = bathy_array[:,0]
     Z = -bathy_array[:,1]
-
     plt.plot(X,Z,label='Bathymetry',color='black')
 
     # Add wavemaker and sponge
     plt.axvline(x=Xc_WK, color='red', linestyle='--', label='Wavemaker')
     #plt.axvline(x=Sponge_W, color='darkgreen', linestyle='--', label='West Sponge')
 
-    # Title and legend stuff
+    # Title, legend, and text
     plt.title('INPUT BATHYMETRY: ' +  f'Dune 3 Trial: {D3_trial}')
-        
     plt.text(1.05, 0.5, f'DX = {DX:.2f} DY = {DY:.2f}\nMglob = {Mglob} Nglob = {Nglob}', 
              fontsize=12, 
              bbox=dict(facecolor='lightyellow', edgecolor='black', boxstyle='round,pad=0.5'),
              transform=plt.gca().transAxes,
              verticalalignment='center')
-    
+    plt.legend()
+
+    # Formatting
     plt.grid()
     plt.xlabel('Cross-shore Position (x)')
     plt.ylabel('Depth (z)')
-    plt.legend()
-    plt.savefig(ptr['b_fig'], dpi=300, bbox_inches='tight')
     plt.show()
-    plt.close()
-    print(f'Bathymetry file successfully saved to: {ptr["b_fig"]}')
-    return {}
 
-def plt_spectra(vars):
+    # Saving
+    plt.savefig(ptr['b_fig'], dpi=300, bbox_inches='tight')
+    
+    # Close and exit
+    plt.close()
+    print(f'\tBathymetry file successfully saved to: {ptr["b_fig"]}\n')
+    return 
+
+def plot_TS_spectra(vars):
+    print('\tStarted plotting spectra...')
     # Unpack variables
     per = vars['spectra']['per']
     enn = vars['spectra']['enn']
     cnn = vars['spectra']['cnn']
     ITER = vars['ITER']
     
-    print('Started plotting Spectra...')
-
+    # Get directories
     d = fwb.get_directories()
     p = fpy.get_FW_paths2()
     ptr = fpy.get_FW_tri_paths(ITER, p)
 
-    # Save to file
+    
+
+    # Plot period and amplitude
     plt.plot(per,enn)
+
+    # Formatting
     plt.grid()
     plt.xlabel('Period (s)')
     plt.ylabel('Amplitude')
     plt.show()
+
+    # Saving
     plt.savefig(ptr['sp_fig'], dpi=300, bbox_inches='tight')
-    plt.close()
-    print(f'Spectra file successfully saved to: {ptr["sp_fig"]}')
     
-    return {}
+    # Close and exit
+    plt.close()
+    print(f'\tSpectra file successfully saved to: {ptr["sp_fig"]}\n')
+    
+    return

@@ -3,6 +3,7 @@ import numpy as np
 
 
 def print_input_file(var_dict,ptr):
+    print('\tStarted printing input file...')
     # Changed 8/19 to remove 'file' check and check by type instead
     var_dict_copy = copy.deepcopy(var_dict)
     with open(ptr['i_file'], 'w') as f:
@@ -11,7 +12,7 @@ def print_input_file(var_dict,ptr):
             if isinstance(value, (str, int, float)):
                 f.write(f"{var_name} = {value}\n")
     
-    print(f"Generated file: {ptr['i_file']}", flush=True)
+    print(f"\tinput.txt file successfully saved to: {ptr['i_file']}\n", flush=True)
     return     
             
 def print_time_series_spectra_file(data, path):
@@ -32,8 +33,8 @@ def print_time_series_spectra_file(data, path):
 
 def print_bathy_file(data, path):
 
-    print('Started printing Bathymetry file...')
+    print('\tStarted printing bthymetry file...')
     np.savetxt(path, data, delimiter=' ', fmt='%f')
-    print(f'Bathymetry file successfully saved to: {path}')
+    print(f'\tDEPTH_FILE file successfully saved to: {path}')
     
     return

@@ -17,7 +17,7 @@ def write_slurm_script(work_dir,run_name,matrix,all_slurm_flags,script_body=None
     
     # Name of batch script (based on process)
     batch_name = os.path.join(batch_dir,f'{all_slurm_flags["job-name"]}.qs')
-    print(f'NAME OF BATCH: {batch_name}')
+
     with open(batch_name, 'w') as file:
         # Write the shebang line
         file.write("#!/bin/bash -l\n")
@@ -40,7 +40,7 @@ def write_slurm_script2(work_dir,run_name,matrix,all_slurm_flags,script_body=Non
     
     # Name of batch script (based on process)
     batch_name = os.path.join(batch_dir,f'{all_slurm_flags["job-name"]}.qs')
-    print(f'NAME OF BATCH: {batch_name}')
+
     with open(batch_name, 'w') as file:
         # Write the shebang line
         file.write("#!/bin/bash -l\n")
@@ -221,16 +221,13 @@ class SlurmPipeline2:
 
         # Directories
         self.work_dir = os.getenv('WORK_DIR')
-        print(self.work_dir)
         self.fw_model = os.getenv('FW_MODEL')
-        print(self.fw_model)
         self.run_name = os.getenv('RUN_NAME')
-        print(self.run_name)
         self.temp_dir = os.getenv('TEMP_DIR')
         self.data_dir = os.getenv('DATA_DIR')
         
         # Dictionary of Job IDs
-        self.jobs = {}
+        self.job_id = None
 
     # Add a job to the pipeline
     def add_job(self, dep_flags, script_content_func, **kwargs):
@@ -257,13 +254,13 @@ class SlurmPipeline2:
         job_id = submit_slurm_job(script)
 
         # Add the IDs to the job id list
-        self.jobs[all_slurm_flags['job-name']] = job_id
-        
+        #self.jobs[all_slurm_flags['job-name']] = job_id
+        self.job_id = job_id
         return job_id
 
     def run_pipeline(self, steps):
         # Track the job ID of the previous step to handle dependencies
-        previous_job_id = None
+        previous_job_id = self.job_id
 
         # Loop through all steps
         for step_func, kwargs in steps.items():
