@@ -76,6 +76,6 @@ def get_feature_desc_ints(int_vars,feature_description):
     
     '''
     for name in int_vars:
-        feature_description[f'{name}'] =  tf.io.FixedLenFeature([],tf.float32)
+        feature_description[f'{name}'] =  tf.io.FixedLenFeature([],tf.int64)
 
     return feature_description

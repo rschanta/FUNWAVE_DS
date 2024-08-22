@@ -158,3 +158,28 @@ def get_tfrecord_as_dict(tensors_3d,tensors_2d,others,In_d,keys_to_ignore,tri_nu
     tensors = tensors_3d + tensors_2d
     return parse_function(paths,feature_description_filt,tensors,out_type='dict')
 '''
+def parse_to_dataset(paths,
+                tensors_4D = [],
+                tensors_3D = [],
+                tensors_2D = [],
+                floats = [],
+                strings = [],
+                ints = []):
+
+
+
+    # Ensure that Title is there
+    strings = strings + ['TITLE']
+    
+    # Build up Feature Description
+    feature_description = construct_feature_descr(tensors_4D, tensors_3D, tensors_2D, floats, strings, ints)
+    
+    # Specify the tensors
+    tensors = tensors_4D + tensors_3D + tensors_2D
+    
+    # Transform into dataset and parse
+    dataset = tf.data.TFRecordDataset(paths)
+    dataset = dataset.map(lambda proto: _parse_function(proto,feature_description,tensors))
+    
+ 
+    return dataset

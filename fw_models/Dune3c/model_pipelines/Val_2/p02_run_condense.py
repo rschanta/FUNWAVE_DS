@@ -10,7 +10,7 @@ import funwave_ds.fw_tf as ftf
 In_d_i = fpy.load_input_dict2()
 
 # Compress/Serialize the outputs
-serialized_features = ftf.serialize_outputs2(In_d_i)
+serialized_features = ftf.serialize_outputs(In_d_i)
 
 # Compress/Serialize the inputs
 serialized_features = ftf.serialize_inputs(In_d_i,

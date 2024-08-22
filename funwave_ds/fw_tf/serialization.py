@@ -8,6 +8,8 @@ import numpy as np
 from typing import Dict
 from pathlib import Path
 
+import funwave_ds.fw_ba as fba
+import funwave_ds.fw_py as fpy
 # In-module imports
 from .serialization_type import serialize_int,serialize_float, serialize_string, serialize_tensor
 from .tensor_stacking import load_and_stack_to_tensors, load_array
@@ -53,7 +55,7 @@ def serialize_inputs(In_d_i,
         trimmed_input_dict = {}
         for key, value in In_d_i.items():
             if isinstance(value, (str, float, int)):
-                print(f'Serializing: {key}={value}')
+                print(f'Serializing: {key}={value}', flush= True)
                 trimmed_input_dict[key] = value
 
     ## CASE 2: Get only the input variables in var_list
@@ -74,11 +76,16 @@ def serialize_inputs(In_d_i,
     return serialized_inputs
 
 
-def serialize_outputs(RESULT_FOLDER,
-                        In_d_i,
+def serialize_outputs(In_d_i,
                         feature_dict=None,
                         var_list=None):
     print('\nStarted compressing outputs...')
+
+    # Get result folder
+    p = fpy.get_FW_paths()
+    tri_num = os.getenv('TRI_NUM')
+    ptr = fpy.get_FW_tri_paths()
+    RESULT_FOLDER = ptr['RESULT_FOLDER']
 
     # Construct a feature dict if not given
     if feature_dict is None:

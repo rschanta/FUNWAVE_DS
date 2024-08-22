@@ -11,12 +11,12 @@ def print_bathy(vars):
     print('\tStarted printing bathymetry file (DEPTH_FILE)...')
     # Unpack variables
     bathy_array = vars['bathy']['file']
-    ITER = vars['ITER']
+    ITER = int(vars['ITER'])
 
     # Get directories
     d = fwb.get_directories()
-    p = fpy.get_FW_paths2()
-    ptr = fpy.get_FW_tri_paths(ITER, p)
+    p = fpy.get_FW_paths()
+    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
 
     # Print
     np.savetxt(ptr['b_file'], bathy_array, delimiter=' ', fmt='%f')
@@ -35,8 +35,8 @@ def print_TS_spectra(vars):
     
     # Get directories
     d = fwb.get_directories()
-    p = fpy.get_FW_paths2()
-    ptr = fpy.get_FW_tri_paths(ITER, p)
+    p = fpy.get_FW_paths()
+    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
     
     # Print
     np.savetxt(ptr['sp_file'], np.column_stack((per, cnn, enn)), fmt='%12.8f')

@@ -36,10 +36,9 @@ pipeline = fba.SlurmPipeline2(slurm_vars = slurm_defaults)
 from pipeline import generate_files, run_condense_outputs, condense_outputs
 
 # Define the steps with their respective arguments and optional SLURM edits
-#        
+#        generate_files: {"file": "p01_generate_files.py"}, 
 steps = {
-    generate_files: {"file": "p01_generate_files.py"}, 
-    run_condense_outputs: {"FW_ex": FW_ex, "file": "p02_run_condense.py", "slurm_edit": {"array": "1-20"}},
+    condense_outputs: {"FW_ex": FW_ex, "file": "p02_run_condense.py", "slurm_edit": {"array": "1-20"}},
 }
 
 # Run the pipeline

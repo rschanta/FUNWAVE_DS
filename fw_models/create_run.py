@@ -1,8 +1,8 @@
 import os
 
 # Define the base folder name
-FW_MODEL = "Dune3c"  # Replace with your desired folder name
-RUN_NAME = "Validation_b"
+FW_MODEL = "DFR_Pi"  # Replace with your desired folder name
+RUN_NAME = "TMA3"
 # Define the subfolders to create
 subfolders = ["design_matrices", "logs", "batch_scripts", "model_code", "model_pipelines"]
 subfolders = ["design_matrices", f"logs/{RUN_NAME}", f"batch_scripts/{RUN_NAME}", "model_code", f"model_pipelines/{RUN_NAME}"]
