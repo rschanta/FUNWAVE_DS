@@ -1,7 +1,7 @@
 import os
 
 # Define the base folder name
-FW_MODEL = "Dune3"  # Replace with your desired folder name
+FW_MODEL = "Test4"  # Replace with your desired folder name
 
 # Define the subfolders to create
 subfolders = ["design_matrices", "logs", "batch_scripts", "model_code", "model_pipelines"]

@@ -47,6 +47,8 @@ def get_FW_paths():
         # INPUTS: PROCESSED INPUT FILES
         'I': os.path.join(temp_dir, fw_model, run_name, 'inputs-proc'),
         'Id': os.path.join(temp_dir, fw_model, run_name, 'inputs-proc', 'In_d.pkl'),
+        'Im': os.path.join(temp_dir, fw_model, run_name, 'inputs-proc', 'Im.csv'),
+        'If': os.path.join(temp_dir, fw_model, run_name, 'inputs-proc', 'If.csv'),
         # OUTPUTS: DIRECTORY FOR RAW TIME SERIES OUTPUT
         'o': os.path.join(temp_dir, fw_model, run_name, 'outputs-raw'),
         'o_': os.path.join(temp_dir, fw_model, run_name, 'outputs-raw', 'out_'),

@@ -77,37 +77,74 @@ def group_variables(design_matrix):
             variable_ranges[var_name] = list(dict.fromkeys(values))
     return variable_ranges     
             
-
-#%% Adding Values: Extra and Dependent
+###########################################################
+# Adding parameters to the matrix
+###########################################################
+# Adding Values: Extra and Dependent
 def add_extra_values(variable_ranges,extra_values):
     for var_name, extra in extra_values.items():
         if var_name in variable_ranges:
             # Ensure extra values are unique and combined with existing values
-            #variable_ranges[var_name] = list(set(variable_ranges[var_name] + extra))
             variable_ranges[var_name] = list(dict.fromkeys(variable_ranges[var_name] + extra))
         else:
             # If variable not already in ranges, add it directly
             variable_ranges[var_name] = list(extra)
     return variable_ranges
 
+
+# Dependent Parameters
 def add_dependent_values(var_dict,functions_to_apply):
     dependent_vars = {}
     for func in functions_to_apply:
+        print(f'\tApplying DEPENDENCY function: {func.__name__}')
         result = func(var_dict)
-        if 'files' in result:
-            if 'files' in dependent_vars:
-                dependent_vars['files'].update(result['files'])
-                var_dict = {**var_dict, **dependent_vars}
-            else:
-                dependent_vars['files'] = result['files']
-                var_dict = {**var_dict, **dependent_vars}
-        else:
-            dependent_vars.update(result)
-            var_dict = {**var_dict, **dependent_vars}
+        dependent_vars.update(result)
+        var_dict = {**var_dict, **dependent_vars}
     return var_dict
 
+###########################################################
+# Filter functions
+###########################################################
+def apply_filters(var_dict,functions_to_apply):
 
-#%% Supporting Files: Printing and Plotting
+    failed_checks = []  # List to keep track of functions that return False
+    failed_vars = {}    # Dictionary to keep track of variables causing the failure
+
+    # Loop through all filter functions
+    for func in functions_to_apply:
+        print(f'\tApplying FILTER function: {func.__name__}')
+        result = func(var_dict)
+        
+        # Record failure and key data
+        if not result:
+            print(f'\tFailed FILTER function: {func.__name__}')
+            # Record function name and what the iteration would have been
+            failed_checks.append(func.__name__)  
+            failed_vars['failed_checks'] = func.__name__ 
+            failed_vars['ITER'] = var_dict['ITER']
+
+            # Loop through variables
+            for k, v in var_dict.items():
+                if isinstance(v, (str, int, float)):
+                    failed_vars[k] = v
+
+    # Record failures out 
+    if failed_checks:
+        # Record which functions trigger the failure
+        failed_vars['failed_checks'] = ', '.join(failed_checks)
+        # Create the dataframe
+        df_failed_vars = pd.DataFrame(failed_vars, index=[0])
+
+        return df_failed_vars
+
+
+    else:
+        print("\tAll filter functions passed successfully!")
+        return None
+
+###########################################################
+# Print/Output files
+###########################################################
 def print_supporting_file(var_dict,functions_to_apply):
     print_path_vars = {}
     for func in functions_to_apply:
@@ -125,6 +162,10 @@ def plot_supporting_file(var_dict,functions_to_apply):
         func(var_dict)
     return
 
+
+###########################################################
+# Write files
+###########################################################
 #%% Writing out the files: La pièce de résistance
 def write_files(matrix, 
                 print_inputs = True,
@@ -195,20 +236,32 @@ def write_files(matrix,
         pickle.dump(all_dicts, f)
     return all_dicts
 
+
+
+
 def write_files2(matrix, 
                 print_inputs = True,
                 function_sets = None, 
+                filter_sets = None,
                 print_sets = None, 
                 plot_sets = None, 
                 extra_values = None):
     
-    ## Get paths needed
+    ###########################################################
+    # Setup
+    ###########################################################
+    # Get paths needed
     make_FW_paths()
     p = get_FW_paths()
 
-    # Initialize large dictionary
+    # Initialize structures for summary files
+    complete_matrix = []
     all_dicts = {}
+    filter_failures = pd.DataFrame()
 
+    ###########################################################
+    # Finding permutations of all variables
+    ###########################################################
     # Get the range of all parameters provided in the matrix
     variable_ranges = group_variables(matrix)
 
@@ -216,23 +269,32 @@ def write_files2(matrix,
     if extra_values is not None:
         variable_ranges = add_extra_values(variable_ranges,extra_values)
             
-    # Get all permutations of input variables
+    # Get all possible permutations
     permutations = list(product(*[variable_ranges[var] for var in variable_ranges]))
     
+    ###########################################################
+    # Looping through all permutations
+    ###########################################################
     k = 1
-    # Loop through each pipeline in the function set
+    # Loop: Processing Pipeline
     for set_name, pipeline in function_sets.items():
-
-        # Loop through each permutation of variables in the design matrix
+        # Loop: Permutation of variables
         for i, perm in enumerate(permutations, start=1):
-            print(f'\nSTARTED PRINTING FILES FOR TRIAL: {k:05}')
-            ## Getting the dictionaries
-            # Create dictionary of variable/value pairs
+
+            print(f'\nSTARTED GENERATING TRIAL: {k:05}')
+            
+            ###########################################################
+            # Setup
+            ###########################################################
+            # Create dictionary for parameters and values in permutation
             var_dict = dict(zip(variable_ranges.keys(), perm))
             
-            # Paths for trial files
+            # Get all paths needed
             ptr = fpy.get_FW_tri_paths(tri_num=k)
 
+            ###########################################################
+            # Add parameters
+            ###########################################################
             # Add on iteration-dependent values
             var_dict['TITLE'] = f'input_{k:05}'
             var_dict['DEP_PARAM_PIPELINE'] = set_name
@@ -241,29 +303,65 @@ def write_files2(matrix,
             
             # Add on dependent parameters        
             var_dict = add_dependent_values(var_dict,pipeline)
-    
-            # Print supporting files if given
-            if print_sets is not None:
-                var_dict = print_supporting_file(var_dict,print_sets)
 
-            # Plot supporting plots if given
-            if plot_sets is not None:
-                plot_supporting_file(var_dict,plot_sets)
+            ###########################################################
+            # Apply filter functions, proceed if none fail
+            ###########################################################
+            failed_params = None
+            if filter_sets is not None:
+                failed_params = apply_filters(var_dict,filter_sets)
 
-            # Save the dictionary
-            with open(ptr['i_file_pkl'], 'wb') as f:
-                pickle.dump(var_dict, f)
+            # Record failure if triggered
+            if failed_params is not None:
+                filter_failures = pd.concat([filter_failures, failed_params], ignore_index=True, sort=False)
+                print(f'PERMUTATION DOES NOT PASS FILTER: SKIP')
+            # Proceed otherwise
+            elif failed_params is None:
+                ###########################################################
+                # Output files and plots
+                ###########################################################
+                # Print supporting files if indicated
+                if print_sets is not None:
+                    var_dict = print_supporting_file(var_dict,print_sets)
 
-            # Print input.txt files if indicated
-            if print_inputs == True:
-                print_input_file(var_dict,ptr)
+                # Plot supporting plots if indicated
+                if plot_sets is not None:
+                    plot_supporting_file(var_dict,plot_sets)
 
-            # Update the larger summary dictionary, move on to next trial
-            all_dicts[f'tri_{k:05}'] = ptr['RESULT_FOLDER']
-            print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
-            k = k + 1 
-        
-    # Save larger dictionary
+                # Print input.txt files if indicated
+                if print_inputs == True:
+                    print_input_file(var_dict,ptr)
+
+                ###########################################################
+                # Update summaries
+                ###########################################################
+                # Dictionary for individual trial
+                with open(ptr['i_file_pkl'], 'wb') as f:
+                    pickle.dump(var_dict, f)
+
+                # Update expanded CSV
+                var_dict = {k: v for k, v in var_dict.items() if isinstance(v, (str, int, float))}
+                complete_matrix.append(pd.DataFrame([var_dict]))
+
+                # Update the larger summary dictionary, move on to next trial
+                all_dicts[f'tri_{k:05}'] = ptr['RESULT_FOLDER']
+
+                ###########################################################
+                print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
+                k = k + 1 
+                
+    ###########################################################
+    # Save summary files
+    ########################################################### 
+    # Big dictionary
     with open(p['Id'], 'wb') as f:
         pickle.dump(all_dicts, f)
-    return all_dicts
+    
+    # Completed matrix
+    complete_matrix = pd.concat(complete_matrix, ignore_index=True, sort=False)
+    complete_matrix.to_csv(p['Im'], index=False)
+
+    # Failure functions
+    filter_failures.to_csv(p['If'], index=False)
+
+    return

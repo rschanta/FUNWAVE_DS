@@ -39,6 +39,7 @@ from pipeline import generate_files, run_condense_outputs, condense_outputs, pos
     #    generate_files: {"file": "p01_generate_files.py"},   
         #generate_files: {"file": "p01_generate_files.py"}, 
 steps = {
+    generate_files: {"file": "p01_generate_files.py"},
     run_condense_outputs: {"FW_ex": FW_ex, "file": "p02_run_condense.py", "slurm_edit": {"array": "1-760"}},
     posta: {"file": "p03a_postprocess.py","slurm_edit": {"array": "1-760"}},
     postb: {"file": "p03b_postprocess.py"}}
