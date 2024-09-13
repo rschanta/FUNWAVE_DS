@@ -2,7 +2,7 @@
 import os
 import sys
 import numpy as np
-sys.path.append("/work/thsu/rschanta/RTS-PY")
+
 import funwave_ds.fw_py as fpy
 import funwave_ds.fw_ba as fwb
 

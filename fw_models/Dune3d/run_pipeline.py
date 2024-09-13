@@ -17,19 +17,19 @@ slurm_defaults = {
 }
 
 # Path to .env file
-env = '/work/thsu/rschanta/RTS-PY/fw_models/Test4/envs/Test4_debug.env'
+env = 'RTS-PY/fw_models/Dune3d/envs/T1.env'
 
 # Initialize the pipeline
 pipeline = fba.SlurmPipeline(slurm_vars = slurm_defaults,env=env)
 
 # Files in the pipeline  
-generate_file = "/work/thsu/rschanta/RTS-PY/fw_models/Test4/model_pipelines/T1/p01_generate_files.py"
-run_condense = "/work/thsu/rschanta/RTS-PY/fw_models/Test4/model_pipelines/T1/p02_condense.py"  
+generate_file = "/work/thsu/rschanta/RTS-PY/fw_models/Dune3d/model_pipelines/T1/generate.py"
+run_condense = "/work/thsu/rschanta/RTS-PY/fw_models/Dune3d/model_pipelines/common/run_condense.py"  
 
 # Steps of the pipeline
 steps = {
     pipe.generate_files: {"file": generate_file},
-    pipe.run_condense_outputs: {"file": run_condense,"slurm_edit": {"array": "1-12"}}
+    pipe.run_condense_outputs: {"file": run_condense,"slurm_edit": {"array": "1-5"}}
 }
 
 # Run the pipeline

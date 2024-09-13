@@ -13,13 +13,13 @@
 #
 
     ## Access environment variables
-    source /work/thsu/rschanta/RTS-PY/fw_models/Test4/envs/Test4.env
+    source /work/thsu/rschanta/RTS-PY/fw_models/Test4/envs/Test4_debug.env
     
     ## Activate Python Environment
     conda activate $CONDA_ENV
     
     ## Export out environment variables
-    export $(xargs </work/thsu/rschanta/RTS-PY/fw_models/Test4/envs/Test4.env)
+    export $(xargs </work/thsu/rschanta/RTS-PY/fw_models/Test4/envs/Test4_debug.env)
     
     ## Run File
     python "/work/thsu/rschanta/RTS-PY/fw_models/Test4/model_pipelines/T1/p01_generate_files.py"

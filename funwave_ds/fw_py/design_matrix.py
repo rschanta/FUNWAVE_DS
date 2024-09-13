@@ -52,6 +52,31 @@ def load_FW_design_matrix():
 
     return design_matrix
 
+def load_FW_design_matrix2(matrix):
+    
+    design_matrix = pd.read_csv(matrix, na_values=[''])
+    # Helper function to convert to valid FORTRAN
+    def convert_to_number(value):
+        try:
+            # Try conversion to float (will work for ints/floats)
+            float_value = float(value)
+            
+            # Case to return float: if a decimal point is provided
+            if '.' in str(value).strip():
+                return float_value
+            # Case to return int: if no decimal point is provided
+            else: 
+                return int(float_value)
+            
+        # Case to return string: if conversion to float fails
+        except ValueError:
+            return value
+        
+    # Apply to constant column
+    design_matrix['CON'] = design_matrix['CON'].apply(convert_to_number)
+
+    return design_matrix
+
 
 def group_variables(design_matrix):
     grouped_vars = design_matrix.groupby('VAR',sort=False)

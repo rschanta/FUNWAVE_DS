@@ -129,3 +129,31 @@ def plot_TS_spectra(dicta,ptr):
     plt.close()
 
     return
+
+
+def plot_TS_spectra2(dicta,ptr):
+    # Unpack variables
+    per = vars['spectra']['per']
+    enn = vars['spectra']['enn']
+    cnn = vars['spectra']['cnn']
+    ITER = vars['ITER']
+    super_path = vars['super_path']
+    run_name = vars['run_name']
+    
+    print('Started plotting Spectra...')
+
+    fpy.make_FW_paths(super_path, run_name)
+    p = fpy.get_FW_paths(super_path, run_name)
+    ptr = fpy.get_FW_tri_paths(ITER, p)
+
+    # Save to file
+    plt.plot(per,enn)
+    plt.grid()
+    plt.xlabel('Period (s)')
+    plt.ylabel('Amplitude')
+    plt.show()
+    plt.savefig(ptr['sp_fig'], dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f'Spectra file successfully saved to: {ptr["sp_fig"]}')
+    
+    return {}

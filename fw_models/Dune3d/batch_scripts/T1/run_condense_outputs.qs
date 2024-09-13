@@ -7,15 +7,15 @@
 #SBATCH --mail-user=rschanta@udel.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
-#SBATCH --array=1-12
+#SBATCH --array=1-5
 #SBATCH --job-name=run_condense_outputs
-#SBATCH --dependency=28346040
-#SBATCH --output=/work/thsu/rschanta/RTS-PY/fw_models/Test4/logs/T1/run_condense_outputs/out/out%a.out
-#SBATCH --error=/work/thsu/rschanta/RTS-PY/fw_models/Test4/logs/T1/run_condense_outputs/err/err%a.out
+#SBATCH --dependency=28474230
+#SBATCH --output=/work/thsu/rschanta/RTS-PY/fw_models/Dune3d/logs/T1/run_condense_outputs/out/out%a.out
+#SBATCH --error=/work/thsu/rschanta/RTS-PY/fw_models/Dune3d/logs/T1/run_condense_outputs/err/err%a.out
 #
 
     ## Access environment variables
-    source /work/thsu/rschanta/RTS-PY/fw_models/Test4/envs/Test4_debug.env
+    source /work/thsu/rschanta/RTS-PY/fw_models/Dune3d/envs/T1.env
 
     . /opt/shared/slurm/templates/libexec/openmpi.sh
     
@@ -31,9 +31,9 @@
     conda activate $CONDA_ENV
 
     ## Export out environment variables
-    export $(xargs </work/thsu/rschanta/RTS-PY/fw_models/Test4/envs/Test4_debug.env)
+    export $(xargs </work/thsu/rschanta/RTS-PY/fw_models/Dune3d/envs/T1.env)
     export TRI_NUM=$SLURM_ARRAY_TASK_ID
     
-    python "/work/thsu/rschanta/RTS-PY/fw_models/Test4/model_pipelines/T1/p02_condense.py"
+    python "/work/thsu/rschanta/RTS-PY/fw_models/Dune3d/model_pipelines/common/run_condense.py"
 
     
