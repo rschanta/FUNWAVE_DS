@@ -7,10 +7,10 @@ import funwave_ds.fw_py as fpy
 import funwave_ds.fw_ba as fwb
 
 def plot_1D_bathy(vars):
-    print('\tStarted plotting bathymetry file...')
+    print('\t\tStarted plotting bathymetry file...')
 
     # Unpack variables
-    bathy_array = vars['bathy']['array']
+    bathy_array = vars['bathy_array']
     ITER = vars['ITER']
     DX = vars['DX']
     DY = vars['DY']
@@ -55,7 +55,7 @@ def plot_1D_bathy(vars):
     
     # Close and exit
     plt.close()
-    print(f'\tBathymetry file successfully saved to: {ptr["b_fig"]}\n')
+    print(f'\t\tBathymetry file successfully saved to: {ptr["b_fig"]}')
     return 
 
 
@@ -67,7 +67,7 @@ plot_TS_spectra
         with 'per', 'enn', 'cnn' arrays
 '''
 def plot_TS_spectra(vars):
-    print('\tStarted plotting spectra...')
+    print('\t\tStarted plotting spectra...')
     # Unpack variables
     per = vars['spectra']['per']
     enn = vars['spectra']['enn']
@@ -95,6 +95,6 @@ def plot_TS_spectra(vars):
     
     # Close and exit
     plt.close()
-    print(f'\tSpectra file successfully saved to: {ptr["sp_fig"]}\n')
+    print(f'\t\tSpectra file successfully saved to: {ptr["sp_fig"]}')
     
     return

@@ -45,7 +45,7 @@ def load_and_stack_to_tensors(all_var_dict,In_d_i):
     tri_tensor_dict = {}
     # Loop through all variables
     for var, file_list in all_var_dict.items(): 
-        print(f'Compressing: {var}')
+        print(f'\tCompressing: {var}')
         var_arrays = []
         # Loop through all files of this variable
         for file_path in file_list:

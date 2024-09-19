@@ -23,15 +23,19 @@ def serialize_dictionary(dicta,feature_dict):
     for key, value in dicta.items():
         # Check if tensor
         if isinstance(value, (np.ndarray, tf.Tensor)):
+            print(f'\tSerializing: {key} = TENSOR', flush= True)
             serialize_tensor(feature_dict,key,value)
         # Check if float
         elif isinstance(value, float): 
+            print(f'\tSerializing: {key}={value}', flush= True)
             serialize_float(feature_dict,key,value)
         # Check if string
         elif isinstance(value, str):
+            print(f'\tSerializing: {key}={value}', flush= True)
             serialize_string(feature_dict,key,value)
         # Check if int
         elif isinstance(value, int):
+            print(f'\tSerializing: {key}={value}', flush= True)
             serialize_int(feature_dict,key,value)
     return feature_dict
 
@@ -98,6 +102,7 @@ def serialize_outputs(In_d_i,
     var_paths = get_vars_out_paths(RESULT_FOLDER, var_list)
     # Compress to dictionary of tensors
     tensor_dict = load_and_stack_to_tensors(var_paths,In_d_i)
+    
     # Serialize
     serialized_outputs = serialize_dictionary(tensor_dict,feature_dict)
     print('Successfully compressed and serialized outputs!')

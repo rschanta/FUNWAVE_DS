@@ -26,7 +26,7 @@ def save_tfrecord(feature_dict):
         example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
         writer.write(example.SerializeToString())
 
-    print(f'Successfully made: {filename}')
+    print(f'\nSuccessfully made: {filename}')
     return
 
 
@@ -46,5 +46,5 @@ def save_tfrecord2(feature_dict,path):
         example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
         writer.write(example.SerializeToString())
 
-    print(f'Successfully made: {path}')
+    print(f'\nSuccessfully made: {path}')
     return

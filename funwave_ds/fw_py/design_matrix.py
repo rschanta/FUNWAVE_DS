@@ -120,11 +120,13 @@ def add_extra_values(variable_ranges,extra_values):
 # Dependent Parameters
 def add_dependent_values(var_dict,functions_to_apply):
     dependent_vars = {}
+    print(f'\nApplying DEPENDENCY functions')
     for func in functions_to_apply:
         print(f'\tApplying DEPENDENCY function: {func.__name__}')
         result = func(var_dict)
         dependent_vars.update(result)
         var_dict = {**var_dict, **dependent_vars}
+    print(f'All DEPENDENCY functions completed successfully!')
     return var_dict
 
 ###########################################################
@@ -134,7 +136,7 @@ def apply_filters(var_dict,functions_to_apply):
 
     failed_checks = []  # List to keep track of functions that return False
     failed_vars = {}    # Dictionary to keep track of variables causing the failure
-
+    print(f'\nApplying FILTER functions')
     # Loop through all filter functions
     for func in functions_to_apply:
         print(f'\tApplying FILTER function: {func.__name__}')
@@ -164,7 +166,7 @@ def apply_filters(var_dict,functions_to_apply):
 
 
     else:
-        print("\tAll filter functions passed successfully!")
+        print("All FILTER functions passed successfully!")
         return None
 
 ###########################################################
@@ -172,19 +174,23 @@ def apply_filters(var_dict,functions_to_apply):
 ###########################################################
 def print_supporting_file(var_dict,functions_to_apply):
     print_path_vars = {}
+    print(f'\nApplying PRINT functions')
     for func in functions_to_apply:
         print(f'\tApplying PRINT function: {func.__name__}')
         print_paths = func(var_dict)
         # Merge path variables back into input
         print_path_vars.update(print_paths)
         var_dict = {**var_dict, **print_path_vars}
+    print(f'All PRINT functions completed successfully!')
     return var_dict
 
 
 def plot_supporting_file(var_dict,functions_to_apply):
+    print(f'\nApplying PLOT functions')
     for func in functions_to_apply:
         print(f'\tApplying PLOT function: {func.__name__}')
         func(var_dict)
+    print(f'All PLOT functions completed successfully!')
     return
 
 
@@ -254,6 +260,7 @@ def write_files(matrix,
             # Update the larger summary dictionary, move on to next trial
             all_dicts[f'tri_{k:05}'] = var_dict
             print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
+            print('#########################################################')
             k = k + 1 
         
     # Save larger dictionary
@@ -373,6 +380,7 @@ def write_files2(matrix,
 
                 ###########################################################
                 print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
+                print('#########################################################')
                 k = k + 1 
                 
     ###########################################################

@@ -41,46 +41,42 @@ def get_FW_paths():
     p = {'TD': temp_dir,
         'RN': os.path.join(temp_dir, fw_model, run_name),
         'RN_str': run_name,
+
+        ###################################################################
+        # Files to go to temp_dir (intended to eventually be deleted)
+        ###################################################################
         # INPUTS: `input.txt` TEXT FILES 
         'i': os.path.join(temp_dir, fw_model, run_name, 'inputs'),
         'i_': os.path.join(temp_dir, fw_model, run_name, 'inputs', 'input_'),
-        # INPUTS: PROCESSED INPUT FILES
-        'I': os.path.join(temp_dir, fw_model, run_name, 'inputs-proc'),
-        'Id': os.path.join(temp_dir, fw_model, run_name, 'inputs-proc', 'In_d.pkl'),
-        'Im': os.path.join(temp_dir, fw_model, run_name, 'inputs-proc', 'Im.csv'),
-        'If': os.path.join(temp_dir, fw_model, run_name, 'inputs-proc', 'If.csv'),
         # OUTPUTS: DIRECTORY FOR RAW TIME SERIES OUTPUT
         'o': os.path.join(temp_dir, fw_model, run_name, 'outputs-raw'),
         'o_': os.path.join(temp_dir, fw_model, run_name, 'outputs-raw', 'out_'),
-        # OUTPUTS: DIRECTORY FOR PROCESSED/CONDENSED TIME SERIES OUTPUT
-        'O': os.path.join(temp_dir, fw_model, run_name, 'outputs-proc'),
-        'O_': os.path.join(temp_dir, fw_model, run_name, 'outputs-proc', 'Out_'),
         # BATHYMETRY FILES
         'b': os.path.join(temp_dir, fw_model, run_name, 'bathy'),
         'b_': os.path.join(temp_dir, fw_model, run_name, 'bathy', 'bathy_'),
-        # BATHYMETRY FIGURES
-        'bF': os.path.join(temp_dir, fw_model, run_name, 'bathy_fig'),
-        'bF_': os.path.join(temp_dir, fw_model, run_name, 'bathy_fig', 'bathy_fig_'),
         # SPECTRA FILES
         'sp': os.path.join(temp_dir, fw_model, run_name, 'spectra'),
         'sp_': os.path.join(temp_dir, fw_model, run_name, 'spectra', 'spectra_'),
+
+        ###################################################################
+        # Files to go to data_dir (intended to keep)
+        ###################################################################
+        # INPUTS: PROCESSED INPUT FILES
+        'I': os.path.join(data_dir, fw_model, run_name, 'inputs-proc'),
+        'Id': os.path.join(data_dir, fw_model, run_name, 'inputs-proc', 'In_d.pkl'),
+        'Im': os.path.join(data_dir, fw_model, run_name, 'inputs-proc', 'Im.csv'),
+        'If': os.path.join(data_dir, fw_model, run_name, 'inputs-proc', 'If.csv'),
+        # OUTPUTS: DIRECTORY FOR PROCESSED/CONDENSED TIME SERIES OUTPUT
+        'O': os.path.join(data_dir, fw_model, run_name, 'outputs-proc'),
+        'O_': os.path.join(data_dir, fw_model, run_name, 'outputs-proc', 'Out_'),
+        # BATHYMETRY FIGURES
+        'bF': os.path.join(data_dir, fw_model, run_name, 'bathy_fig'),
+        'bF_': os.path.join(data_dir, fw_model, run_name, 'bathy_fig', 'bathy_fig_'),
         # SPECTRA FIGURES
-        'spF': os.path.join(temp_dir, fw_model, run_name, 'spectra_fig'),
-        'spF_': os.path.join(temp_dir, fw_model, run_name, 'spectra_fig', 'spectra_fig_'),
-        # OTHER FUNWAVE OUTPUTS
-        'F': os.path.join(temp_dir, fw_model, run_name, 'other-FW-out'),
+        'spF': os.path.join(data_dir, fw_model, run_name, 'spectra_fig'),
+        'spF_': os.path.join(data_dir, fw_model, run_name, 'spectra_fig', 'spectra_fig_'),
         # ANIMATIONS
-        'ani': os.path.join(temp_dir, fw_model, run_name, 'animations'),
-        'aniE': os.path.join(temp_dir, fw_model, run_name, 'animations', 'eta-animations'),
-        'aniE_': os.path.join(temp_dir, fw_model, run_name, 'animations', 'eta-animations', 'eta_'),
-        'aniU': os.path.join(temp_dir, fw_model, run_name, 'animations', 'u-animations'),
-        'aniU_': os.path.join(temp_dir, fw_model, run_name, 'animations', 'u-animations', 'u_'),
-        'aniV': os.path.join(temp_dir, fw_model, run_name, 'animations', 'v-animations'),
-        'aniV_': os.path.join(temp_dir, fw_model, run_name, 'animations', 'v-animations', 'v_'),
-        'aniUU': os.path.join(temp_dir, fw_model, run_name, 'animations', 'U_undertow-animations'),
-        'aniUU_': os.path.join(temp_dir, fw_model, run_name, 'animations', 'U_undertow-animations', 'U_undertow_'),
-        'aniVU': os.path.join(temp_dir, fw_model, run_name, 'animations', 'v_undertow-animations'),
-        'aniVU_': os.path.join(temp_dir, fw_model, run_name, 'animations', 'v_undertow-animations', 'V_undertow_'),
+        'ani': os.path.join(data_dir, fw_model, run_name, 'animations')
     }
 
     return p
@@ -89,7 +85,6 @@ def get_FW_paths():
 def make_FW_paths():
     # Get list of directories from list_FW_dirs
     p = get_FW_paths()
-    
     # RUN_NAME
     os.makedirs(p['RN'], exist_ok=True)
     # INPUTS: `input.txt` TEXT FILES 
@@ -108,16 +103,9 @@ def make_FW_paths():
     os.makedirs(p['sp'], exist_ok=True)
     # SPECTRA FIGURES
     os.makedirs(p['spF'], exist_ok=True)
-    # OTHER FUNWAVE OUTPUTS
-    os.makedirs(p['F'], exist_ok=True)
     # ANIMATIONS
     os.makedirs(p['ani'], exist_ok=True)
-    os.makedirs(p['aniE'], exist_ok=True)
-    os.makedirs(p['aniU'], exist_ok=True)
-    os.makedirs(p['aniV'], exist_ok=True)
-    os.makedirs(p['aniUU'], exist_ok=True)
-    os.makedirs(p['aniVU'], exist_ok=True)
-    
+
     print('Directories successfully created!')
 
 
@@ -159,11 +147,6 @@ def get_FW_tri_paths(tri_num=None):
             'b_fig': f"{p['bF_']}{tri_num:05d}.png",
         # Path to spectra figure
             'sp_fig': f"{p['spF_']}{tri_num:05d}.png",
-        # Path to animations
-            'aniE': f"{p['aniE_']}{tri_num:05d}.avi",
-            'aniU': f"{p['aniU_']}{tri_num:05d}.avi",
-            'aniUU': f"{p['aniUU_']}{tri_num:05d}.avi",
-            'aniVU': f"{p['aniVU_']}{tri_num:05d}.avi"
     }
 
     return ptr

@@ -10,9 +10,9 @@ print_bathy
     - prints a DEPTH_FILE, assuming a numpy array that is the DEPTH_FILE
 '''
 def print_bathy(vars):
-    print('\tStarted printing bathymetry file (DEPTH_FILE)...')
+    print('\t\tStarted printing bathymetry file (DEPTH_FILE)...')
     # Unpack variables
-    bathy_array = vars['bathy']['file']
+    bathy_array = vars['bathy_file']
     ITER = int(vars['ITER'])
 
     # Get directories
@@ -23,7 +23,7 @@ def print_bathy(vars):
     # Print
     np.savetxt(ptr['b_file'], bathy_array, delimiter=' ', fmt='%f')
 
-    print(f'\tDEPTH_FILE file successfully saved to: {ptr["b_file"]}\n')
+    print(f'\t\tDEPTH_FILE file successfully saved to: {ptr["b_file"]}')
     return {'DEPTH_FILE': ptr['b_file']}
 
 
@@ -50,6 +50,6 @@ def print_TS_spectra(vars):
     # Print
     # TODO: user-defined key in ptr
     np.savetxt(ptr['sp_file'], np.column_stack((per, cnn, enn)), fmt='%12.8f')
-    print(f'\tWaveCompFile successfully saved to: {ptr["sp_file"]}\n')
+    print(f'\t\tWaveCompFile successfully saved to: {ptr["sp_file"]}')
     
     return {'WaveCompFile': ptr['sp_file']}
