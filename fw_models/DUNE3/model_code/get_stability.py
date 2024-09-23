@@ -19,7 +19,7 @@ def get_stability_vars(vars):
     DX_lo = h/15
     DX_hi = L/60
     DX = np.mean([DX_hi,DX_lo])
-    DY = DX
+    DY = 1.0 # CHANGE 9/19 trying to get undertow right
 
     # Set DEP_WK to DEPTH_FLAT as well
     DEP_WK = h

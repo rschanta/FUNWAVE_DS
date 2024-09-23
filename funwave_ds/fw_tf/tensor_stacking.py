@@ -12,11 +12,14 @@ def load_array(var_XXXXX: Path, Mglob: int, Nglob: int):
         Loads in an array from a var_XXXXX binary output file or time_dt.txt
     '''
     # Deal with time_dt.txt separately: This is the only allowable ASCII file
-    if var_XXXXX.name == 'time_dt.txt':
-        return np.loadtxt(var_XXXXX,dtype=np.float32)
-    else:
-        return np.fromfile(var_XXXXX, dtype=np.float32).reshape(Nglob,Mglob)
-    
+    try:
+        if var_XXXXX.name == 'time_dt.out':
+            return np.loadtxt(var_XXXXX,dtype=np.float32)
+        else:
+            return np.fromfile(var_XXXXX, dtype=np.float32).reshape(Nglob,Mglob)
+    except:
+        print('Some issue with dimensions! Substitute with zeros to avoid crashing')
+        return np.zeros((Nglob, Nglob))
     
 def get_MNglob(In_d_i):
     '''
@@ -52,9 +55,11 @@ def load_and_stack_to_tensors(all_var_dict,In_d_i):
             var_array = load_array(file_path,Mglob,Nglob)
             var_arrays.append(var_array)
         # Form into tensor, squeeze out any extra dimensions
-        var_tensor = np.squeeze(np.stack(var_arrays, axis=0))
-        tri_tensor_dict[var] = var_tensor
-    
+        try:
+            var_tensor = np.squeeze(np.stack(var_arrays, axis=0))
+            tri_tensor_dict[var] = var_tensor
+        except:
+            print('Issue!')
     return tri_tensor_dict
 
     

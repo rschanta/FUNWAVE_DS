@@ -92,6 +92,8 @@ def RuCoDel(file=None,env=None):
     
     python "{file}"
 
+    echo "Deleting Raw Outputs from: ${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
+    rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
     """
     return text_content
 

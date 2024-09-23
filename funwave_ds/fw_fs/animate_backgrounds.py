@@ -19,6 +19,7 @@ def animate_1D_Var(vars,plotvar):
     title = vars['TITLE']
     Xc_WK = vars['Xc_WK']
     Sponge_west_width = vars['Sponge_west_width']
+    PLOT_INTV = vars['PLOT_INTV']
     #timestep = vars['timestep']
 
     # Get/make necessary paths
@@ -41,6 +42,13 @@ def animate_1D_Var(vars,plotvar):
 
     # Define time
     t = time[:,0]
+    dt_av = np.mean(time[:,1]) # Use average dt to inform stride
+
+    ## Frame rate and time coarseness
+    speed = 10                       # model time displayed in 1 second of animation time                  
+    coarseness = 0.5                 # model time between each frame in the animation
+    fr = speed/coarseness            # required frame rate for this to work
+    stride = int(coarseness/dt_av)   # space between indices for this to work
 
     # Set up plot
     fig, ax = plt.subplots(figsize=(6, 4), dpi=200)     # Set size and resolution
@@ -74,10 +82,10 @@ def animate_1D_Var(vars,plotvar):
     
     # Set up movie writer
     fourcc = cv2.VideoWriter_fourcc(*'XVID')   # '*XVID' = .avi file
-    out = cv2.VideoWriter(avi_path, fourcc, 10, (width, height))
+    out = cv2.VideoWriter(avi_path, fourcc, fr, (width, height))
 
     # Loop through time steps
-    for t_i in range(0, len(t), 1):
+    for t_i in range(0, len(t), stride):
         print(f'\t\t\tplotting up to time {t[t_i]}')
 
         # Update outvar

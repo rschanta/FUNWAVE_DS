@@ -38,6 +38,10 @@ def make_log_folders(work_dir,run_name,matrix,all_slurm_flags):
     # Just one folder if no array
     if all_slurm_flags.get('array') is None:
         job_name = all_slurm_flags['job-name']
+        print(work_dir)
+        print(run_name)
+        print(matrix)
+        print(job_name)
         out_err_dir = os.path.join(work_dir, 'fw_models',run_name, 'logs',matrix,job_name)
         os.makedirs(out_err_dir, exist_ok=True)
         all_slurm_flags['output'] =  os.path.join(out_err_dir,'out.out')
