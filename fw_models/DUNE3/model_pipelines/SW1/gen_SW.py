@@ -7,27 +7,23 @@ import model_code as mod         # Model specific code
 
 
 # Load in Design Matrix
-matrix_file = '/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/design_matrices/T1a.csv'
+matrix_file = '/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/design_matrices/SW1.csv'
 matrix = fpy.load_FW_design_matrix2(matrix_file)
 
 # Dependent Parameters
 function_sets = {'Standard' : [mod.get_pickle_data,
-                               mod.get_spectra_data,
-                               mod.get_period,
                                mod.get_bathy,
                                mod.set_pi_vars]}
 
 
 # Plot functions
-plot_functions = [fs.plot_1D_bathy,
-                 fs.plot_TS_spectra]
+plot_functions = [fs.plot_1D_bathy]
 
 # Filter functions
 filter_functions = [fs.filter_kh]
 
 # Print functions
-print_functions = [fs.print_bathy,
-                   fs.print_TS_spectra]
+print_functions = [fs.print_bathy]
 
 
 # Write the files
@@ -38,5 +34,4 @@ fpy.write_files2(matrix,
                 print_sets = print_functions)
 
 print('File Generation Script Run!')
-
 

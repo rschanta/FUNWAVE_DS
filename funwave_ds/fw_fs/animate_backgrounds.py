@@ -43,11 +43,14 @@ def animate_1D_Var(vars,plotvar):
     # Define time
     t = time[:,0]
     dt_av = np.mean(time[:,1]) # Use average dt to inform stride
-
+    
     ## Frame rate and time coarseness
     speed = 10                       # model time displayed in 1 second of animation time                  
     coarseness = 0.5                 # model time between each frame in the animation
     fr = speed/coarseness            # required frame rate for this to work
+    print('HERE')
+    print(time[:,1])
+    print('HERE')
     stride = int(coarseness/dt_av)   # space between indices for this to work
 
     # Set up plot

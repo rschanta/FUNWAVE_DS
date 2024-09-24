@@ -13,7 +13,7 @@ def load_array(var_XXXXX: Path, Mglob: int, Nglob: int):
     '''
     # Deal with time_dt.txt separately: This is the only allowable ASCII file
     try:
-        if var_XXXXX.name == 'time_dt.out':
+        if var_XXXXX.name == 'time_dt.txt':
             return np.loadtxt(var_XXXXX,dtype=np.float32)
         else:
             return np.fromfile(var_XXXXX, dtype=np.float32).reshape(Nglob,Mglob)
