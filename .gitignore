@@ -4,7 +4,6 @@
 /logs
 *.pkl
 *.mp4
-*.png
 *.mat
 *.avi
 *.pyc
