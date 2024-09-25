@@ -6,13 +6,14 @@ This dataset will be used to examine the ability to map offshore time series aro
 
 ## Schematic
 ![Swash diagrmam](./SW1_sup/SWA_diagram.png)
+
 We are interested in getting using the free surface elevation $\eta_0$ time series at $x_0$ near the wavemaker to predict a time series free surface elevation $\eta_s$ at a position $x_s$ in the swash. Any model will also have access to the FUNWAVE input parameters $\Theta_{FW}$ (which includes information on bathymetry, forcing, and numerics). 
 
 So the model sought ($\mathcal{F}$) has the form:
 
 $$\mathcal{F}[\eta_0(t,x_0),\Theta_{FW}] = \eta_s(t,x_s)$$
 
-Note that as usual, we set the wavemaker position `Xc_WK` and sponge width `Sponge_west_width` as some multiple $\lambda$ of a representative wavelength. This is estimated via the linear dispersion $\sigma^2 = gh\tanh(kh)$ for $\sigma$ from `Tperiod` and $h$ from `DEP_WK`.
+Note that as usual, we set the wavemaker position `Xc_WK` and sponge width `Sponge_west_width` as some multiple $\lambda$ of a representative wavelength. This is estimated via the linear dispersion $\sigma^2 = gk\tanh(kh)$ for $\sigma$ from `Tperiod` and $h$ from `DEP_WK`.
 
 ## Input Parameters and Preprocessing
 ### Custom Input Design Parameters
@@ -68,9 +69,12 @@ Plots of the bathymetry/domain are generated.
 - **DEP_FILE.txt**: A bathymetry input file is generated for each trial
 
 ## Postprocessing
-### Outputs Condensed
-All inputs and outputs are output to the `.tfrecord` data format for use in ML applications. Plan to expand to NETCDF in the near future.
+### Condensing Raw Binaries to Larger Files
+All inputs and outputs are output to the `.tfrecord` data format for use in ML applications. I plan to expand this to a more convenient, self-describing HDF5 and NetCDF format as well in the future
+
 ### Postprocessing Functions Applied
-None for now, but plan to include code to automatically pull out a few time series near the wavemaker and then defined the "swash region" and pull out a few time series at different $x_s$ positions.
+The basic idea for postprocessing is to isolate some time series at the wavemaker and in the swash that can be mapped from input to output. To do this, 2 time series are indexed out- `WK_series` and `SW_series`. `WK_series` is found by finding the grid point closest to the point corresponding to `Xc_WK`. `SW_series` is found by finding the easternmost point that is consistently wet and not masked.
+
+Note that for consistency, the propagation time is cut out of the `SW_series`, since the time it takes for the wave to propagate to the swash is different between different trials and not easily comparable. This is done by starting the series at the global minimum eta in the time series
 ### Plots/Videos Generated
 Animations of the wave field are automatically generated for all trials.
