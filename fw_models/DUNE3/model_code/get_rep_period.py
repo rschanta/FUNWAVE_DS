@@ -14,14 +14,16 @@ def get_period(vars):
         print('\t\tSuccessfully found a representative period!')
         return {'Tperiod': Tperiod}
     elif WAVEMAKER == 'WK_IRR':
-        FreqPeak = vars['FreqPeak']
-        Tperiod = 1/FreqPeak
+        PeakPeriod = vars['PeakPeriod']
+        FreqPeak = 1/PeakPeriod
+        Tperiod = vars['PeakPeriod']
         print('\t\t\t Using 1/FreqPeak for irregular wave.')
         print('\t\tSuccessfully found a representative period!')
-        return {'Tperiod': Tperiod}
+        return {'FreqPeak': FreqPeak,'Tperiod': Tperiod}
     elif WAVEMAKER == 'WK_REG':
         print('\t\t\t Using TPeriod in input file')
         print('\t\tSuccessfully found a representative period!')
-        return
+        Tperiod = vars['PeakPeriod']
+        return {'Tperiod': Tperiod}
 
     

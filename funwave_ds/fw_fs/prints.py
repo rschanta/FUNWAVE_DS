@@ -53,3 +53,27 @@ def print_TS_spectra(vars):
     print(f'\t\tWaveCompFile successfully saved to: {ptr["sp_file"]}')
     
     return {'WaveCompFile': ptr['sp_file']}
+
+
+'''
+print_TS_spectra
+    - prints a time series spectra for WK_TIME_SERIES assuming
+        some user-defined parameter `spectra` that is a dictionary
+        with 'per', 'enn', 'cnn' arrays
+'''
+def print_TS_spectra_new(vars):
+    print('\tStarted printing spectra file (WaveCompFile)...')
+    
+    # Unpack variables
+    spectra = vars['spectra_array'][:,1:]
+    ITER = vars['ITER']
+    
+    # Get directories
+    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
+    
+    # Print
+    # TODO: user-defined key in ptr
+    np.savetxt(ptr['sp_file'], spectra, fmt='%12.8f')
+    print(f'\t\tWaveCompFile successfully saved to: {ptr["sp_file"]}')
+    
+    return {'WaveCompFile': ptr['sp_file']}

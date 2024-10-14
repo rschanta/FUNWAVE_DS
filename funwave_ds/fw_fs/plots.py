@@ -98,3 +98,42 @@ def plot_TS_spectra(vars):
     print(f'\t\tSpectra file successfully saved to: {ptr["sp_fig"]}')
     
     return
+
+
+'''
+plot_TS_spectra
+    - plots a time series spectra, for WK_TIME_SERIES assuming
+        some user-defined parameter `spectra` that is a dictionary
+        with 'per', 'enn', 'cnn' arrays
+'''
+def plot_TS_spectra_new(vars):
+    print('\t\tStarted plotting spectra...')
+    # Unpack variables
+    per = vars['spectra_array'][:,1]
+    cnn = vars['spectra_array'][:,2]
+    ITER = vars['ITER']
+    
+    # Get directories
+    d = fwb.get_directories()
+    p = fpy.get_FW_paths()
+    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
+
+    
+
+    # Plot period and amplitude
+    plt.plot(per,cnn)
+
+    # Formatting
+    plt.grid()
+    plt.xlabel('Period (s)')
+    plt.ylabel('Amplitude')
+    plt.show()
+
+    # Saving
+    plt.savefig(ptr['sp_fig'], dpi=300, bbox_inches='tight')
+    
+    # Close and exit
+    plt.close()
+    print(f'\t\tSpectra file successfully saved to: {ptr["sp_fig"]}')
+    
+    return
