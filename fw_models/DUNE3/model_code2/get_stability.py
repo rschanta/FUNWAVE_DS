@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import fsolve
 import pickle
+from funwave_ds.fw_py.record import log_function_call
 def get_stability_vars(vars):
     print('\t\tStarted applying variables dependent on stability...')
     # Unpack vars needed
@@ -10,8 +11,10 @@ def get_stability_vars(vars):
     # Find wavelength (L) through linear dispersion root-finding
     sigma = 2 * np.pi / Tperiod
     g = 9.81
+
     def disp_relation(k):
         return sigma**2 - g * k * np.tanh(k * h)
+    
     k = fsolve(disp_relation, 0)[0]
     L = 2 * np.pi / k
 

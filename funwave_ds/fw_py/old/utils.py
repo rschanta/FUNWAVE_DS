@@ -1,7 +1,7 @@
 import numpy as np
 import os
 #%% Basic Cutting Function
-
+'''
 def cut_between(arrays: list[np.array], cutting_array: np.array, lower: float = None, upper: float = None, mode: str = "between", axis: int = 0):
     """
     Cut multiple numpy arrays based on the indices of a cutting array closest to the specified bounds.
@@ -48,3 +48,4 @@ def cut_between(arrays: list[np.array], cutting_array: np.array, lower: float = 
 
 # Actually it is lol, bathy
 
+'''

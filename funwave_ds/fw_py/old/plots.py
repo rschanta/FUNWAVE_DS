@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+'''
 # TODO Also make a bit moe general, yknow?
 def plot_bathy(dicta,ptr):
     # Pull out params
@@ -157,3 +157,5 @@ def plot_TS_spectra2(dicta,ptr):
     print(f'Spectra file successfully saved to: {ptr["sp_fig"]}')
     
     return {}
+
+'''

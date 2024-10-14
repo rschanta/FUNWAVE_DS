@@ -12,7 +12,7 @@ import funwave_ds.fw_py as fpy
 from .path_tools import get_FW_tri_paths
 from .path_tools import get_FW_paths, make_FW_paths,get_FW_tri_paths
 from .print_files import print_bathy_file, print_input_file
-from .plots import plot_bathy2
+from .record import log_function_call, save_logs_to_file
 
 #%% FUNCTION
 import funwave_ds.fw_ba as fba
@@ -123,7 +123,10 @@ def add_dependent_values(var_dict,functions_to_apply):
     print(f'\nApplying DEPENDENCY functions')
     for func in functions_to_apply:
         print(f'\tApplying DEPENDENCY function: {func.__name__}')
-        result = func(var_dict)
+        # Add to log
+        decorated_func = log_function_call(func)
+        result = decorated_func(var_dict)
+        # Update
         dependent_vars.update(result)
         var_dict = {**var_dict, **dependent_vars}
     print(f'All DEPENDENCY functions completed successfully!')
@@ -194,7 +197,7 @@ def plot_supporting_file(var_dict,functions_to_apply):
     return
 
 
-###########################################################
+""" ###########################################################
 # Write files
 ###########################################################
 #%% Writing out the files: La pièce de résistance
@@ -266,11 +269,11 @@ def write_files(matrix,
     # Save larger dictionary
     with open(p['Id'], 'wb') as f:
         pickle.dump(all_dicts, f)
-    return all_dicts
+    return all_dicts """
 
+#########################################################################
 
-
-
+##########################################################################
 def write_files2(matrix, 
                 print_inputs = True,
                 function_sets = None, 
@@ -397,4 +400,7 @@ def write_files2(matrix,
     # Failure functions
     filter_failures.to_csv(p['If'], index=False)
 
+    # Record of function calls
+    save_logs_to_file(f"{p['L']}/generation_function_log.py")
+    save_logs_to_file(f"{p['L']}/generation_function_log.txt")
     return

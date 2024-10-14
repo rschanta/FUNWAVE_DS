@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
+from funwave_ds.fw_py.record import log_function_call
 
+@log_function_call
 def calculate_spectra(time_series,lo,hi):
     '''
     

@@ -2,8 +2,8 @@ import numpy as np
 from scipy.fft import fft
 
 
-def get_TS_spectra(t, eta, lo, hi):
-    """
+""" def get_TS_spectra(t, eta, lo, hi):
+
     Arguments:
     - t: (n x 1 numpy array) time series
     - eta: (n x 1 numpy array) eta series
@@ -21,7 +21,7 @@ def get_TS_spectra(t, eta, lo, hi):
             - bn: (n x 1 array) sine terms
         - peak_per: (float) period associated with the highest amplitude (cnn)
         - num_components: (int) number of components (length of cnn array)
-    """
+
     # Get time series and eta series
     t = t - np.min(t)  
     dt = t[1] - t[0]  
@@ -83,3 +83,4 @@ def get_TS_spectra(t, eta, lo, hi):
     }
 
     return spectra
+ """

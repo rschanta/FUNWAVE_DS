@@ -108,3 +108,5 @@ def animate_1D_Var(vars,plotvar):
     out.release()
     print(f"\t\t Finished Animation of {plotvar}...")
     return {}
+
+## TODO: Animate 2D Var

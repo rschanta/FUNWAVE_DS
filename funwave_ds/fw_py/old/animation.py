@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+'''
 def animate_eta_1D(results,name,timestep,bathy=True,dep=True,fr = 5,WK=True):
     # Deal with bathy
     if bathy == True:
@@ -82,3 +83,5 @@ def animate_eta_1D(results,name,timestep,bathy=True,dep=True,fr = 5,WK=True):
     plt.show()
     
     return
+
+'''

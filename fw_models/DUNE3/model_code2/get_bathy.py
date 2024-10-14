@@ -1,6 +1,6 @@
 import numpy as np
 from .get_stability import get_stability_vars
-
+from funwave_ds.fw_py.record import log_function_call
 
 '''
 get_bathy_new()
@@ -23,8 +23,9 @@ def get_bathy(vars):
     h = bathyZ[0]
     vars['DEPTH_FLAT'] = h
 
-    # Make a call to get_stability_vars, unpack DX and L
-    output_vars = get_stability_vars(vars)
+    # Make a call to get_stability_vars (log beforehand)
+    output_vars = log_function_call(get_stability_vars)(vars)
+    
     DX = output_vars['DX']
     L = output_vars['L_']
 

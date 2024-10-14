@@ -69,6 +69,8 @@ def get_FW_paths():
         # OUTPUTS: DIRECTORY FOR PROCESSED/CONDENSED TIME SERIES OUTPUT
         'O': os.path.join(data_dir, fw_model, run_name, 'outputs-proc'),
         'O_': os.path.join(data_dir, fw_model, run_name, 'outputs-proc', 'Out_'),
+        # LOG DATA: CODE USED TO GENERATE/PROCESS DATA
+        'L': os.path.join(data_dir, fw_model, run_name, 'log'),
         # BATHYMETRY FIGURES
         'bF': os.path.join(data_dir, fw_model, run_name, 'bathy_fig'),
         'bF_': os.path.join(data_dir, fw_model, run_name, 'bathy_fig', 'bathy_fig_'),
@@ -95,6 +97,8 @@ def make_FW_paths():
     os.makedirs(p['o'], exist_ok=True)
     # OUTPUTS: DIRECTORY FOR PROCESSED/CONDENSED TIME SERIES OUTPUT
     os.makedirs(p['O'], exist_ok=True)
+    # LOG DATA: CODE USED TO GENERATE/PROCESS DATA
+    os.makedirs(p['L'], exist_ok=True)
     # BATHYMETRY FILES
     os.makedirs(p['b'], exist_ok=True)
     # BATHYMETRY FIGURES

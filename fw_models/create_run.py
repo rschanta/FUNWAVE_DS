@@ -7,7 +7,7 @@ DEBUG_DATA_DIR = "/work/thsu/rschanta/DATA/DEBUG"
 TEMP_DIR = "/lustre/scratch/rschanta"
 DEBUG_TEMP_DIR = "/lustre/scratch/rschanta/DEBUG"
 FW_MODEL = "DUNE3"
-RUN_NAME  = "T01"
+RUN_NAME  = "T02"
 FW_EX = "/work/thsu/rschanta/RTS/funwave/v3.6H/exec/FW-REG"
 CONDA_ENV = "tf_env"
 
