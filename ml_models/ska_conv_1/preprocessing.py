@@ -6,7 +6,7 @@ from scipy.ndimage import uniform_filter1d
 from scipy.interpolate import CubicSpline
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from funwave_ds.fw_py.utils import cut_between
+from funwave_ds.fw_py.old.utils import cut_between
 from postprocessing.skew_asymmetry.skew_asymmetry import calculate_ska_1D
 
 

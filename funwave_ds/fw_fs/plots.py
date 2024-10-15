@@ -4,7 +4,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import funwave_ds.fw_py as fpy
-import funwave_ds.fw_ba as fwb
+import funwave_ds.fw_hpc as fwb
 
 def plot_1D_bathy(vars):
     print('\t\tStarted plotting bathymetry file...')
@@ -20,8 +20,6 @@ def plot_1D_bathy(vars):
     Sponge_W = vars['Sponge_west_width']
 
     # Get directories
-    d = fwb.get_directories()
-    p = fpy.get_FW_paths()
     ptr = fpy.get_FW_tri_paths(tri_num = int(ITER))
 
     
@@ -36,7 +34,7 @@ def plot_1D_bathy(vars):
     plt.axvline(x=Sponge_W, color='darkgreen', linestyle='--', label='West Sponge')
 
     # Title, legend, and text
-    plt.title('INPUT BATHYMETRY: ' +  f'TRIAL: {ITER}')
+    plt.title('Input Bathymetry: ' +  f'Trial: {ITER}')
     plt.text(1.05, 0.5, f'DX = {DX:.2f} DY = {DY:.2f}\nMglob = {Mglob} Nglob = {Nglob}', 
              fontsize=12, 
              bbox=dict(facecolor='lightyellow', edgecolor='black', boxstyle='round,pad=0.5'),
@@ -66,39 +64,6 @@ plot_TS_spectra
         some user-defined parameter `spectra` that is a dictionary
         with 'per', 'enn', 'cnn' arrays
 '''
-def plot_TS_spectra(vars):
-    print('\t\tStarted plotting spectra...')
-    # Unpack variables
-    per = vars['spectra']['per']
-    enn = vars['spectra']['enn']
-    cnn = vars['spectra']['cnn']
-    ITER = vars['ITER']
-    
-    # Get directories
-    d = fwb.get_directories()
-    p = fpy.get_FW_paths()
-    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
-
-    
-
-    # Plot period and amplitude
-    plt.plot(per,cnn)
-
-    # Formatting
-    plt.grid()
-    plt.xlabel('Period (s)')
-    plt.ylabel('Amplitude')
-    plt.show()
-
-    # Saving
-    plt.savefig(ptr['sp_fig'], dpi=300, bbox_inches='tight')
-    
-    # Close and exit
-    plt.close()
-    print(f'\t\tSpectra file successfully saved to: {ptr["sp_fig"]}')
-    
-    return
-
 
 '''
 plot_TS_spectra
@@ -127,6 +92,7 @@ def plot_TS_spectra_new(vars):
     plt.grid()
     plt.xlabel('Period (s)')
     plt.ylabel('Amplitude')
+    plt.title('Input Spectra: ' +  f'Trial: {ITER}')
     plt.show()
 
     # Saving

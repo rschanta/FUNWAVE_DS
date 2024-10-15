@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 import funwave_ds.fw_py as fpy
-import funwave_ds.fw_ba as fwb
+import funwave_ds.fw_hpc as fwb
 
 # Animate a 1D Eta Profile
 def animate_1D_Var(vars,plotvar):

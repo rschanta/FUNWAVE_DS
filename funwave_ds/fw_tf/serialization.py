@@ -1,25 +1,30 @@
-import os
-import pickle
-import sys
-
 import tensorflow as tf
 import numpy as np
 
-from typing import Dict
-from pathlib import Path
-
-import funwave_ds.fw_ba as fba
+# Out of module imports
 import funwave_ds.fw_py as fpy
-# In-module imports
-from .serialization_type import serialize_int,serialize_float, serialize_string, serialize_tensor
-from .tensor_stacking import load_and_stack_to_tensors, load_array
 
-# Out-of-module imports
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from fw_py.path_tools import find_prefixes_path, get_vars_out_paths
+# In-module imports
+from .get_io import get_inputs, get_outputs
+from .save_tf_record import save_tfrecord
+from .serialization_type import serialize_int,serialize_float, serialize_string, serialize_tensor
+
 
 
 def serialize_dictionary(dicta,feature_dict):
+    '''
+    Convert a dictionary of tensors, floats, strings, and integers
+    to serialized features for a tfrecord
+
+    Arguments:
+    - dicta (dictionary): dictionary of FUNWAVE inputs/outputs
+    - feature_dict (dictionary): feature description dictionaries
+
+    Returns:
+    - feature_dict (dictionary): feature description dictionaries
+    '''
+
+    print(f'\nStarted serialization of variables...')
     for key, value in dicta.items():
         # Check if tensor
         if isinstance(value, (np.ndarray, tf.Tensor)):
@@ -37,78 +42,42 @@ def serialize_dictionary(dicta,feature_dict):
         elif isinstance(value, int):
             print(f'\tSerializing: {key}={value}', flush= True)
             serialize_int(feature_dict,key,value)
+    print(f'Serialization complete!')
+
     return feature_dict
 
     
-def serialize_inputs(In_d_i,
-                        feature_dict=None,
-                        var_list=None):
 
+def postprocess(functions_to_apply,supp_dict={}):
     '''
-        Serializes inputs
+    Postprocess the FUNWAVE outputs
     '''
 
-    print('\nStarted compressing inputs...')
-    # Construct a feature dict if not given
-    if feature_dict is None:
-        feature_dict = {}
+    # Get input dictionary and variables
+    In_d_i = fpy.load_input_dict_i()
+    in_dict = get_inputs(In_d_i)
 
-    ## CASE 1: Get all valid input variables
-    if var_list is None:
-        # Get dictionary values that are floats,ints, and strings
-        trimmed_input_dict = {}
-        for key, value in In_d_i.items():
-            if isinstance(value, (str, float, int)):
-                print(f'Serializing: {key}={value}', flush= True)
-                trimmed_input_dict[key] = value
+    # Get the output variables
+    out_dict = get_outputs(In_d_i)
 
-    ## CASE 2: Get only the input variables in var_list
-    elif var_list is not None:
-        # Get dictionary values of keys specified
-        trimmed_input_dict = {}
-        for key in var_list:
-            if key in greater_dict:
-                if isinstance(value, (str, float, int)):
-                    print(f'Serializing: {key}={In_d_i[key]}')
-                    trimmed_input_dict[key] = In_d_i[key]
-                else:
-                    print(f'{key} found in inputs, not but a string,float, or int, so ignored!')
+    # Merge in the supplemental variables
+    io_dict = {**in_dict, **out_dict, **supp_dict}
 
-    # Serialize
-    serialized_inputs = serialize_dictionary(trimmed_input_dict,feature_dict)
-    print('Successfully compressed and serialized inputs!')
-    return serialized_inputs
+    # Apply Post-processing functions
+    print(f'\nApplying post-processing functions')
+    for func in functions_to_apply:
+        print(f'\tApplying function: {func.__name__}')
+        post_vars = func(io_dict)
+        pp_dict = {**io_dict, **post_vars}
+    print(f'\nPost-processing functions successful!')
 
-
-def serialize_outputs(In_d_i,
-                        feature_dict=None,
-                        var_list=None):
-    print('\nStarted compressing outputs...')
-
-    # Get result folder
-    p = fpy.get_FW_paths()
-    tri_num = os.getenv('TRI_NUM')
-    ptr = fpy.get_FW_tri_paths()
-    RESULT_FOLDER = ptr['RESULT_FOLDER']
-
-    # Construct a feature dict if not given
-    if feature_dict is None:
-        feature_dict = {}
-    # Get var_list if not given
-    if var_list is None:
-        var_list = find_prefixes_path(RESULT_FOLDER)
-
-    # Get dictionary of lists (this is where clean up of underscore happens)
-    var_paths = get_vars_out_paths(RESULT_FOLDER, var_list)
-    # Compress to dictionary of tensors
-    tensor_dict = load_and_stack_to_tensors(var_paths,In_d_i)
+    # Serialize the dictionary
+    serialized_features = serialize_dictionary(pp_dict,{})
     
-    # Serialize
-    serialized_outputs = serialize_dictionary(tensor_dict,feature_dict)
-    print('Successfully compressed and serialized outputs!')
-    return serialized_outputs
+    # Save out the tfrecord
+    save_tfrecord(serialized_features)
 
-
+    return serialized_features
 
 
 

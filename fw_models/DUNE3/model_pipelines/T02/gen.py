@@ -1,13 +1,9 @@
-import sys
-import os
 import funwave_ds.fw_py as fpy   # Basic functionality
 import funwave_ds.fw_fs as fs    # Common function set tools
 import model_code2 as mod         # Model specific code
 
-
-# Load in Design Matrix
-matrix_file = '/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/design_matrices/T01.csv'
-matrix = fpy.load_FW_design_matrix2(matrix_file)
+# Define the design matrix
+matrix_file = '/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/design_matrices/T02.csv'
 
 # Dependent Parameters
 function_sets = {'Standard' : [mod.get_pickle_data,
@@ -30,7 +26,7 @@ print_functions = [fs.print_bathy,
 
 
 # Write the files
-fpy.write_files2(matrix, 
+fpy.process_design_matrix(matrix_file, 
                 function_sets = function_sets, 
                 filter_sets = filter_functions,
                 plot_sets = plot_functions,

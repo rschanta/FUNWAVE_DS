@@ -1,11 +1,11 @@
+import numpy as np
+from pathlib import Path
+import tensorflow as tf
+
 '''
     tensor_stacking
         -Function to load in 2D arrays for time series outputs and stack to tensors 
 '''
-
-import numpy as np
-from pathlib import Path
-
 
 def load_array(var_XXXXX: Path, Mglob: int, Nglob: int):
     '''
@@ -23,7 +23,8 @@ def load_array(var_XXXXX: Path, Mglob: int, Nglob: int):
     
 def get_MNglob(In_d_i):
     '''
-        Finds Mglob and Nglob for an output, and ensures that they are ints
+    Finds Mglob and Nglob for an output, and ensures that they are ints. 
+    This is important for loading in binaries to tensors correctly.
     '''
     try:
         Mglob = In_d_i['Mglob']
@@ -62,4 +63,11 @@ def load_and_stack_to_tensors(all_var_dict,In_d_i):
             print('Issue!')
     return tri_tensor_dict
 
-    
+def deserialize_tensor(parsed_features,var:str):
+    '''
+    Deserialize a tensor
+    '''
+    shape = tf.cast(parsed_features[f'{var}_shape'], tf.int64)
+    tensor = tf.io.parse_tensor(parsed_features[var], out_type=tf.float32)
+    parsed_features[var] = tf.reshape(tensor, shape)
+    return parsed_features

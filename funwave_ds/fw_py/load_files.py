@@ -1,5 +1,4 @@
 import pickle
-import funwave_ds.fw_ba as fba
 import funwave_ds.fw_py as fpy
 import os
 

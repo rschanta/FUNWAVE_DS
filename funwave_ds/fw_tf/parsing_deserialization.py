@@ -1,14 +1,6 @@
 import tensorflow as tf
-from typing import  Dict, Any
 from .feature_description import *
-
-
-def deserialize_tensor(parsed_features,var:str):
-    shape = tf.cast(parsed_features[f'{var}_shape'], tf.int64)
-    tensor = tf.io.parse_tensor(parsed_features[var], out_type=tf.float32)
-    parsed_features[var] = tf.reshape(tensor, shape)
-    return parsed_features
-
+from .tensor_stacking import deserialize_tensor
 
 def _parse_function(proto,feature_description,tensors):
     '''
@@ -85,12 +77,7 @@ def parse_function(tf_record_files,
         raise ValueError("Specify either dataset or dict for out_type")
     
 
-    return all_parsed_dict
-
-
-## GOOD ONE: KEEP
-def parse_spec_var(paths,
-                tensors_4D = [],
+def parse_variables(paths,
                 tensors_3D = [],
                 tensors_2D = [],
                 floats = [],
@@ -103,10 +90,10 @@ def parse_spec_var(paths,
     strings = strings + ['TITLE']
     
     # Build up Feature Description
-    feature_description = construct_feature_descr(tensors_4D, tensors_3D, tensors_2D, floats, strings, ints)
+    feature_description = construct_feature_descr(tensors_3D, tensors_2D, floats, strings, ints)
     
     # Specify the tensors
-    tensors = tensors_4D + tensors_3D + tensors_2D
+    tensors = tensors_3D + tensors_2D
     
     # Transform into dataset and parse
     dataset = tf.data.TFRecordDataset(paths)

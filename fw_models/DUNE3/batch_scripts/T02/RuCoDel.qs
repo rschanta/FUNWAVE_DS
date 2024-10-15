@@ -9,6 +9,7 @@
 #SBATCH --export=ALL
 #SBATCH --array=1-20
 #SBATCH --job-name=RuCoDel
+#SBATCH --dependency=28909354
 #SBATCH --output=/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/logs/T02/RuCoDel/out/out%a.out
 #SBATCH --error=/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/logs/T02/RuCoDel/err/err%a.out
 #

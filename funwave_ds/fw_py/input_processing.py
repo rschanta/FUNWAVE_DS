@@ -1,6 +1,4 @@
 import numpy as np
-
-# TODO Also make a bit moe general, yknow?
 def bathy_from_dep_flat(Mglob, FWS):
     D = FWS['DEPTH_FLAT']
     Xslp = FWS['Xslp']

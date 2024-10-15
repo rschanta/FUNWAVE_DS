@@ -2,6 +2,10 @@ import numpy as np
 from scipy.optimize import fsolve
 
 
+'''
+    Tools for calculating quantities from hydodynamic theories
+'''
+
 def dispersion(T, h):
     sigma = 2 * np.pi / T
     g = 9.81

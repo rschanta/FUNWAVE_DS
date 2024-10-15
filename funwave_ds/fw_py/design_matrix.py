@@ -1,84 +1,55 @@
 import pickle
-import os
-import sys
-import copy
-import pandas as pd
+import shutil
 import numpy as np
+import pandas as pd
 from itertools import product
 
-import funwave_ds.fw_ba as fwb
-import funwave_ds.fw_py as fpy
 
-from .path_tools import get_FW_tri_paths
+# In-module imports
 from .path_tools import get_FW_paths, make_FW_paths,get_FW_tri_paths
-from .print_files import print_bathy_file, print_input_file
+from .print_files import print_input_file
 from .record import log_function_call, save_logs_to_file
+from .utils import convert_to_number
 
-#%% FUNCTION
-import funwave_ds.fw_ba as fba
 
-#%% Loading and grouping variables
-def load_FW_design_matrix():
+#%% LOAD IN VARIABLES AND GROUP VARIABLES
 
-    d = fba.get_directories()
+def load_design_matrix(matrix):
+    '''
+    Load in a design matrix from a .csv file, ensuring valid formatting
 
-    path = os.path.join(d['WORK_DIR'], 
-                        'fw_models', 
-                        d['FW_MODEL'], 
-                        'design_matrices', 
-                        f"{d['RUN_NAME']}.csv")
+    Arguments:
+    - matrix (string): Path to the design matrix csv file
 
-    design_matrix = pd.read_csv(path, na_values=[''])
-    
-    # Helper function to convert to valid FORTRAN
-    def convert_to_number(value):
-        try:
-            # Try conversion to float (will work for ints/floats)
-            float_value = float(value)
-            
-            # Case to return float: if a decimal point is provided
-            if '.' in str(value).strip():
-                return float_value
-            # Case to return int: if no decimal point is provided
-            else: 
-                return int(float_value)
-            
-        # Case to return string: if conversion to float fails
-        except ValueError:
-            return value
-        
-    # Apply to constant column
-    design_matrix['CON'] = design_matrix['CON'].apply(convert_to_number)
+    Returns:
+    - design_matrix (Pandas DataFrame): DataFrame of design matrix with valid
+        FORTRAN formatting
+    '''
 
-    return design_matrix
-
-def load_FW_design_matrix2(matrix):
-    
+    # Load in Design Matric from CSV file
     design_matrix = pd.read_csv(matrix, na_values=[''])
-    # Helper function to convert to valid FORTRAN
-    def convert_to_number(value):
-        try:
-            # Try conversion to float (will work for ints/floats)
-            float_value = float(value)
-            
-            # Case to return float: if a decimal point is provided
-            if '.' in str(value).strip():
-                return float_value
-            # Case to return int: if no decimal point is provided
-            else: 
-                return int(float_value)
-            
-        # Case to return string: if conversion to float fails
-        except ValueError:
-            return value
-        
-    # Apply to constant column
+
+    # Convert to valid FORTRAN formatting of numbers
     design_matrix['CON'] = design_matrix['CON'].apply(convert_to_number)
 
     return design_matrix
 
 
 def group_variables(design_matrix):
+    '''
+    Find every possible permutation of variables (Cartesian Product) to generate
+    the ranges of variables in the ensemble of runs
+
+    Arguments:
+    - design_matrix (Pandas DataFrame): DataFrame of design matrix with valid
+        FORTRAN formatting [output of `load_FW_design_matrix`]
+
+    Returns:
+    - variable_ranges (Pandas DataFrame): DataFrame of design matrix with valid
+        FORTRAN formatting
+    '''
+
+
     grouped_vars = design_matrix.groupby('VAR',sort=False)
     variable_ranges = {}
     for var_name, group in grouped_vars:
@@ -102,11 +73,22 @@ def group_variables(design_matrix):
             variable_ranges[var_name] = list(dict.fromkeys(values))
     return variable_ranges     
             
-###########################################################
-# Adding parameters to the matrix
-###########################################################
-# Adding Values: Extra and Dependent
+
+#%% ADDING ON VALUES TO THE MATRIX
 def add_extra_values(variable_ranges,extra_values):
+    '''
+    Add on extra variables to the design matrix
+
+    Arguments:
+    - variable_ranges (Pandas DataFrame): DataFrame of design matrix with valid
+        FORTRAN formatting [output of `group_variables`]
+    - extra_values (dictionary): dicitionary of variables to add
+
+    Returns:
+    - variable_ranges (Pandas DataFrame): DataFrame of design matrix with valid
+        FORTRAN formatting, extra values added
+    '''
+
     for var_name, extra in extra_values.items():
         if var_name in variable_ranges:
             # Ensure extra values are unique and combined with existing values
@@ -117,8 +99,19 @@ def add_extra_values(variable_ranges,extra_values):
     return variable_ranges
 
 
-# Dependent Parameters
 def add_dependent_values(var_dict,functions_to_apply):
+    '''
+    Add on dependeny parameters defined by some dependency pipeline
+
+    Arguments:
+    - var_dict (dictionary): dictionary of FUNWAVE parameters
+    - functions_to_apply (list): list of functions defining the pipeline
+
+    Returns:
+    - df_failed_vars (dictionary): dictionary of FUNWAVE parameters, with dependent
+        parameters added
+    '''
+
     dependent_vars = {}
     print(f'\nApplying DEPENDENCY functions')
     for func in functions_to_apply:
@@ -132,14 +125,24 @@ def add_dependent_values(var_dict,functions_to_apply):
     print(f'All DEPENDENCY functions completed successfully!')
     return var_dict
 
-###########################################################
-# Filter functions
-###########################################################
+#%% FILTERING OUT CASES
 def apply_filters(var_dict,functions_to_apply):
+    '''
+    Applies the defined filter functions to knock out trials that are not 
+    valid.
+
+    Arguments:
+    - var_dict (dictionary): dictionary of FUNWAVE parameters
+    - functions_to_apply (list): list of functions defining the filter functions
+
+    Returns:
+    - var_dict (df_failed_vars/None): DataFrame of failed variables
+    '''
 
     failed_checks = []  # List to keep track of functions that return False
     failed_vars = {}    # Dictionary to keep track of variables causing the failure
     print(f'\nApplying FILTER functions')
+
     # Loop through all filter functions
     for func in functions_to_apply:
         print(f'\tApplying FILTER function: {func.__name__}')
@@ -172,10 +175,20 @@ def apply_filters(var_dict,functions_to_apply):
         print("All FILTER functions passed successfully!")
         return None
 
-###########################################################
-# Print/Output files
-###########################################################
+#%% Print/output files
+
 def print_supporting_file(var_dict,functions_to_apply):
+    '''
+    Applies the functions of print functions for supporting files
+
+    Arguments:
+    - var_dict (dictionary): dictionary of FUNWAVE parameters
+    - functions_to_apply (list): list of print functions
+
+    Returns:
+    - var_dict (df_failed_vars/None): DataFrame of failed variables
+    '''
+
     print_path_vars = {}
     print(f'\nApplying PRINT functions')
     for func in functions_to_apply:
@@ -189,92 +202,30 @@ def print_supporting_file(var_dict,functions_to_apply):
 
 
 def plot_supporting_file(var_dict,functions_to_apply):
+    '''
+    Applies the functions of plot functions for supporting files
+
+    Arguments:
+    - var_dict (dictionary): dictionary of FUNWAVE parameters
+    - functions_to_apply (list): list of plot functions
+
+    Returns:
+    - var_dict (df_failed_vars/None): DataFrame of failed variables
+    '''
+
     print(f'\nApplying PLOT functions')
     for func in functions_to_apply:
         print(f'\tApplying PLOT function: {func.__name__}')
         func(var_dict)
     print(f'All PLOT functions completed successfully!')
+    
     return
 
 
-""" ###########################################################
-# Write files
-###########################################################
-#%% Writing out the files: La pièce de résistance
-def write_files(matrix, 
-                print_inputs = True,
-                function_sets = None, 
-                print_sets = None, 
-                plot_sets = None, 
-                extra_values = None):
-    
-    ## Get paths needed
-    make_FW_paths()
-    p = get_FW_paths()
 
-    # Initialize large dictionary
-    all_dicts = {}
 
-    # Get the range of all parameters provided in the matrix
-    variable_ranges = group_variables(matrix)
-
-    # Add on extra values if provided
-    if extra_values is not None:
-        variable_ranges = add_extra_values(variable_ranges,extra_values)
-            
-    # Get all permutations of input variables
-    permutations = list(product(*[variable_ranges[var] for var in variable_ranges]))
-    
-    k = 1
-    # Loop through each pipeline in the function set
-    for set_name, pipeline in function_sets.items():
-
-        # Loop through each permutation of variables in the design matrix
-        for i, perm in enumerate(permutations, start=1):
-            print(f'\nSTARTED PRINTING FILES FOR TRIAL: {k:05}')
-            ## Getting the dictionaries
-            # Create dictionary of variable/value pairs
-            var_dict = dict(zip(variable_ranges.keys(), perm))
-            
-            # Paths for trial files
-            ptr = fpy.get_FW_tri_paths(tri_num=k)
-
-            # Add on iteration-dependent values
-            var_dict['TITLE'] = f'input_{k:05}'
-            var_dict['DEP_PARAM_PIPELINE'] = set_name
-            var_dict['RESULT_FOLDER'] = ptr['RESULT_FOLDER']
-            var_dict['ITER'] = k
-            
-            # Add on dependent parameters        
-            var_dict = add_dependent_values(var_dict,pipeline)
-    
-            # Print supporting files if given
-            if print_sets is not None:
-                var_dict = print_supporting_file(var_dict,print_sets)
-
-            # Plot supporting plots if given
-            if plot_sets is not None:
-                plot_supporting_file(var_dict,plot_sets)
-
-            # Print input.txt files if indicated
-            if print_inputs == True:
-                print_input_file(var_dict,ptr)
-
-            # Update the larger summary dictionary, move on to next trial
-            all_dicts[f'tri_{k:05}'] = var_dict
-            print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
-            print('#########################################################')
-            k = k + 1 
-        
-    # Save larger dictionary
-    with open(p['Id'], 'wb') as f:
-        pickle.dump(all_dicts, f)
-    return all_dicts """
-
-#########################################################################
-
-##########################################################################
-def write_files2(matrix, 
+#%% Work through the design matrix
+def process_design_matrix(matrix_file, 
                 print_inputs = True,
                 function_sets = None, 
                 filter_sets = None,
@@ -282,10 +233,12 @@ def write_files2(matrix,
                 plot_sets = None, 
                 extra_values = None):
     
-    ###########################################################
-    # Setup
-    ###########################################################
-    # Get paths needed
+    '''
+    Works through the design matrix process
+    '''
+
+    ## SETUP AND INITIALIZE
+    # Paths
     make_FW_paths()
     p = get_FW_paths()
 
@@ -294,9 +247,10 @@ def write_files2(matrix,
     all_dicts = {}
     filter_failures = pd.DataFrame()
 
-    ###########################################################
-    # Finding permutations of all variables
-    ###########################################################
+    ## LOAD IN THE MATRIX
+    matrix = load_design_matrix(matrix_file)
+
+    ## FIND PERMUTATIONS OF ALL VARIABLES
     # Get the range of all parameters provided in the matrix
     variable_ranges = group_variables(matrix)
 
@@ -307,9 +261,8 @@ def write_files2(matrix,
     # Get all possible permutations
     permutations = list(product(*[variable_ranges[var] for var in variable_ranges]))
     
-    ###########################################################
-    # Looping through all permutations
-    ###########################################################
+
+    ## LOOP THROUGH ALL PERMUTATIONS OF VARIABLES
     k = 1
     # Loop: Processing Pipeline
     for set_name, pipeline in function_sets.items():
@@ -318,18 +271,14 @@ def write_files2(matrix,
 
             print(f'\nSTARTED GENERATING TRIAL: {k:05}')
             
-            ###########################################################
-            # Setup
-            ###########################################################
+            ## SETUP
             # Create dictionary for parameters and values in permutation
             var_dict = dict(zip(variable_ranges.keys(), perm))
             
             # Get all paths needed
-            ptr = fpy.get_FW_tri_paths(tri_num=k)
+            ptr = get_FW_tri_paths(tri_num=k)
 
-            ###########################################################
-            # Add parameters
-            ###########################################################
+            ## ADD PARAMETERS
             # Add on iteration-dependent values
             var_dict['TITLE'] = f'input_{k:05}'
             var_dict['DEP_PARAM_PIPELINE'] = set_name
@@ -339,9 +288,7 @@ def write_files2(matrix,
             # Add on dependent parameters        
             var_dict = add_dependent_values(var_dict,pipeline)
 
-            ###########################################################
-            # Apply filter functions, proceed if none fail
-            ###########################################################
+            ## APPLY FILTER FUNCTIONS
             failed_params = None
             if filter_sets is not None:
                 failed_params = apply_filters(var_dict,filter_sets)
@@ -352,9 +299,8 @@ def write_files2(matrix,
                 print(f'PERMUTATION DOES NOT PASS FILTER: SKIP')
             # Proceed otherwise
             elif failed_params is None:
-                ###########################################################
-                # Output files and plots
-                ###########################################################
+
+                ## OUTPUT FILES/PLOTS
                 # Print supporting files if indicated
                 if print_sets is not None:
                     var_dict = print_supporting_file(var_dict,print_sets)
@@ -367,9 +313,7 @@ def write_files2(matrix,
                 if print_inputs == True:
                     print_input_file(var_dict,ptr)
 
-                ###########################################################
-                # Update summaries
-                ###########################################################
+                ## UPDATE SUMMARIES
                 # Dictionary for individual trial
                 with open(ptr['i_file_pkl'], 'wb') as f:
                     pickle.dump(var_dict, f)
@@ -381,26 +325,28 @@ def write_files2(matrix,
                 # Update the larger summary dictionary, move on to next trial
                 all_dicts[f'tri_{k:05}'] = ptr['RESULT_FOLDER']
 
-                ###########################################################
+                # End loop iteration
                 print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
-                print('#########################################################')
+                print('#'*40)
                 k = k + 1 
                 
-    ###########################################################
-    # Save summary files
-    ########################################################### 
-    # Big dictionary
+    ## SAVE SUMMARY FILES
+    # Save the big dictionary
     with open(p['Id'], 'wb') as f:
         pickle.dump(all_dicts, f)
     
-    # Completed matrix
+    # Save the completed matrix
     complete_matrix = pd.concat(complete_matrix, ignore_index=True, sort=False)
     complete_matrix.to_csv(p['Im'], index=False)
 
-    # Failure functions
-    filter_failures.to_csv(p['If'], index=False)
+    # Save the failure functions (to logs)
+    filter_failures.to_csv(f"{p['L']}/failures.txt", index=False)
 
-    # Record of function calls
+    # Save record of function calls (to logs)
     save_logs_to_file(f"{p['L']}/generation_function_log.py")
     save_logs_to_file(f"{p['L']}/generation_function_log.txt")
+
+    # Save copy of design matrix (to logs)
+    shutil.copy(matrix_file, f"{p['L']}/design_matrix.csv")
+
     return

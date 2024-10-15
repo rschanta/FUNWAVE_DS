@@ -3,7 +3,7 @@ import sys
 import numpy as np
 
 import funwave_ds.fw_py as fpy
-import funwave_ds.fw_ba as fwb
+import funwave_ds.fw_hpc as fwb
 
 '''
 print_bathy

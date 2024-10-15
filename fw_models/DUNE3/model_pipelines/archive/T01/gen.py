@@ -6,7 +6,7 @@ import model_code2 as mod         # Model specific code
 
 
 # Load in Design Matrix
-matrix_file = '/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/design_matrices/T01.csv'
+matrix_file = '/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/design_matrices/T02.csv'
 matrix = fpy.load_FW_design_matrix2(matrix_file)
 
 # Dependent Parameters

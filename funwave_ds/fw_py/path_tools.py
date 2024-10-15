@@ -1,22 +1,25 @@
-'''
-    path_tools
-        - Any function that deals with the getting of paths, the making of
-            directories, finding what is in a directory, and similar 
-            operations
-            - All function names end with "path(s)" and begin with either:
-                - "get"
-                - "make"
-                - "find"
-                or something similarly descriptive
-
-'''
-
 import os
 from pathlib import Path
 from typing import  Dict, Any, Optional
 from pathlib import Path
-import funwave_ds.fw_py as fpy
-import funwave_ds.fw_ba as fwb
+
+# In-module imports
+from .environments import get_env_dirs
+
+
+'''
+path_tools
+    - Any function that deals with the getting of paths, the making of
+        directories, finding what is in a directory, and similar 
+        operations
+        - All function names end with "path(s)" and begin with either:
+            - "get"
+            - "make"
+            - "find"
+            or something similarly descriptive
+
+'''
+
 
 #%% Path functions from global key variables
 def get_FW_paths():
@@ -31,7 +34,7 @@ def get_FW_paths():
     - p: Dictionary containing all paths.
     """
 
-    d = fwb.get_directories()
+    d = get_env_dirs()
     temp_dir = d['TEMP_DIR']
     data_dir = d['DATA_DIR']
     fw_model = d['FW_MODEL']

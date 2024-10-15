@@ -1,6 +1,3 @@
-import os
-import funwave_ds.fw_ba as fba
-
 ## GENERATE FILES
 def generate_files(file=None,env=None):
 
