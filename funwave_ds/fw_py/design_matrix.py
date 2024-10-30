@@ -3,14 +3,14 @@ import shutil
 import numpy as np
 import pandas as pd
 from itertools import product
-
+import xarray as xr
 
 # In-module imports
 from .path_tools import get_FW_paths, make_FW_paths,get_FW_tri_paths
 from .print_files import print_input_file
 from .record import log_function_call, save_logs_to_file
 from .utils import convert_to_number
-
+from .netcdf import *
 
 #%% LOAD IN VARIABLES AND GROUP VARIABLES
 
@@ -186,7 +186,7 @@ def print_supporting_file(var_dict,functions_to_apply):
     - functions_to_apply (list): list of print functions
 
     Returns:
-    - var_dict (df_failed_vars/None): DataFrame of failed variables
+
     '''
 
     print_path_vars = {}
@@ -321,6 +321,170 @@ def process_design_matrix(matrix_file,
                 # Update expanded CSV
                 var_dict = {k: v for k, v in var_dict.items() if isinstance(v, (str, int, float))}
                 complete_matrix.append(pd.DataFrame([var_dict]))
+
+                # Update the larger summary dictionary, move on to next trial
+                all_dicts[f'tri_{k:05}'] = ptr['RESULT_FOLDER']
+
+                # End loop iteration
+                print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
+                print('#'*40)
+                k = k + 1 
+                
+    ## SAVE SUMMARY FILES
+    # Save the big dictionary
+    with open(p['Id'], 'wb') as f:
+        pickle.dump(all_dicts, f)
+    
+
+    ## TODO: Save as NETCDF instead
+    # Save the completed matrix
+    complete_matrix = pd.concat(complete_matrix, ignore_index=True, sort=False)
+    complete_matrix.to_csv(p['Im'], index=False)
+
+    # Save the failure functions (to logs)
+    filter_failures.to_csv(f"{p['L']}/failures.txt", index=False)
+
+    # Save record of function calls (to logs)
+    save_logs_to_file(f"{p['L']}/generation_function_log.py")
+    save_logs_to_file(f"{p['L']}/generation_function_log.txt")
+
+    # Save copy of design matrix (to logs)
+    shutil.copy(matrix_file, f"{p['L']}/design_matrix.csv")
+
+    return
+
+
+#%% Work through the design matrix
+def process_design_matrix_NC(matrix_file, 
+                print_inputs = True,
+                function_sets = None, 
+                filter_sets = None,
+                print_sets = None, 
+                plot_sets = None, 
+                extra_values = None):
+    
+    '''
+    Works through the design matrix process
+    '''
+
+    ## SETUP AND INITIALIZE
+    # Paths
+    make_FW_paths()
+    p = get_FW_paths()
+
+    # Initialize structures for summary files
+    complete_matrix = []
+    all_dicts = {}
+    filter_failures = pd.DataFrame()
+
+    ## LOAD IN THE MATRIX
+    matrix = load_design_matrix(matrix_file)
+
+    ## FIND PERMUTATIONS OF ALL VARIABLES
+    # Get the range of all parameters provided in the matrix
+    variable_ranges = group_variables(matrix)
+
+    # Add on extra values if provided
+    if extra_values is not None:
+        variable_ranges = add_extra_values(variable_ranges,extra_values)
+            
+    # Get all possible permutations
+    permutations = list(product(*[variable_ranges[var] for var in variable_ranges]))
+    
+
+    ## LOOP THROUGH ALL PERMUTATIONS OF VARIABLES
+    k = 1
+    # Loop: Processing Pipeline
+    for set_name, pipeline in function_sets.items():
+        # Loop: Permutation of variables
+        for i, perm in enumerate(permutations, start=1):
+
+            print(f'\nSTARTED GENERATING TRIAL: {k:05}')
+            
+            ## SETUP
+            # Create dictionary for parameters and values in permutation
+            var_dict = dict(zip(variable_ranges.keys(), perm))
+            
+            # Get all paths needed
+            ptr = get_FW_tri_paths(tri_num=k)
+
+            ## ADD PARAMETERS
+            # Add on iteration-dependent values
+            var_dict['TITLE'] = f'input_{k:05}'
+            var_dict['DEP_PARAM_PIPELINE'] = set_name
+            var_dict['RESULT_FOLDER'] = ptr['RESULT_FOLDER']
+            var_dict['ITER'] = k
+            
+            # Add on dependent parameters        
+            var_dict = add_dependent_values(var_dict,pipeline)
+
+            ## APPLY FILTER FUNCTIONS
+            failed_params = None
+            if filter_sets is not None:
+                failed_params = apply_filters(var_dict,filter_sets)
+
+            # Record failure if triggered
+            if failed_params is not None:
+                filter_failures = pd.concat([filter_failures, failed_params], ignore_index=True, sort=False)
+                print(f'PERMUTATION DOES NOT PASS FILTER: SKIP')
+            
+            # Proceed otherwise
+            elif failed_params is None:
+
+                
+
+
+                ## OUTPUT FILES/PLOTS
+                # Print supporting files if indicated
+                if print_sets is not None:
+                    var_dict = print_supporting_file(var_dict,print_sets)
+
+                # Plot supporting plots if indicated
+                if plot_sets is not None:
+                    plot_supporting_file(var_dict,plot_sets)
+
+                # Print input.txt files if indicated
+                if print_inputs == True:
+                    print_input_file(var_dict,ptr)
+
+
+                ## MAKE NETCDF FILE
+                ds = xr.Dataset()
+                # catch-all dictionary
+                dic = {}
+                
+                # Loop through to assemble everything
+                for key, value in var_dict.items():
+                    
+                    # Deal with the Coordinate Objects
+                    if isinstance(value, CoordinateObject):
+                        ds = add_coords(value,ds)
+                        ds = add_data_vars(value,ds)
+                        ds = add_attr_vars(value,ds)
+                    
+                    # Deal with everything else
+                    elif is_valid_netcdf_attribute(value):
+                        ds.attrs[key] = value
+                        
+                    # Else: Is some invalid datatype, will just be merged into the dictionary
+                    else:
+                        print((f'Warning: `{key}` not a valid type for net-cdf storage,'
+                            ' although it will be stored to a pickable dictionary'))
+                        dic[key] = value 
+
+                # Dump netcdf to dictionary and add others
+                ds_dict = ds.to_dict()
+                ds_dict['NON_CDF'] = dic
+
+
+                ## UPDATE SUMMARIES
+                # Dictionary for individual trial
+                with open(ptr['i_file_pkl'], 'wb') as f:
+                    pickle.dump(ds_dict['attrs'], f)
+
+                # Update expanded CSV
+                ds_dict['attrs'] = {k: v for k, v in var_dict.items() if isinstance(v, (str, int, float))}
+                complete_matrix.append(pd.DataFrame([var_dict]))                
 
                 # Update the larger summary dictionary, move on to next trial
                 all_dicts[f'tri_{k:05}'] = ptr['RESULT_FOLDER']

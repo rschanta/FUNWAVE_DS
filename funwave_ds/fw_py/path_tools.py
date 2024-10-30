@@ -43,6 +43,7 @@ def get_FW_paths():
     ##
     p = {'TD': temp_dir,
         'RN': os.path.join(temp_dir, fw_model, run_name),
+        'RN_perm': os.path.join(data_dir, fw_model, run_name),
         'RN_str': run_name,
 
         ###################################################################

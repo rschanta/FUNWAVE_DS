@@ -80,6 +80,7 @@ def parse_function(tf_record_files,
 def parse_variables(paths,
                 tensors_3D = [],
                 tensors_2D = [],
+                tensors_1D = [],
                 floats = [],
                 strings = [],
                 ints = []):
@@ -90,10 +91,10 @@ def parse_variables(paths,
     strings = strings + ['TITLE']
     
     # Build up Feature Description
-    feature_description = construct_feature_descr(tensors_3D, tensors_2D, floats, strings, ints)
+    feature_description = construct_feature_descr(tensors_3D, tensors_2D, tensors_1D,floats, strings, ints)
     
     # Specify the tensors
-    tensors = tensors_3D + tensors_2D
+    tensors = tensors_3D + tensors_2D + tensors_1D
     
     # Transform into dataset and parse
     dataset = tf.data.TFRecordDataset(paths)
