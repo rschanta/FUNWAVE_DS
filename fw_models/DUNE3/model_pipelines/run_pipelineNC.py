@@ -5,7 +5,7 @@ env = '/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/envs/TNC.env'
 
 # Files in the pipeline  
 generate_file = "/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/model_pipelines/TNC/gen.py"
-
+condense_file = "/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/model_pipelines/TNC/pro.py"
 # Standard Slurm Flags
 slurm_defaults = {
     "nodes": 1,
@@ -25,6 +25,7 @@ pipeline = pipe.SlurmPipeline(slurm_vars = slurm_defaults,env=env)
 # Steps of the pipeline
 steps = {
     pipe.generate_files: {"file": generate_file},
+    pipe.run_condense_outputs: {"file": condense_file,"slurm_edit": {"array": "1-3"}}
 }
 
 

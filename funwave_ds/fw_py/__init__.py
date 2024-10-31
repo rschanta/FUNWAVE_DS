@@ -1,6 +1,6 @@
 # Import specific functions or classes if needed
 from .design_matrix import *
-from .path_tools import *
+from .path_tools2 import *
 from .hydro import *
 from .load_files import *
 from .netcdf import *

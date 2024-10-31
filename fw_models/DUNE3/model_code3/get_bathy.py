@@ -17,6 +17,8 @@ def get_bathy(vars):
     WGR = vars['WGR']                   # Raw poisition of the wave gauges in X
     WGF = vars['WGF']                   # Filtered position of the wave gauges in X
     MWLR = vars['MWLR']                 # Raw MWL at wave gauges
+
+    
     WG_to_use = vars['WG_to_use']       # spectra position to use
     pi_1 = vars['pi_1']                 # Add on distance
     

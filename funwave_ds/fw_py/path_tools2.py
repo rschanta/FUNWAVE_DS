@@ -67,25 +67,28 @@ def get_FW_paths():
         ###################################################################
         # INPUTS: PROCESSED INPUT FILES
         'I': os.path.join(data_dir, fw_model, run_name, 'inputs-proc'),
-        'Id': os.path.join(data_dir, fw_model, run_name, 'inputs-proc', 'In_d.pkl'),
         'Im': os.path.join(data_dir, fw_model, run_name, 'inputs-proc', 'Im.csv'),
         'Ih': os.path.join(data_dir, fw_model, run_name, 'inputs-proc', 'Ih.h5'),
-        'If': os.path.join(data_dir, fw_model, run_name, 'inputs-proc', 'If.csv'),
-        # OUTPUTS: DIRECTORY FOR PROCESSED/CONDENSED TIME SERIES OUTPUT
-        'O': os.path.join(data_dir, fw_model, run_name, 'outputs-proc'),
-        'O_': os.path.join(data_dir, fw_model, run_name, 'outputs-proc', 'Out_'),
+
+        # NET CDF DATA 
+        'nc': os.path.join(data_dir, fw_model, run_name, 'net_cdf'),
+
         # LOG DATA: CODE USED TO GENERATE/PROCESS DATA
         'L': os.path.join(data_dir, fw_model, run_name, 'log'),
-        # BATHYMETRY FIGURES
-        'bF': os.path.join(data_dir, fw_model, run_name, 'bathy_fig'),
-        'bF_': os.path.join(data_dir, fw_model, run_name, 'bathy_fig', 'bathy_fig_'),
-        # SPECTRA FIGURES
-        'spF': os.path.join(data_dir, fw_model, run_name, 'spectra_fig'),
-        'spF_': os.path.join(data_dir, fw_model, run_name, 'spectra_fig', 'spectra_fig_'),
+
+
+        ## FIGURES
+        'fig': os.path.join(data_dir, fw_model, run_name, 'figures'),
+        # Bathymetry
+        'bF': os.path.join(data_dir, fw_model, run_name, 'figures','bathy'),
+        'bF_': os.path.join(data_dir, fw_model, run_name, 'figures', 'bathy', 'bathy_fig_'),
+        # Spectra
+        'spF': os.path.join(data_dir, fw_model, run_name, 'figures','spectra'),
+        'spF_': os.path.join(data_dir, fw_model, run_name, 'figures', 'spectra', 'spectra_fig_'),
+        
         # ANIMATIONS
         'ani': os.path.join(data_dir, fw_model, run_name, 'animations'),
-        # NET CDFS
-        'nc': os.path.join(data_dir, fw_model, run_name, 'net_cdf'),
+        
     }
 
     return p
@@ -95,30 +98,36 @@ def make_FW_paths():
     # Get list of directories from list_FW_dirs
     p = get_FW_paths()
     print('Started Directory Creation...')
+
     # RUN_NAME
     os.makedirs(p['RN'], exist_ok=True)
+    
     # INPUTS: `input.txt` TEXT FILES 
     os.makedirs(p['i'], exist_ok=True)
     # INPUTS: PROCESSED INPUT FILES
     os.makedirs(p['I'], exist_ok=True)
+   
     # OUTPUTS: DIRECTORY FOR RAW TIME SERIES OUTPUT
     os.makedirs(p['o'], exist_ok=True)
-    # OUTPUTS: DIRECTORY FOR PROCESSED/CONDENSED TIME SERIES OUTPUT
-    os.makedirs(p['O'], exist_ok=True)
+    
     # LOG DATA: CODE USED TO GENERATE/PROCESS DATA
     os.makedirs(p['L'], exist_ok=True)
     # BATHYMETRY FILES
     os.makedirs(p['b'], exist_ok=True)
-    # BATHYMETRY FIGURES
-    os.makedirs(p['bF'], exist_ok=True)
     # SPECTRA
     os.makedirs(p['sp'], exist_ok=True)
-    # SPECTRA FIGURES
+
+    # NETCDF
+    os.makedirs(p['nc'], exist_ok=True)
+
+    # FIGURES
+    os.makedirs(p['fig'], exist_ok=True)
+    os.makedirs(p['bF'], exist_ok=True)
     os.makedirs(p['spF'], exist_ok=True)
+    
     # ANIMATIONS
     os.makedirs(p['ani'], exist_ok=True)
-    # NETCDFS
-    os.makedirs(p['nc'], exist_ok=True)
+    
 
     print('Directories successfully created!')
 
@@ -138,32 +147,28 @@ def get_FW_tri_paths(tri_num=None):
             'input_name': f"input_{tri_num:05d}",
         # Input Name/Title
             'tri_name': f"tri_{tri_num:05d}",
+
+        ## TEMP FILES
         # Path to the input_XXXXX.txt file
             'i_file': f"{p['i_']}{tri_num:05d}.txt",
-        # Path to input_XXXXX.pkl file
-            'i_file_pkl': f"{p['I']}/tri_{tri_num:05d}.pkl",
         # Path to out_XXXXX folder (RESULT_FOLDER) to put into FUNWAVE 
             'RESULT_FOLDER': f"{p['o_']}{tri_num:05d}/",
         # Path to bathy_XXXXX.txt file
             'b_file': f"{p['b_']}{tri_num:05d}.txt",
         # Path to spectra_XXXXX.txt file
             'sp_file': f"{p['sp_']}{tri_num:05d}.txt",
-        # Path to condensed output structure
-            'out_file': f"{p['O_']}{tri_num:05d}.mat",
-            'out_record': f"{p['O_']}{tri_num:05d}.tfrecord",
-        # Path to dep.out
-            'dep_file': f"{p['o_']}{tri_num:05d}/dep.out",
-        # Path to cd_breakwater.out
-            'cd_breakwater_file': f"{p['o_']}{tri_num:05d}/cd_breakwater.out",
-        # Path to time_dt.out
-            'time_dt_file': f"{p['o_']}{tri_num:05d}/time_dt.txt",
+
+        ## NET CDF
+            'nc_file': f"{p['nc']}/tri_{tri_num:05d}.nc",
+            
+        ## FIGURES
         # Path to bathymetry figure
+            'b_fig': f"{p['bF_']}{tri_num:05d}.png",
             'b_fig': f"{p['bF_']}{tri_num:05d}.png",
         # Path to spectra figure
             'sp_fig': f"{p['spF_']}{tri_num:05d}.png",
 
-        # PATH TO NETCDF
-            'nc_file': f"{p['nc']}/tri_{tri_num:05d}.nc",
+
     }
 
     return ptr

@@ -68,17 +68,29 @@ class DomainObject(CoordinateObject):
         else:
             raise ValueError(f"Array dimensions {array.shape} do not match expected "
                              f"dimensions ({self.attrs.Mglob}, {self.attrs.Nglob})")
-            
+        
+
+    # Define bathymetry from a custom array
+    def z_from_1D_array(self,array):
+        ''' Get Z from an 1D array (ie- must be tiled to 3) '''
+    
+        # Ensure that it is dimensionally correct
+        if np.reshape(array, -1).shape[0] == self.attrs.Mglob:
+            # Add the artificial Y tiling
+            bathy_file = np.tile(array, (3, 1)).T
+            # Add a CoordVar 
+            setattr(self.vars, 'Z', CoordVar(['X','Y'],bathy_file))
+        else:
+            raise ValueError(f"Array dimensions {array.shape} does not match expected "
+                             f"dimension: ({self.attrs.Mglob})")
+        
+
     # Construct bathymetry from DEP_FLAT
     def z_from_dep_flat(self):
         pass
         # TODO: construct bathymetry from the depth flat case
             
-    # Print out the bathymetry file
-    def print_file(self,path):
-        bathy = self.vars.Z.value
-        np.savetxt(path, bathy, fmt="%d", delimiter=",")
-        return
+
 
 
 
@@ -160,18 +172,25 @@ class WavemakerObject(CoordinateObject):
         self.df_spectra_cut = df_spectra_cut
         
         # Add spectra along a coordinate
-        self.coords.per = df_spectra_cut['period']
-        self.vars.amp = CoordVar(['per'],df_spectra_cut['amplitude'])
-        self.vars.phase = CoordVar(['per'],df_spectra_cut['phase'])
-        
+        perr = df_spectra_cut['period'].to_numpy()
+        ampp = df_spectra_cut['amplitude'].to_numpy()
+
+        self.coords.period = df_spectra_cut['period']
+        self.attrs.PeakPeriod = perr[np.argmax(ampp)]
+        self.attrs.NumWaveComp = len(perr)
+        self.vars.amp2 = CoordVar(['period'],df_spectra_cut['amplitude'])
+        self.vars.phase2 = CoordVar(['period'],df_spectra_cut['phase'])
+        return
+    
     def add_1D_spectra(self,period=None,amplitude=None,phase=None):
         # Add some spectra with this information pre-calculated
         self.coords.per = period
         self.attrs.PeakPeriod = period[np.argmax(amplitude)]
+        self.attrs.NumWaveComp = len(period)
         self.vars.amp = CoordVar(['per'],amplitude)
         self.vars.phase = CoordVar(['per'],phase)
         self.vars.theta = CoordVar(['per'],0*phase)
-
+        return
 
 
 #%%

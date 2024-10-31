@@ -6,7 +6,7 @@ def get_stability_vars(vars):
     print('\t\tStarted applying variables dependent on stability...')
     # Unpack vars needed
     WKK = vars['WKK'] 
-    h = vars['DEPTH_FLAT']
+    h = vars['h']
 
     # Find wavelength (L) through linear dispersion root-finding
     sigma = 2 * np.pi / WKK.attrs.PeakPeriod

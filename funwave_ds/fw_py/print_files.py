@@ -5,12 +5,9 @@ import numpy as np
 def print_input_file(var_dict,ptr):
     print('\nPRINTING input.txt...')
     print('\tStarted printing input file...')
-    # Changed 8/19 to remove 'file' check and check by type instead
 
-    print(var_dict)
     var_dict_copy = copy.deepcopy(var_dict)
     with open(ptr['i_file'], 'w') as f:
-        # Remove files
         for var_name, value in var_dict_copy.items():
             if isinstance(value, (str, int, float)):
                 f.write(f"{var_name} = {value}\n")

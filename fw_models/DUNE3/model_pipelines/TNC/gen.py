@@ -13,7 +13,8 @@ function_sets = {'Standard' : [mod.get_pickle_data,
 
 
 # Plot functions
-plot_functions = []
+plot_functions = [fs.plot_1D_bathy_nc,
+                  fs.plot_TS_spectra_nc]
 
 # Filter functions
 filter_functions = []

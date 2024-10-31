@@ -108,9 +108,9 @@ def print_TS_spectra_nc(vars):
     
     # Unpack variables
     WKK = vars['WKK']
-    per = WKK.coords.per
-    cnn = WKK.vars.amp.value
-    enn = WKK.vars.phase.value
+    per = WKK.coords.period
+    cnn = WKK.vars.amp2.value
+    enn = WKK.vars.phase2.value
     ITER = vars['ITER']
     
     # Get directories

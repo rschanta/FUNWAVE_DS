@@ -3,6 +3,18 @@ from .get_stability import get_stability_vars
 from funwave_ds.fw_py.record import log_function_call
 import funwave_ds.fw_py as fpy
 
+## Interpolate Bathymetry correctly
+def interpolate_bathy(XF,ZF,DX):
+        ## Ensure points in X are uniqe
+        unique_X, indices = np.unique(XF, return_index=True)    # Unique X value indices
+        sorted_indices = np.sort(indices)                       # These indices sorted
+        bathyX = XF[sorted_indices]                             # Pre-interpolation X values    
+
+        ## Interpolate to grid
+        X_FW = np.arange(0, np.max(bathyX) + DX, DX)            # FUNWAVE X Points
+        Z_FW = np.interp(X_FW, XF, ZF)                          # FUNWAVE Z Points
+
+        return X_FW, Z_FW
 
 '''
 get_bathy_new()
@@ -10,58 +22,66 @@ get_bathy_new()
 '''
 def get_bathy(vars):
     print('\t\tStarted processing bathymetry...')
+
+    #-----------------------------------------------------------------
+    # Unpack Coordinate Objects
+    D3Object = vars['D3Object']   
+    # Coordinates
+    XR = D3Object.coords.D3r_X              # Raw X positions
+    XF = D3Object.coords.D3f_X              # Filtered X positions
+    WGR = D3Object.coords.D3r_loc_x         # Raw position of the wave gauges in X
+    WGF = D3Object.coords.D3f_loc_x         # Filtered position of the wave gauges in X
+    # Variables
+    HR = D3Object.vars.D3r_Z.value          # Raw bathymetry heights from bottom of flume
+    HF = D3Object.vars.D3f_Z.value          # Filtered bathymetry heights from bottom of flume
+    MWLR = D3Object.vars.D3r_MWL.value      # Raw MWL at wave gauges
     
     # Unpack Variables 
-    D3Object = vars['D3Object']                
-    pi_1 = vars['pi_1']
-    bathyX = D3Object.coords.D3f_X
-    bathyh = D3Object.vars.D3f_Z.value
-    MWL = D3Object.vars.D3r_MWL.value
+    WG_to_use = vars['WG_to_use']           # spectra position to use
+    pi_1 = vars['pi_1']                     # Add on distance
+    #-----------------------------------------------------------------
+    # Define datum using MWL
+    Y_datum = MWLR[0]
 
+    ## VERTICAL Processing
+    ver_shift = MWLR[0]                # Horizontal shift value
+    vars_to_vshift = [HR, HF, MWLR]    # Variables to shift vertically    
+    v_shifted_vars = [ver_shift - var for var in vars_to_vshift]               
+    ZR, ZF, MWLR = v_shifted_vars 
 
-    # Subtract mean of the MWL
-    datum = np.nanmean(MWL)
-    bathyZ = datum - bathyh
-
-    # Get height needed for stability calcs (just left-most height)
-    h = bathyZ[0]
-    vars['DEPTH_FLAT'] = h
-
-    # Make a call to get_stability_vars (log beforehand)
+    ## STABILITY: Calculate wavelenth and DX
+    vars['h'] = ZF[0]   # Pass through an h to use
     output_vars = log_function_call(get_stability_vars)(vars)
-    
     DX = output_vars['DX']
     L = output_vars['L_']
+
+    ## HORIZONTAL Processing
+    hor_shift = pi_1*L -   XF[0]                                   # Horizontal shift value      
+    vars_to_hshift = [XF, WGF, XR, WGR]                            # Variables to shift horizontally
+    h_shifted_vars = [var + hor_shift for var in vars_to_hshift]  
+    XF, WGF, XR, WGR = h_shifted_vars
+
+    ## Add on western points
+    XF = np.insert(XF,0,0)
+    ZF = np.insert(ZF,0,ZF[0])
+    
+    ## Interpolation
+    X_FW, Z_FW = interpolate_bathy(XF,ZF,DX)
+    
+    ## FUNWAVE variables needed
+    Xc_WK = WGF[WG_to_use]
+    DEP_WK = ZF[(np.abs(XF - 0)).argmin()]
     vars['DX'] = DX
     vars['DY'] = DX
-    vars['L_'] = L
-    # Calculate the amount to add, if needed, and add on
-    X_add = pi_1*L 
-    bathyX = bathyX + X_add
-
-    # Add the propagation distance
-    bathyX = np.insert(bathyX, 0, 0)
-    bathyZ = np.insert(bathyZ, 0, bathyZ[0])
-    
-    # Remove duplicate X values (issue for some trials, also from pi_1=0)
-    unique_X, indices = np.unique(bathyX, return_index=True)
-    sorted_indices = np.sort(indices)
-    bathyX = bathyX[sorted_indices]
-    bathyZ = bathyZ[sorted_indices]
-
-    # Interpolate to grid
-    X_out = np.arange(0, np.max(bathyX) + DX, DX)
-    Z_out = np.interp(X_out, bathyX, bathyZ)
-    bathy_file = np.tile(Z_out, (3, 1))
-
-
-    # Set Mglob and Nglob
-    vars['Mglob'] = int(len(X_out))
+    vars['Mglob'] = int(len(X_FW))
     vars['Nglob'] = int(3)
 
     # Make the Domain Object, and height to it
     DOM = fpy.DomainObject(vars)
-    DOM.z_from_array(bathy_file.T)
+    DOM.z_from_1D_array(Z_FW)
 
     print('\t\tSucessfully processed bathymetry...')
-    return {'DOM': DOM}
+    return {'DOM': DOM,
+            'DEP_WK': DEP_WK,
+            'Xc_WK': Xc_WK,
+            'L_': L}
