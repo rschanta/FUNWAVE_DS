@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from dataclasses import dataclass
-
+import xarray as xr
 #%% Variable along some coordinate
 class CoordVar:
     def __init__(self,dimensions,value):
@@ -91,7 +91,49 @@ class DomainObject(CoordinateObject):
         # TODO: construct bathymetry from the depth flat case
             
 
+class DomainObject2(xr.Dataset):
+    def __init__(self, var_dict):
 
+        # Construct X and Y coordinates from input parameters
+        X = var_dict['DX'] * np.arange(0, var_dict['Mglob'])
+        Y = var_dict['DY'] * np.arange(0, var_dict['Nglob'])
+
+        # Initialize the xarray Dataset with coordinates
+        super().__init__(coords={'X': X, 'Y': Y})
+        
+        # Store important spatial parameters as attributes
+        for key in ['Mglob', 'Nglob', 'DX', 'DY']:
+            self.attrs[key] = var_dict[key]
+
+
+    # Method to define bathymetry from a custom 2D array
+    def z_from_array(self, array):
+        """Get Z from an array and add it as a variable."""
+
+        # Adding Z as a DataArray with 'X' and 'Y' dimensions
+        if np.shape(array) == (self.attrs['Mglob'], self.attrs['Nglob']):
+            self['Z'] = (('X', 'Y'), array)  
+        else:
+            raise ValueError(f"Array dimensions {array.shape} do not match expected "
+                             f"dimensions ({self.attrs['Mglob']}, {self.attrs['Nglob']})")
+
+    # Method to define bathymetry from a custom 1D array, with Y tiling
+    def z_from_1D_array(self, array):
+        """Get Z from a 1D array, which will be tiled along the Y-axis."""
+
+        if np.reshape(array, -1).shape[0] == self.attrs['Mglob']:
+            # Tile the array along Y
+            bathy_array = np.tile(array, (self.attrs['Nglob'], 1)).T
+            self['Z'] = (('X', 'Y'), bathy_array)  # Adding Z as a DataArray with 'X' and 'Y' dimensions
+            
+        else:
+            raise ValueError(f"Array dimensions {array.shape} do not match expected "
+                             f"dimension: ({self.attrs['Mglob']})")
+
+    # Placeholder for constructing bathymetry from DEP_FLAT
+    def z_from_dep_flat(self):
+        """Construct bathymetry from the depth flat case."""
+        pass  # Implementation of this method as needed
 
 
         

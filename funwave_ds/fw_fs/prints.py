@@ -49,6 +49,43 @@ def print_bathy_nc(vars):
     print(f'\t\tDEPTH_FILE file successfully saved to: {ptr["b_file"]}')
     return {'DEPTH_FILE': ptr['b_file']}
 
+def print_bathy_nc2(vars):
+    print('\t\tStarted printing bathymetry file (DEPTH_FILE)...')
+
+    # Unpack variables
+    bathy_array = vars['DOM'].vars.Z.value.T
+    ITER = int(vars['ITER'])
+
+    # Get directories
+    d = fwb.get_directories()
+    p = fpy.get_FW_paths()
+    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
+
+    # Print
+    np.savetxt(ptr['b_file'], bathy_array, delimiter=' ', fmt='%f')
+    
+    print(f'\t\tDEPTH_FILE file successfully saved to: {ptr["b_file"]}')
+    return {'DEPTH_FILE': ptr['b_file']}
+
+
+def print_bathy_nc3(vars):
+    print('\t\tStarted printing bathymetry file (DEPTH_FILE)...')
+
+    # Unpack variables
+    DOM = vars['DOM']
+    bathy_array = DOM['Z'].values.T
+    ITER = int(vars['ITER'])
+
+    # Get directories
+    d = fwb.get_directories()
+    p = fpy.get_FW_paths()
+    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
+
+    # Print
+    np.savetxt(ptr['b_file'], bathy_array, delimiter=' ', fmt='%f')
+    
+    print(f'\t\tDEPTH_FILE file successfully saved to: {ptr["b_file"]}')
+    return {'DEPTH_FILE': ptr['b_file']}
 
 '''
 print_TS_spectra
@@ -111,6 +148,26 @@ def print_TS_spectra_nc(vars):
     per = WKK.coords.period
     cnn = WKK.vars.amp2.value
     enn = WKK.vars.phase2.value
+    ITER = vars['ITER']
+    
+    # Get directories
+    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
+    
+    # Print
+    np.savetxt(ptr['sp_file'], np.column_stack((per, cnn, enn)), fmt='%12.8f')
+    print(f'\t\tWaveCompFile successfully saved to: {ptr["sp_file"]}')
+    
+    return {'WaveCompFile': ptr['sp_file']}
+
+
+def print_TS_spectra_nc2(vars):
+    print('\t\tStarted printing spectra file (WaveCompFile)...')
+    
+    # Unpack variables
+    WKK = vars['WKK']
+    per = WKK.coords['period'].values
+    cnn = WKK['amp2'].values
+    enn = WKK['phase2'].values
     ITER = vars['ITER']
     
     # Get directories

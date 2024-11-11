@@ -1,11 +1,11 @@
 import funwave_ds.fw_hpc as pipe
 
 # Inputs to Change
-env = '/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/envs/TNC.env'
+env = '/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/envs/TNC4.env'
 
 # Files in the pipeline  
-generate_file = "/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/model_pipelines/TNC/gen.py"
-condense_file = "/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/model_pipelines/TNC/pro.py"
+generate_file = "/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/model_pipelines/TNC4/gen.py"
+condense_file = "/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/model_pipelines/TNC4/pro.py"
 # Standard Slurm Flags
 slurm_defaults = {
     "nodes": 1,
@@ -25,7 +25,7 @@ pipeline = pipe.SlurmPipeline(slurm_vars = slurm_defaults,env=env)
 # Steps of the pipeline
 steps = {
     pipe.generate_files: {"file": generate_file},
-    #pipe.RuCoDel: {"file": condense_file,"slurm_edit": {"array": "1-20"}}
+    pipe.RuCoDel: {"file": condense_file,"slurm_edit": {"array": "1-20"}}
 }
 
 

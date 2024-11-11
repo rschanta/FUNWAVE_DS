@@ -7,6 +7,7 @@ get_pickles
 import os
 import pickle
 import funwave_ds.fw_py as fpy
+
 def get_pickle_data(vars):
     print('\t\tStarted finding pickled data...')
     

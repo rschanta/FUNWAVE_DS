@@ -7,10 +7,11 @@
 #SBATCH --mail-user=rschanta@udel.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
-#SBATCH --array=1-3
-#SBATCH --job-name=run_condense_outputs
-#SBATCH --output=/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/logs/TNC/run_condense_outputs/out/out%a.out
-#SBATCH --error=/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/logs/TNC/run_condense_outputs/err/err%a.out
+#SBATCH --array=1-20
+#SBATCH --job-name=RuCoDel
+#SBATCH --dependency=29045412
+#SBATCH --output=/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/logs/TNC/RuCoDel/out/out%a.out
+#SBATCH --error=/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/logs/TNC/RuCoDel/err/err%a.out
 #
 
     ## Access environment variables
@@ -35,4 +36,6 @@
     
     python "/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/model_pipelines/TNC/pro.py"
 
+    echo "Deleting Raw Outputs from: ${TEMP_DIR}/${FW_MODEL}/${RUN_NAME}/outputs-raw/out_${task_id}"
+    rm -rf "${TEMP_DIR}/${FW_MODEL}/${RUN_NAME}/outputs-raw/out_${task_id}"
     

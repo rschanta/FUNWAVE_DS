@@ -35,7 +35,7 @@ def get_FW_paths():
     """
 
     d = get_env_dirs()
-    temp_dir = d['TEMP_DIR']
+    temp_dir = d['DATA_DIR']
     data_dir = d['DATA_DIR']
     fw_model = d['FW_MODEL']
     run_name = d['RUN_NAME']
@@ -98,12 +98,14 @@ def make_FW_paths():
     # Get list of directories from list_FW_dirs
     p = get_FW_paths()
     print('Started Directory Creation...')
-
+    print('Howydy! I am making paths')
     # RUN_NAME
+    print(p['RN'])
     os.makedirs(p['RN'], exist_ok=True)
     
     # INPUTS: `input.txt` TEXT FILES 
     os.makedirs(p['i'], exist_ok=True)
+    print(p['i'])
     # INPUTS: PROCESSED INPUT FILES
     os.makedirs(p['I'], exist_ok=True)
    
@@ -157,6 +159,9 @@ def get_FW_tri_paths(tri_num=None):
             'b_file': f"{p['b_']}{tri_num:05d}.txt",
         # Path to spectra_XXXXX.txt file
             'sp_file': f"{p['sp_']}{tri_num:05d}.txt",
+
+        # TIME FILE
+            't_file':  f"{p['o_']}{tri_num:05d}/time_dt.txt",
 
         ## NET CDF
             'nc_file': f"{p['nc']}/tri_{tri_num:05d}.nc",

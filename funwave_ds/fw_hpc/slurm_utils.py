@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 ###############################################################
 def make_log_folders(work_dir,run_name,matrix,all_slurm_flags):
+
     # Just one folder if no array
     if all_slurm_flags.get('array') is None:
         job_name = all_slurm_flags['job-name']
