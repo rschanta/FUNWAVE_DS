@@ -26,7 +26,7 @@ def run_condense_outputs(file=None,env=None):
     . /opt/shared/slurm/templates/libexec/openmpi.sh
     
     ## Construct name of file
-        input_dir="$TEMP_DIR/$FW_MODEL/$RUN_NAME/inputs/"
+        input_dir="$DATA_DIR/$FW_MODEL/$RUN_NAME/inputs/"
         task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
         input_file="${{input_dir}}input_${{task_id}}.txt"
     
@@ -46,7 +46,7 @@ def run_condense_outputs(file=None,env=None):
     return text_content
 
 
-
+## DELETE RAW DATA
 def delete_raws(file=None,env=None):
 
     text_content = f"""
@@ -63,6 +63,8 @@ def delete_raws(file=None,env=None):
     """
     return text_content
 
+
+## CONDENSE OUTPUTS
 def condense_outputs(file=None,env=None):
 
     text_content = f"""
@@ -81,7 +83,8 @@ def condense_outputs(file=None,env=None):
     """
     return text_content
 
-    ## RUN AND CONDENSE
+
+## RUN CONDENSE AND DELETE
 def RuCoDel(file=None,env=None):
 
     text_content = f"""

@@ -1,7 +1,11 @@
+
 import numpy as np
 import xarray as xr
 import funwave_ds.fw_py as fpy
 from pathlib import Path
+## Note: Both of these are needed to load in properly!
+from netCDF4 import Dataset
+import h5py
 
 def load_array(var_XXXXX: Path, Mglob: int, Nglob: int):
     '''
@@ -55,8 +59,12 @@ def get_into_netcdf():
 
     ptr = fpy.get_FW_tri_paths()
     
+
     # Get the NETCDF Data
+    print('GOT HERE!')
     ds = xr.load_dataset(ptr['nc_file'])
+    print('AND HERE!')
+
     Mglob, Nglob = ds.attrs['Mglob'], ds.attrs['Nglob']
     
     # Get paths to outputs
@@ -96,7 +104,8 @@ def get_into_netcdf():
             # Add variable
             ds = ds.assign( {var_name: ( ['t_AVE','Y','X'], var_value)})
 
-    ds.to_netcdf(ptr['nc_file'], mode="w")
+    print('AND HERE TOO!')
+    ds.to_netcdf(ptr['nc_file'],mode='w')
     print('NET-CDF Successfully saved!')
     return ds
 

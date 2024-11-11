@@ -25,7 +25,7 @@ pipeline = pipe.SlurmPipeline(slurm_vars = slurm_defaults,env=env)
 # Steps of the pipeline
 steps = {
     pipe.generate_files: {"file": generate_file},
-    pipe.RuCoDel: {"file": condense_file,"slurm_edit": {"array": "1-20"}}
+    pipe.run_condense_outputs: {"file": condense_file,"slurm_edit": {"array": "1-20"}}
 }
 
 
