@@ -4,7 +4,7 @@ from typing import  Dict, Any, Optional
 from pathlib import Path
 
 # In-module imports
-from .environments import get_env_dirs
+from .config_env import get_env_dirs
 
 
 '''
@@ -88,6 +88,8 @@ def get_FW_paths():
         
         # ANIMATIONS
         'ani': os.path.join(data_dir, fw_model, run_name, 'animations'),
+        'anie': os.path.join(data_dir, fw_model, run_name, 'animations','eta'),
+        'eta_ani': os.path.join(data_dir, fw_model, run_name, 'animations', 'eta', 'eta_'),
         
     }
 
@@ -129,6 +131,7 @@ def make_FW_paths():
     
     # ANIMATIONS
     os.makedirs(p['ani'], exist_ok=True)
+    os.makedirs(p['anie'], exist_ok=True)
     
 
     print('Directories successfully created!')
@@ -173,7 +176,9 @@ def get_FW_tri_paths(tri_num=None):
         # Path to spectra figure
             'sp_fig': f"{p['spF_']}{tri_num:05d}.png",
 
-
+        ## ANIMATIONS
+        # Path to bathymetry figure
+            'eta_ani': f"{p['eta_ani']}{tri_num:05d}.avi",
     }
 
     return ptr

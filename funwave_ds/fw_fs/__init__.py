@@ -3,4 +3,9 @@ from .filters import *
 from .plots import *
 from .prints import *
 from .animate import *
+from .ani_main import *
 from .spectra_tools import *
+from .ani_add_elements import *
+from .ani_main import *
+from .ani_setup import *
+from .ani_unpack import *

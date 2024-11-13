@@ -3,9 +3,9 @@ import os
 # Directories
 WORK_DIR = "/work/thsu/rschanta/RTS-PY"
 DATA_DIR =  "/work/thsu/rschanta/DATA"
-DEBUG_DATA_DIR = "/work/thsu/rschanta/DATA/DEBUG"
+#DEBUG_DATA_DIR = "/work/thsu/rschanta/DATA/DEBUG"
 TEMP_DIR = "/lustre/scratch/rschanta"
-DEBUG_TEMP_DIR = "/lustre/scratch/rschanta/DEBUG"
+#DEBUG_TEMP_DIR = "/lustre/scratch/rschanta/DEBUG"
 FW_MODEL = "DUNE3"
 RUN_NAME  = "TNC4"
 FW_EX = "/work/thsu/rschanta/RTS/funwave/v3.6H/exec/FW-REG"
@@ -27,6 +27,7 @@ for folder in subfolders:
 
 print(f"Created {FW_MODEL} folder with subdirectories: {', '.join(subfolders)}")
 
+
 ################################################################
 # Create the Environment File(s)
 #################################################################
@@ -47,20 +48,3 @@ CONDA_ENV={CONDA_ENV}
 with open(env_file_path, "w") as file:
     file.write(dotenv_file)
 
-## Debugging Environment
-# Path Name
-env_file_path = os.path.join(WORK_DIR, 'fw_models', FW_MODEL, 'envs', f'{RUN_NAME}_debug.env')
-
-## Main DotEnv
-dotenv_file = f"""WORK_DIR={WORK_DIR}
-DATA_DIR={DEBUG_DATA_DIR}
-TEMP_DIR={DEBUG_TEMP_DIR}
-FW_MODEL={FW_MODEL}
-RUN_NAME={RUN_NAME}
-ENV_FILE_PATH={env_file_path}
-PYTHONPATH={WORK_DIR}:{WORK_DIR}/fw_models/{FW_MODEL}
-FW_EX={FW_EX}
-CONDA_ENV={CONDA_ENV}
-"""
-with open(env_file_path, "w") as file:
-    file.write(dotenv_file)

@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.optimize import fsolve
-from funwave_ds.fw_py.record import log_function_call
+from funwave_ds.fw_py.config_record import log_function_call
 def get_stability_vars(vars):
     
     print('\t\tStarted applying variables dependent on stability...')

@@ -1,6 +1,6 @@
 import numpy as np
 from .get_stability import get_stability_vars
-from funwave_ds.fw_py.record import log_function_call
+from funwave_ds.fw_py.config_record import log_function_call
 
 '''
 get_bathy_new()

@@ -11,7 +11,7 @@ import funwave_ds.fw_hpc as fwb
 def animate_1D_Var(vars,plotvar):
     print(f"\t\tStarted Animation of {plotvar}...")
 
-    # Pull out variables
+    #-----------------------------------------------------------------
     outvar = vars[plotvar]
     mask = vars['mask']
     bathy = vars['bathy_array']
@@ -20,6 +20,9 @@ def animate_1D_Var(vars,plotvar):
     Xc_WK = vars['Xc_WK']
     Sponge_west_width = vars['Sponge_west_width']
     PLOT_INTV = vars['PLOT_INTV']
+    #-----------------------------------------------------------------
+
+    
     #timestep = vars['timestep']
 
     # Get/make necessary paths

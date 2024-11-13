@@ -9,7 +9,7 @@
 #SBATCH --export=ALL
 #SBATCH --array=1-20
 #SBATCH --job-name=run_condense_outputs
-#SBATCH --dependency=29113178
+#SBATCH --dependency=29113582
 #SBATCH --output=/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/logs/TNC4/run_condense_outputs/out/out%a.out
 #SBATCH --error=/work/thsu/rschanta/RTS-PY/fw_models/DUNE3/logs/TNC4/run_condense_outputs/err/err%a.out
 #

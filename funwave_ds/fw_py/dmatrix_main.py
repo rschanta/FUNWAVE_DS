@@ -10,13 +10,15 @@ from netCDF4 import Dataset
 import h5py
 
 # In-module imports
-from .path_tools2 import get_FW_paths, make_FW_paths,get_FW_tri_paths
-from .print_files import print_input_file
-from .record import log_function_call, save_logs_to_file
-from .utils import convert_to_number
-from .netcdf import *
+from .config_paths import get_FW_paths, make_FW_paths,get_FW_tri_paths
+from .utils_general import print_input_file
+from .config_record import log_function_call, save_logs_to_file
+from .utils_general import convert_to_number
+from .dmatrix_filter import apply_filter_set
+from .dmatrix_pipeline import print_supporting_file, plot_supporting_file
+from .nc_io import get_net_cdf
 
-#%% LOADING
+#%% LOADING DESIGN MATRIX 
 '''
     The functions in this section are used to load in the 
     design matrix and get all the possible combination of 
@@ -45,8 +47,7 @@ def load_design_matrix(matrix):
 
 def group_variables(design_matrix):
     '''
-    Find every possible permutation of variables (Cartesian Product) to generate
-    the ranges of variables in the ensemble of runs
+    Find all of the variables represented in the design matrix
 
     Arguments:
     - design_matrix (Pandas DataFrame): DataFrame of design matrix with valid
@@ -57,7 +58,6 @@ def group_variables(design_matrix):
         - key: name of variable
         - value: list of values it assumed
     '''
-
 
     grouped_vars = design_matrix.groupby('VAR',sort=False)
     variable_ranges = {}
@@ -82,14 +82,27 @@ def group_variables(design_matrix):
             variable_ranges[var_name] = list(dict.fromkeys(values))
     return variable_ranges     
             
-def combo_vars(matrix_file):
-        matrix = load_design_matrix(matrix_file)   # Pandas dataframe
-        variable_ranges = group_variables(matrix)  # Dictionary of lists
+def get_variable_permutations(matrix_file):
+    '''
+    Find all possible permutations (the cartesidan product) of the input
+    variables in the design matrix
 
-        # List of lists (all possible combinations)
-        permutations = list(product(*[variable_ranges[var] for var in variable_ranges]))    
+    Arguments:
+    - matrix_file (string): path to the design matrix csv
 
-        return variable_ranges,permutations
+    Returns:
+    - variable_ranges (Dictionary): 
+        - key: names of variable
+        - permutations: all possible permutations
+    '''
+
+    matrix = load_design_matrix(matrix_file)   # Pandas dataframe
+    variable_ranges = group_variables(matrix)  # Dictionary of lists
+
+    # List of lists (all possible combinations)
+    permutations = list(product(*[variable_ranges[var] for var in variable_ranges]))    
+
+    return variable_ranges,permutations
 
 #%% ADDING VALUES
 '''
@@ -150,215 +163,10 @@ def add_required_params(var_dict,k,set_name,ptr):
     var_dict['DEP_PARAM_PIPELINE'] = set_name               # Name of the pipeline used
     var_dict['RESULT_FOLDER'] = ptr['RESULT_FOLDER']        # RESULT_FOLDER for FUNWAVE
     var_dict['ITER'] = k                                    # Iteration number
-
     return var_dict
 
-#%% FILTERING
-'''
-The functions in this section are used to discard trials
-of an ensemble that do not meet some criteria set by a 
-filter function.
-'''
-def apply_filters(var_dict,functions_to_apply):
-    '''
-    Applies the defined filter functions to knock out trials that are not 
-    valid.
-
-    Arguments:
-    - var_dict (dictionary): dictionary of FUNWAVE parameters
-    - functions_to_apply (list): list of functions defining the filter functions
-
-    Returns:
-    - var_dict (df_failed_vars/None): DataFrame of failed variables
-    '''
-
-    failed_checks = []  # List to keep track of functions that return False
-    failed_vars = {}    # Dictionary to keep track of variables causing the failure
-    print(f'\nApplying FILTER functions')
-
-    # Loop through all filter functions
-    for func in functions_to_apply:
-        print(f'\tApplying FILTER function: {func.__name__}')
-        result = func(var_dict)
-        
-        # Record failure and key data
-        if not result:
-            print(f'\tFailed FILTER function: {func.__name__}')
-            # Record function name and what the iteration would have been
-            failed_checks.append(func.__name__)  
-            failed_vars['failed_checks'] = func.__name__ 
-            failed_vars['ITER'] = var_dict['ITER']
-
-            # Loop through variables
-            for k, v in var_dict.items():
-                if isinstance(v, (str, int, float)):
-                    failed_vars[k] = v
-
-    # Record failures out 
-    if failed_checks:
-        # Record which functions trigger the failure
-        failed_vars['failed_checks'] = ', '.join(failed_checks)
-        # Create the dataframe
-        df_failed_vars = pd.DataFrame(failed_vars, index=[0])
-
-        return df_failed_vars
-
-
-    else:
-        print("All FILTER functions passed successfully!")
-        return None
-    
-def apply_filter_set(var_dict,filter_sets):
-    failed_params = None
-    filter_failures = pd.DataFrame()            # Trials that fail filters
-
-    # If filter sets are present, apply them:
-    if filter_sets:
-        apply_filters(var_dict, filter_sets)
-
-    # Record the failutres should they occur
-    if failed_params is not None:
-        filter_failures = pd.concat([filter_failures, failed_params], ignore_index=True, sort=False)
-        print(f'PERMUTATION DOES NOT PASS FILTER: SKIP')
-        return filter_failures
-    else:
-        return None 
-
-#%% PRINT/PLOT 
-'''
-The functions in this section are used to work through
-functions defined to print supporting files and generate
-plots related to the input. This is intended for files
-like bathymetry and spectra, but NOT the input.txt file 
-itself.
-'''
-
-def print_supporting_file(var_dict,functions_to_apply):
-    '''
-    Applies the functions of print functions for supporting files
-
-    Arguments:
-    - var_dict (dictionary): dictionary of FUNWAVE parameters
-    - functions_to_apply (list): list of print functions
-
-    Returns:
-
-    '''
-
-    print_path_vars = {}
-    print(f'\nApplying PRINT functions')
-    for func in functions_to_apply:
-        print(f'\tApplying PRINT function: {func.__name__}')
-        print_paths = func(var_dict)
-        # Merge path variables back into input
-        print_path_vars.update(print_paths)
-        var_dict = {**var_dict, **print_path_vars}
-    print(f'All PRINT functions completed successfully!')
-    return var_dict
-
-def plot_supporting_file(var_dict,functions_to_apply):
-    '''
-    Applies the functions of plot functions for supporting files
-
-    Arguments:
-    - var_dict (dictionary): dictionary of FUNWAVE parameters
-    - functions_to_apply (list): list of plot functions
-
-    Returns:
-    - var_dict (df_failed_vars/None): DataFrame of failed variables
-    '''
-
-    print(f'\nApplying PLOT functions')
-    for func in functions_to_apply:
-        print(f'\tApplying PLOT function: {func.__name__}')
-        func(var_dict)
-    print(f'All PLOT functions completed successfully!')
-    
-    return
 
 #%% SUMMARY FILES
-'''
-3 Summary files are created for each ensemble:
-    - .nc (NETCDF): All variables  that are valid types
-            for NetCDF files will be stored to .nc files.
-
-    - .csv (via pandas): A "complete" design matrix is 
-            made for all the scalar/string parameters
-            for each ensemble.
-    
-    - .h5 (HDF5): Any variable that can't be stored to the 
-            NetCDF file will be serialized and stored to
-            an .h5 file. 
-'''
-
-def ensure_net_cdf_type(nc_data):
-
-    # Display Type
-    for var_name in nc_data.data_vars:
-        print(f"Variable '{var_name}' has data type: {nc_data[var_name].dtype}")
-
-    # Work through variables
-    for var_name in nc_data.data_vars:
-        if nc_data[var_name].dtype == 'float64':
-            nc_data[var_name] = nc_data[var_name].astype('float32')
-            print(f"Converted '{var_name}' to float32")
-
-    # Work through coordinates
-    for coord_name in nc_data.coords:
-        if nc_data.coords[coord_name].dtype == 'float64':
-            nc_data.coords[coord_name] = nc_data.coords[coord_name].astype('float32')
-            print(f"Converted coordinate '{coord_name}' to float32")
-
-    # Work through attributse
-    for attr_name, attr_value in nc_data.attrs.items():
-        if isinstance(attr_value, (float, np.float64)):
-            nc_data.attrs[attr_name] = float(attr_value)  # Standardize to Python float
-            print(f"Converted attribute '{attr_name}' to float32")
-        elif not isinstance(attr_value, (str, int, float)):
-            nc_data.attrs[attr_name] = str(attr_value)  # Convert unsupported types to string
-            print(f"Converted attribute '{attr_name}' to string")
-
-    return nc_data
-
-def get_net_cdf2(var_dict,ptr):
-
-    ## Initialization
-    xr_datasets = []  # List of xarray objects
-    non_nc_data = {}  # Dictionary of non-netcdf compatible variables                
-    
-    # Loop through all variables
-    for key, value in var_dict.items():
-        
-        # If the value is an xarray Dataset, add it directly to the list
-        if isinstance(value, xr.Dataset):
-            xr_datasets.append(value)
-
-            
-        # If the value is incompatible with NetCDF, store in non_nc_data
-        elif not isinstance(value, (int, float, str)):
-            print(f"Warning: `{key}` is not a valid type for NetCDF storage. "
-                  "It will be stored in a pickable dictionary instead.")
-            non_nc_data[key] = value  # Add to non-NetCDF data dictionary
-
-    ## Merge the dataset
-    try:
-        nc_data = xr.merge(xr_datasets)
-    except ValueError as e:
-        print("Error during merging: ", e)
-        return None, non_nc_data  
-    
-    ## Add attributes as strings to the dataset
-    for key, value in var_dict.items():
-        if isinstance(value, (int, float, str)):
-            nc_data.attrs[key] = value
-
-    # Ensure type compatability for everything
-    nc_data = ensure_net_cdf_type(nc_data)
-    # Note: It's really finicky about the h5netcdf engine, this gets weird quickly
-    nc_data.to_netcdf(ptr['nc_file'])
-    
-    return (nc_data, non_nc_data)
-
 def get_pandas_df(summary_data,p):
         dataframes = []
 
@@ -377,7 +185,7 @@ def get_pandas_df(summary_data,p):
 
 
 
-#%% Work through the design matrix
+#%% PROCESS THE DESIGN MATRIX
 def process_design_matrix_NC2(matrix_file, 
                 print_inputs = True,
                 function_sets = None, 
@@ -398,7 +206,7 @@ def process_design_matrix_NC2(matrix_file,
 
     
     ## Load in design matrix and parse variables
-    variable_ranges,permutations = combo_vars(matrix_file)
+    variable_ranges,permutations = get_variable_permutations(matrix_file)
     
     #------------------------ Beginning of Loop-----------------------------#   
     ## Loop through all possible permutations and pipelines
@@ -436,7 +244,7 @@ def process_design_matrix_NC2(matrix_file,
                     plot_supporting_file(var_dict,plot_sets)
 
                 ## Storing for summaries
-                data_proc,non_cdf_stuff = get_net_cdf2(var_dict,ptr)       # Split data into netCDF-able and non-netCDF-able 
+                data_proc,non_cdf_stuff = get_net_cdf(var_dict,ptr)       # Split data into netCDF-able and non-netCDF-able 
                 summary_data = {f'trial_{k:05}': data_proc}
 
                 ## Print `input.txt` for this given trial
