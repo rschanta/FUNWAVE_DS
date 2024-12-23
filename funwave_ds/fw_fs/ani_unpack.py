@@ -47,19 +47,27 @@ def extract_variables_out(ds,
                           dynamic_variables, 
                           attribute_labels):
     
-    # Get the coordinates
+    # Get the coordinates for static and dynamic variables
     all_variables = static_variables + dynamic_variables
     coord_list = list({var['coord'] for var in all_variables if 'coord' in var})
     coord_list = coord_list + ['Z','t_FW']
-    
-    # Get the variables
+    print(f'\tCoordinates Found: {coord_list}')
+
+    # Get static variables without coordinates
+    stat_list = list({var['key'] for var in all_variables if not 'coord' in var})
+    print(f'\tStatic Vars Found: {stat_list}')
+
+
+    # Get the dynamic variables
     var_list = list({var['key'] for var in dynamic_variables if 'key' in var})
     var_list = var_list + ['mask'] 
+    print(f'\tDynamic Variables Found: {var_list}')
 
     # Unpack them and combine
     c_ = unpack_coords(ds,coord_list)                           
-    v_ = unpack_coords(ds,var_list)                                     
-    a_ = unpack_attributes(ds,attribute_labels)  
+    v_ = unpack_variables(ds,var_list)                                     
+    a_ = unpack_attributes(ds,attribute_labels+stat_list)  
     variables  = {**c_, **v_, **a_}
+    print(f'\tAll Variables Found: {variables.keys()}')
     
     return variables

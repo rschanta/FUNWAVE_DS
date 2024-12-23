@@ -16,9 +16,6 @@ class DomainObject2(xr.Dataset):
         # Construct X and Y coordinates from input parameters
         X = var_dict['DX'] * np.arange(0, var_dict['Mglob'])
         Y = var_dict['DY'] * np.arange(0, var_dict['Nglob'])
-        print('X & Y shape')
-        print(X.shape)
-        print(Y.shape)
 
         # Initialize the xarray Dataset with coordinates
         super().__init__(coords={'X': X, 'Y': Y})

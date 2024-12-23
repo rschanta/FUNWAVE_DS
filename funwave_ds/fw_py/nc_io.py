@@ -151,9 +151,7 @@ def get_into_netcdf():
     
 
     # Get the NETCDF Data
-    print('GOT HERE!')
     ds = xr.load_dataset(ptr['nc_file'])
-    print('AND HERE!')
 
     Mglob, Nglob = ds.attrs['Mglob'], ds.attrs['Nglob']
     

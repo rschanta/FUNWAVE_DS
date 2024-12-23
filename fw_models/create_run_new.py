@@ -4,8 +4,8 @@ import os
 WORK_DIR = "/work/thsu/rschanta/RTS-PY"
 DATA_DIR =  "/work/thsu/rschanta/DATA"
 TEMP_DIR = "/lustre/scratch/rschanta"
-FW_MODEL = "REG"
-RUN_NAME  = "A2"
+FW_MODEL = "ONUR"
+RUN_NAME  = "A"
 FW_EX = "/work/thsu/rschanta/RTS/funwave/v3.6H/exec/FW-REG"
 CONDA_ENV = "tf_env"
 

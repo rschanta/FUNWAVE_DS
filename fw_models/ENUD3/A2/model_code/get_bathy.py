@@ -44,7 +44,7 @@ def get_bathy(vars):
     #-----------------------------------------------------------------
 
     ## VERTICAL Processing
-    ver_shift = MWLR[0]                # Horizontal shift value
+    ver_shift = MWLR[0]                # Vertical shift value
     vars_to_vshift = [HR, HF, MWLR]    # Variables to shift vertically    
     v_shifted_vars = [ver_shift - var for var in vars_to_vshift]               
     ZR, ZF, MWLR = v_shifted_vars 
@@ -85,5 +85,6 @@ def get_bathy(vars):
     return {'DOM': DOM,
             'DEP_WK': DEP_WK,
             'Xc_WK': Xc_WK,
-            'L_': L}
+            'L_': L,
+            'DATA_SHIFT': L_*pi_1}
     #-----------------------------------------------------------------

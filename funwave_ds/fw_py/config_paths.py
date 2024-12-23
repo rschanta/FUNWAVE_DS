@@ -35,7 +35,8 @@ def get_FW_paths():
     """
 
     d = get_env_dirs()
-    temp_dir = d['DATA_DIR']
+    # CHANGE LINE BACK TO TEMP_DIR
+    temp_dir = d['TEMP_DIR']
     data_dir = d['DATA_DIR']
     fw_model = d['FW_MODEL']
     run_name = d['RUN_NAME']
@@ -90,6 +91,8 @@ def get_FW_paths():
         'ani': os.path.join(data_dir, fw_model, run_name, 'animations'),
         'anie': os.path.join(data_dir, fw_model, run_name, 'animations','eta'),
         'eta_ani': os.path.join(data_dir, fw_model, run_name, 'animations', 'eta', 'eta_'),
+        'aniunder': os.path.join(data_dir, fw_model, run_name, 'animations','U_undertow'),
+        'undertow_ani': os.path.join(data_dir, fw_model, run_name, 'animations', 'U_undertow', 'U_undertow_'),
         
     }
 
@@ -100,14 +103,11 @@ def make_FW_paths():
     # Get list of directories from list_FW_dirs
     p = get_FW_paths()
     print('Started Directory Creation...')
-    print('Howydy! I am making paths')
     # RUN_NAME
-    print(p['RN'])
     os.makedirs(p['RN'], exist_ok=True)
     
     # INPUTS: `input.txt` TEXT FILES 
     os.makedirs(p['i'], exist_ok=True)
-    print(p['i'])
     # INPUTS: PROCESSED INPUT FILES
     os.makedirs(p['I'], exist_ok=True)
    
@@ -132,6 +132,7 @@ def make_FW_paths():
     # ANIMATIONS
     os.makedirs(p['ani'], exist_ok=True)
     os.makedirs(p['anie'], exist_ok=True)
+    os.makedirs(p['aniunder'], exist_ok=True)
     
 
     print('Directories successfully created!')
@@ -179,6 +180,7 @@ def get_FW_tri_paths(tri_num=None):
         ## ANIMATIONS
         # Path to bathymetry figure
             'eta_ani': f"{p['eta_ani']}{tri_num:05d}.avi",
+            'undertow_ani': f"{p['undertow_ani']}{tri_num:05d}.avi",
     }
 
     return ptr

@@ -217,43 +217,47 @@ def process_design_matrix_NC2(matrix_file,
 
         # Loop 2: Loop through every possible permutation of values
         for i, perm in enumerate(permutations, start=1):
-            print(f'\nSTARTED GENERATING TRIAL: {k:05}')
-            ptr = get_FW_tri_paths(tri_num=k)                           # Paths needed
+            try:
+                print(f'\nSTARTED GENERATING TRIAL: {k:05}',flush=True)
+                ptr = get_FW_tri_paths(tri_num=k)                           # Paths needed
 
-            # Dictionary of parameters (keys) and values (values) for this trial
-            var_dict = dict(zip(variable_ranges.keys(), perm))
+                # Dictionary of parameters (keys) and values (values) for this trial
+                var_dict = dict(zip(variable_ranges.keys(), perm))
             
-            ## Add on parameters
-            var_dict = add_required_params(var_dict,k,set_name,ptr)     # Required parameters
-            var_dict = add_dependent_values(var_dict,pipeline)          # Dependent parameters based on pipeline   
+                ## Add on parameters
+                var_dict = add_required_params(var_dict,k,set_name,ptr)     # Required parameters
+                var_dict = add_dependent_values(var_dict,pipeline)          # Dependent parameters based on pipeline   
 
-            ## Filtering conditions
-            failed_params = apply_filter_set(var_dict,filter_sets)      # Apply filter sets
-            if failed_params:
-                pass # TODO: implement failure condition
+                ## Filtering conditions
+                failed_params = apply_filter_set(var_dict,filter_sets)      # Apply filter sets
+                if failed_params:
+                    pass # TODO: implement failure condition
             
-            ## No failures: proceed to output
-            elif failed_params is None:    
+                ## No failures: proceed to output
+                elif failed_params is None:    
 
-                ## Create other files and plots needed
-                # Files other than input.txt    
-                if print_sets:                                                                                    
-                    var_dict = print_supporting_file(var_dict,print_sets)
-                # Plots to generate
-                if plot_sets:                                               
-                    plot_supporting_file(var_dict,plot_sets)
+                    ## Create other files and plots needed
+                    # Files other than input.txt    
+                    if print_sets:                                                                                    
+                        var_dict = print_supporting_file(var_dict,print_sets)
+                    # Plots to generate
+                    if plot_sets:                                               
+                        plot_supporting_file(var_dict,plot_sets)
 
-                ## Storing for summaries
-                data_proc,non_cdf_stuff = get_net_cdf(var_dict,ptr)       # Split data into netCDF-able and non-netCDF-able 
-                summary_data = {f'trial_{k:05}': data_proc}
+                    ## Storing for summaries
+                    data_proc,non_cdf_stuff = get_net_cdf(var_dict,ptr)       # Split data into netCDF-able and non-netCDF-able 
+                    summary_data = {f'trial_{k:05}': data_proc}
 
-                ## Print `input.txt` for this given trial
-                if print_inputs:
-                    print_input_file(data_proc.attrs,ptr)
+                    ## Print `input.txt` for this given trial
+                    if print_inputs:
+                        print_input_file(data_proc.attrs,ptr)
 
-                ## End loop iteration
-                print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
-                print('#'*40)
+                    ## End loop iteration
+                    print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
+                    print('#'*40)
+                    k = k + 1
+            except:
+                print(f'Problem with Trial {k}')
                 k = k + 1 
     #------------------------ End of Loop------------------------------#      
       
