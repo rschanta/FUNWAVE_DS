@@ -13,3 +13,9 @@
 *superr*
 *logs*
 *.egg-info*
+/ml_modles
+/runs
+/testbed
+/data
+/postprocessing
+*.out

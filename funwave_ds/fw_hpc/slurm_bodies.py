@@ -1,3 +1,6 @@
+
+
+
 ## GENERATE FILES
 def generate_files(file=None,env=None):
 
@@ -16,6 +19,28 @@ def generate_files(file=None,env=None):
     """
     return text_content
 
+## RUN FUNWAVE
+def run_FW(file=None,env=None):
+
+    text_content = f"""
+    ## Access environment variables
+    source {env}
+
+    . /opt/shared/slurm/templates/libexec/openmpi.sh
+    
+    ## Construct name of file
+        input_dir="$TEMP_DIR/$FW_MODEL/$RUN_NAME/inputs/"
+        task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
+        input_file="${{input_dir}}input_${{task_id}}.txt"
+    
+    ## Run FUNWAVE
+        ${{UD_MPIRUN}} $FW_EX "$input_file"
+
+
+    """
+    return text_content
+
+
 ## RUN AND CONDENSE
 def run_condense_outputs(file=None,env=None):
 
@@ -26,7 +51,7 @@ def run_condense_outputs(file=None,env=None):
     . /opt/shared/slurm/templates/libexec/openmpi.sh
     
     ## Construct name of file
-        input_dir="$DATA_DIR/$FW_MODEL/$RUN_NAME/inputs/"
+        input_dir="$TEMP_DIR/$FW_MODEL/$RUN_NAME/inputs/"
         task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
         input_file="${{input_dir}}input_${{task_id}}.txt"
     
@@ -85,7 +110,9 @@ def condense_outputs(file=None,env=None):
 
 
 ## RUN CONDENSE AND DELETE
-def RuCoDel(file=None,env=None):
+def run_condense_delete(file=None,env=None):
+    # Get function name and construct output file
+    func_name = run_condense_delete.__name__ 
 
     text_content = f"""
     ## Access environment variables
@@ -107,11 +134,22 @@ def RuCoDel(file=None,env=None):
     ## Export out environment variables
     export $(xargs <{env})
     export TRI_NUM=$SLURM_ARRAY_TASK_ID
+    export FUNC_NAME={func_name}
     
+    ## Run the Compression File
     python "{file}"
 
-    echo "Deleting Raw Outputs from: ${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
-    rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
+    ## Run the Log Deletions
+    #python /work/thsu/rschanta/RTS-PY/funwave_ds/fw_hpc/delete_log.py
+
+    ## Run the Raw Output Deletions
+    #echo "Deleting Input File(s)"
+    #rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/inputs/input_${{task_id}}.txt"
+    #rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/inputs/input_${{task_id}}.txt"
+
+    #echo "Deleting Raw Outputs from: ${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
+    #rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
+  
     """
     return text_content
 

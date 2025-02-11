@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='funwaveds',  # Replace with your project's name
-    version='0.1.0',  # Replace with your project's version
-    description='Python tools for FUNWAVE.',  # Replace with a description
-    author='Ryan Schanta',  # Replace with your name
-    author_email='rschanta@udel.edu',  # Replace with your email
-    url='https://github.com/rschanta/FUNWAVE_DS',  # Replace with your project's URL
-    packages=find_packages(),  # Automatically find all packages and subpackages
+    name='funwaveds',  
+    version='0.1.0',  
+    description='Python tools for FUNWAVE.',  
+    author='Ryan Schanta',  
+    author_email='rschanta@udel.edu',  
+    url='https://github.com/rschanta/FUNWAVE_DS',  
+    packages=find_packages(),  
     install_requires=[
         'absl-py==2.1.0',
         'astunparse==1.6.3',

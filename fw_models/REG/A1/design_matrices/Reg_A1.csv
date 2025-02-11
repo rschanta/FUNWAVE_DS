@@ -22,7 +22,7 @@ DY,Dependent,,,
 WAVEMAKER,WK_REG,,,
 DEP_WK,Dependent,,,
 Xc_WK,Dependent,,,
-Tperiod,,4.00,12.00,9
+Tperiod,,4.00,5,2
 AMP_WK,,0.20,1.00,9
 Theta_WK,0.00,,,
 Delta_WK,3.00,,,
@@ -55,3 +55,4 @@ ROLLER,T,,,
 UNDERTOW,T,,,
 ROLLER_EFFECT,T,,,
 FIELD_IO_TYPE,BINARY,,,
+Tperiod,,,,

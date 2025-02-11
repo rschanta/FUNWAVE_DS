@@ -1,14 +1,19 @@
 import os
 
-# Directories
+################################################################
+# INPUT HERE: directories
+################################################################
 WORK_DIR = "/work/thsu/rschanta/RTS-PY"
 DATA_DIR =  "/work/thsu/rschanta/DATA"
 TEMP_DIR = "/lustre/scratch/rschanta"
-FW_MODEL = "ONUR"
-RUN_NAME  = "A"
-FW_EX = "/work/thsu/rschanta/RTS/funwave/v3.6H/exec/FW-REG"
+FW_MODEL = "USACE_Empty_Tank"
+RUN_NAME  = "A2"
+FW_EX = "/work/thsu/rschanta/RTS-PY/funwave/FW_rts/exec/FW-REG"
 CONDA_ENV = "tf_env"
 
+################################################################
+# SETUP
+################################################################
 # Define the subfolders to create
 subfolders = ["design_matrices", f"logs", f"batch_scripts", "model_code", f"model_pipelines","envs"]
 
@@ -28,7 +33,7 @@ print(f"Created {FW_MODEL} folder with subdirectories: {', '.join(subfolders)}")
 
 ################################################################
 # Create the Environment File(s)
-#################################################################
+################################################################
 # Path Name
 env_file_path = os.path.join(base_dir, 'envs',f'{RUN_NAME}.env')
 
@@ -38,6 +43,7 @@ DATA_DIR={DATA_DIR}
 TEMP_DIR={TEMP_DIR}
 FW_MODEL={FW_MODEL}
 RUN_NAME={RUN_NAME}
+LOG_DIR={WORK_DIR}/fw_models/{FW_MODEL}/{RUN_NAME}/logs
 ENV_FILE_PATH={env_file_path}
 PYTHONPATH={WORK_DIR}:{WORK_DIR}/fw_models/{FW_MODEL}/{RUN_NAME}
 FW_EX={FW_EX}

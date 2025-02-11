@@ -7,9 +7,9 @@
 #SBATCH --mail-user=rschanta@udel.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
-#SBATCH --array=1-6561
+#SBATCH --array=1-16
 #SBATCH --job-name=RuCoDel
-#SBATCH --dependency=29127695
+#SBATCH --dependency=29589229
 #SBATCH --output=/work/thsu/rschanta/RTS-PY/fw_models/REG/A1/logs/RuCoDel/out/out%a.out
 #SBATCH --error=/work/thsu/rschanta/RTS-PY/fw_models/REG/A1/logs/RuCoDel/err/err%a.out
 #
@@ -20,10 +20,10 @@
     . /opt/shared/slurm/templates/libexec/openmpi.sh
     
     ## Construct name of file
-        input_dir="$DATA_DIR/$FW_MODEL/$RUN_NAME/inputs/"
+        input_dir="$TEMP_DIR/$FW_MODEL/$RUN_NAME/inputs/"
         task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
         input_file="${input_dir}input_${task_id}.txt"
-    
+        echo "Running ${input_file}"
     ## Run FUNWAVE
         ${UD_MPIRUN} $FW_EX "$input_file"
 

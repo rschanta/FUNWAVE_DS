@@ -1,10 +1,12 @@
 # `fw_fs`: Function Sets
 
-The `fw_fs` submodule contains *function sets* related to specific preprocessing or postprocessing steps in a pipeline. Although most pipelines are specific to a given model run, there are some particularly common operations that are defined here. 
+The `fw_fs` submodule contains *function sets* that may be useful for certain preprocessing and postprocessing pipelines. They are broadly divided by general function:
 
-|File| Purpose|Functions within|
-|:--|:--|:--|
-|[animate_backgrounds](./animate_backgrounds.py) | Common templates for creating animations of output data, such as $\eta$ vs. $t$ in the domain. | `animate_1D_Var`, `animate_2D_Var`| 
-|[animate](./animate.py) | Functions to animate specific output parameters from the templates in animate_backgrounds| `animate_1D_eta`, `animate_1D_u`, `animate_1D_v` | 
-|[filters](./filters.py) | Common filters to exclude invalid inputs (ie- deep water modeling) | `filter_kh` | 
-|[plots](./plots.py) | Functions to generate commonly-used plots (ie- bathymetry, spectra)| `plot_1D_bathy`, `plot_TS_spectra`| 
+|File| Purpose|
+|:--|:--|
+|[animation](./animation) | Create animations of FUNWAVE-TVD outputs from `.nc` formats as specified in `fw_py`| 
+|[filters](./filters) | Common filters to exclude invalid inputs (ie- deep water modeling) | 
+|[model_utils](./model_utils) | Tools that may be useful for specific modes of FUNWAVE-TVD, such as `DEPTH_TYPE=SLP`| 
+|[plots](./plots) | Create static diagrams (pngs, jpegs, etc) for bathymetry, spectra, etc. | 
+|[prints](./prints) | Print supporting input files that models may need, such as `bathy.txt` or `WaveCompFile.txt`| 
+|[wave_forcing](./wave_forcing) | Functionality for wavemakers, coupling, or any forcing terms| 

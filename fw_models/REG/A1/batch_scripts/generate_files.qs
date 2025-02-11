@@ -22,5 +22,5 @@
     export $(xargs </work/thsu/rschanta/RTS-PY/fw_models/REG/A1/envs/A1.env)
     
     ## Run File
-    python "/work/thsu/rschanta/RTS-PY/fw_models/REG/A1/model_pipelines/gen.py"
+    python "/work/thsu/rschanta/RTS-PY/fw_models/n2025/A/model_pipelines/gen.py"
     

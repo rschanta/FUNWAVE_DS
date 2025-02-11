@@ -1,3 +1,4 @@
+"""
 def calculate_skewness(eta):
      '''
     Calculates the skewness of a 1D time series in eta
@@ -66,3 +67,5 @@ def calculate_ska_1D(vars):
 
     return {'skewness': skewness,
             'asymmetry': asymmetry}
+
+"""
