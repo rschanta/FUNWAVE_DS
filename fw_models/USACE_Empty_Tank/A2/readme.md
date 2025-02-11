@@ -1,5 +1,4 @@
 # Empty Tank Energy Analysis
-[TOC]
 
 **NOTE**: This is intended to be a general overview of the process, with a bit more detail that I usually document for myself to explain the FUNWAVE_DS module in context a bit better. More fully fledged documentation is under development.
 
@@ -98,7 +97,7 @@ There is only one time-variable explicitly set in this study- `TOTAL_TIME`. This
 |:--|:--|:--|:--|
 |Total Simulation Time|$\tau_1$|300| Enough to get a steady state|
 
-Thus,  $\texttt{TOTAL\_TIME}=\tau_1\texttt{Tperiod}$ with $\tau_1=300$
+Thus,  $\texttt{TOTAL TIME}=\tau_1\texttt{Tperiod}$ with $\tau_1=300$
 
 ### $\xi$ Parameters: Setting Hydrodynamic Parameters Dynamically
 It also may make sense to set some parameters based on hydodynamic constraints. For example, the classic nonlinearity parameter $\epsilon=a/h$ or the classic depth parameter $\mu=kh$ may be of explicit interest. These are set by $\xi$ parameters.
@@ -109,7 +108,7 @@ In this study, we only use the nonlinearity parameter $\epsilon=a/h$ to dynamica
 |:--|:--|:--|:--|
 |$\epsilon=\frac{a}{h}$|$\xi_1$|0.05| Very linear waves, at least at generation|
 
-Thus the amplitude is set as $\texttt{AMP\_WK}=\xi_1\texttt{DEPTH\_FLAT}$
+Thus the amplitude is set as $\texttt{AMP WK}=\xi_1\texttt{DEPTH FLAT}$
 
 
 ## Preprocessing with FUNWAVE_DS
