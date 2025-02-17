@@ -13,45 +13,7 @@ Consistent with FUNWAVE-TVD best practices, sponge layers are placed on each end
 
 Since the primary interest is the behavior as the wave propagates eastwards, wave gauges are placed in the region labeled **East Region** at regular spacing. Beyond this region and before the sponge, an additional region is placed as a **Buffer Region** where waves can propagate uninhibited by the sponge. The western side of the domain is constructed such that the wavetrain can be generated without interference from the western sponge region. Because of this, there is some non-sponge region left of the wave maker labeled the **West Region**, where there are similarly no gages.
 
-### Representative Wavelength
-The width of these regions is set dynamically for each wave condition, based on a **representative wavelength** $\lambda_0$. This wavelength is calculated from the linear dispersion relationship for the input period `Tperiod` of the wavemaker and the depth `DEPTH_FLAT` of the domain:
 
-$$
-\sigma^2 = gk\tanh{kh}
-$$
-
-where:
-- $\sigma=\frac{2\pi}{T}$: the intrinsic angular frequency, which is just related to the period `Tperiod` for this setup
-- $h$: the depth of water, taken as `DEPTH_FLAT` in this setup
-- $g$: gravity (9.81 m/s^2)
-
-The representative wavelength is then taken as:
-
-$$
-\lambda_0 = \frac{2\pi}{k}
-$$
-
-Note that this is technically rounded to the nearest integer (see ) to make the numbers a bit nicer.
-
-### Representative Wavelength
-The width of these regions is set dynamically for each wave condition, based on a **representative wavelength** $\lambda_0$. This wavelength is calculated from the linear dispersion relationship for the input period `Tperiod` of the wavemaker and the depth `DEPTH_FLAT` of the domain:
-
-$$
-\sigma^2 = gk\tanh{kh}
-$$
-
-where:
-- $\sigma=\frac{2\pi}{T}$: the intrinsic angular frequency, which is just related to the period `Tperiod` for this setup
-- $h$: the depth of water, taken as `DEPTH_FLAT` in this setup
-- $g$: gravity (9.81 m/s^2)
-
-The representative wavelength is then taken as:
-
-$$
-\lambda_0 = \frac{2\pi}{k}
-$$
-
-Note that this is technically rounded to the nearest integer (see ) to make the numbers a bit nicer.
 
 
 ### Representative Wavelength

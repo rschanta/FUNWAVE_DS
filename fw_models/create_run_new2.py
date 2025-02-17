@@ -3,9 +3,9 @@ import os
 ################################################################
 # INPUT HERE: directories
 ################################################################
-WORK_DIR = "/work/thsu/rschanta/RTS-PY"
-DATA_DIR =  "/work/thsu/rschanta/DATA"
-TEMP_DIR = "/lustre/scratch/rschanta"
+WORK_DIR = r'C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\Research\FUNWAVE_DS\FUNWAVE_DS\tutorials\work_dir'
+DATA_DIR =  r'C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\Research\FUNWAVE_DS\FUNWAVE_DS\tutorials\data_dir'
+TEMP_DIR = r'C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\Research\FUNWAVE_DS\FUNWAVE_DS\tutorials\temp_dir'
 FW_MODEL = "USACE_Empty_Tank"
 RUN_NAME  = "A2"
 FW_EX = "/work/thsu/rschanta/RTS-PY/funwave/FW_rts/exec/FW-REG"
@@ -51,7 +51,7 @@ FW_MODEL={FW_MODEL}
 RUN_NAME={RUN_NAME}
 LOG_DIR={WORK_DIR}/fw_models/{FW_MODEL}/{RUN_NAME}/logs
 ENV_FILE_PATH={env_file_path}
-PYTHONPATH={WORK_DIR}:{WORK_DIR}/fw_models/{FW_MODEL}/{RUN_NAME}
+PYTHONPATH={WORK_DIR}:{WORK_DIR}/{FW_MODEL}/{RUN_NAME}
 FW_EX={FW_EX}
 CONDA_ENV={CONDA_ENV}
 """
