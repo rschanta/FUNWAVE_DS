@@ -13,15 +13,15 @@ def make_log_folders(work_dir,run_name,matrix,all_slurm_flags):
     # Just one folder if no array
     if all_slurm_flags.get('array') is None:
         job_name = all_slurm_flags['job-name']
-        out_err_dir = os.path.join(work_dir, 'fw_models',run_name,matrix, 'logs',job_name)
+        out_err_dir = os.path.join(work_dir,run_name,matrix, 'logs',job_name)
         os.makedirs(out_err_dir, exist_ok=True)
         all_slurm_flags['output'] =  os.path.join(out_err_dir,'out.out')
         all_slurm_flags['error'] =  os.path.join(out_err_dir, 'err.out') 
     # Separate dir for outputs and errors if an array
     else:
         job_name = all_slurm_flags['job-name']
-        out_dir = os.path.join(work_dir, 'fw_models',run_name,matrix, 'logs',job_name,'out')
-        err_dir = os.path.join(work_dir, 'fw_models',run_name,matrix, 'logs',job_name,'err')
+        out_dir = os.path.join(work_dir,run_name,matrix, 'logs',job_name,'out')
+        err_dir = os.path.join(work_dir,run_name,matrix, 'logs',job_name,'err')
         os.makedirs(out_dir, exist_ok=True)
         os.makedirs(err_dir, exist_ok=True)
         all_slurm_flags['output'] = os.path.join(out_dir,'out%a.out')
@@ -52,7 +52,7 @@ def get_directories():
 def write_slurm_script(work_dir,run_name,matrix,all_slurm_flags,script_body=None):
 
     # Make folder if it doesn't exist for batch scripts
-    batch_dir = os.path.join(work_dir, 'fw_models',run_name, matrix,'batch_scripts')
+    batch_dir = os.path.join(work_dir,run_name, matrix,'batch_scripts')
     os.makedirs(batch_dir, exist_ok=True)
     print(f'Batch script folder created: {batch_dir}')
     
