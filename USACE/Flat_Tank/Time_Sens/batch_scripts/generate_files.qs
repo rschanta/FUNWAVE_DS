@@ -2,14 +2,15 @@
 #
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=32
-#SBATCH --partition=thsu
+#SBATCH --partition=standard
 #SBATCH --time=7-00:00:00
 #SBATCH --mail-user=rschanta@udel.edu
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
+#SBATCH --exclude=r03n56
 #SBATCH --job-name=generate_files
-#SBATCH --output=/lustre/scratch/rschanta/Flat_Tank/Time_Sens/logs/generate_files/out.out
-#SBATCH --error=/lustre/scratch/rschanta/Flat_Tank/Time_Sens/logs/generate_files/err.out
+#SBATCH --output=/lustre/scratch/rschanta/USACE/Flat_Tank/Time_Sens/logs/generate_files/out.out
+#SBATCH --error=/lustre/scratch/rschanta/USACE/Flat_Tank/Time_Sens/logs/generate_files/err.out
 #
 
     ## Access environment variables

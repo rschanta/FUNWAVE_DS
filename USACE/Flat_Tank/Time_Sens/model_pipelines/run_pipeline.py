@@ -16,7 +16,8 @@ slurm_defaults = {
     "time": "7-00:00:00",
     "mail-user": "rschanta@udel.edu",
     "mail-type": "BEGIN,END,FAIL",
-    "export": "ALL"
+    "export": "ALL",
+    "exclude": "r03n56"
 }
 
 

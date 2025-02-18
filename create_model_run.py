@@ -7,11 +7,11 @@ lbase = r'/lustre/scratch/rschanta/'
 
 d = {
      'WORK_DIR': os.path.join(base,'USACE'),
-     'DATA_DIR': os.path.join(wbase,'data'),
-     'TEMP_DIR': lbase,
+     'DATA_DIR': os.path.join(wbase,'USACE_Outputs'),
+     'TEMP_DIR': os.path.join(lbase,'USACE'),
      'FW_MODEL': 'Flat_Tank',
      'RUN_NAME': 'DX_Sens',
-     'FW_EX': "/work/thsu/rschanta/RTS-PY/funwave/FW_rts/exec/FW-REG",
+     'FW_EX': "/work/thsu/rschanta/RTS-PY/funwave/FW_ds/executables/FW-STANDARD",
      'CONDA_ENV': "tf_env"}
 
 

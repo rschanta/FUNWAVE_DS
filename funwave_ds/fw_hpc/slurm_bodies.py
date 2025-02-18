@@ -42,7 +42,7 @@ def run_FW(file=None,env=None):
 
 
 ## RUN AND CONDENSE
-def run_condense_outputs(file=None,env=None):
+def run_condense(file=None,env=None):
 
     text_content = f"""
     ## Access environment variables
@@ -83,14 +83,14 @@ def delete_raws(file=None,env=None):
         task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
         input_file="${{input_dir}}input_${{task_id}}.txt"
 
-    echo "Deleting Raw Outputs from: ${{DATA_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
-    rm -rf "${{DATA_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
+    echo "Deleting Raw Outputs from: ${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
+    rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
     """
     return text_content
 
 
 ## CONDENSE OUTPUTS
-def condense_outputs(file=None,env=None):
+def condense(file=None,env=None):
 
     text_content = f"""
     ## Access environment variables
@@ -139,16 +139,13 @@ def run_condense_delete(file=None,env=None):
     ## Run the Compression File
     python "{file}"
 
-    ## Run the Log Deletions
-    #python /work/thsu/rschanta/RTS-PY/funwave_ds/fw_hpc/delete_log.py
-
     ## Run the Raw Output Deletions
     #echo "Deleting Input File(s)"
     #rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/inputs/input_${{task_id}}.txt"
     #rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/inputs/input_${{task_id}}.txt"
 
     #echo "Deleting Raw Outputs from: ${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
-    #rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
+    rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
   
     """
     return text_content

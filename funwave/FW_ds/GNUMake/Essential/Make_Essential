@@ -1,0 +1,264 @@
+#--------------------Use shell------------------------
+SHELL    = /bin/sh
+
+#-----Eliminate the leading and ending white space----
+FUNWAVE_DIR := $(strip $(FUNWAVE_DIR))
+WORK_DIR    := $(strip $(WORK_DIR))
+COMPILER    := $(strip $(COMPILER))
+PARALLEL    := $(strip $(PARALLEL))
+PRECISION   := $(strip $(PRECISION))
+EXEC        := $(strip $(EXEC))
+
+DEF_FC      := $(strip $(DEF_FC))
+DEF_FC_FLAG := $(strip $(DEF_FC_FLAG))
+MPI         := $(strip $(MPI))
+SPHERICAL   := $(strip $(SPHERICAL))
+DEBUG       := $(strip $(DEBUG))
+
+#----------------C Pre-processor----------------------
+#  note: CPP is not C++
+CPP       = /usr/bin/cpp
+CPPFLAGS = -P -traditional
+
+#----------------Fortran Compiler---------------------
+# if $(DEF_FC) is not empty
+ifneq ($(DEF_FC),$(filter $(DEF_FC), ''))
+   FC = $(DEF_FC)
+# if $(DEF_FC) is empty
+else
+   # intel
+   ifeq ($(COMPILER),$(filter $(COMPILER), intel))
+      USE_MOD = -module $(MOD_DIR)
+      ifeq ($(PARALLEL),$(filter $(PARALLEL), true))
+         ifeq ($(MPI),$(filter $(MPI), intelmpi))
+            FC = mpiifort
+         else
+            FC = mpif90
+         endif
+      else ifeq ($(PARALLEL),$(filter $(PARALLEL), false))
+         FC = ifort
+      endif
+   # gnu
+   else ifeq ($(COMPILER),$(filter $(COMPILER), gnu))
+      USE_MOD = -J $(MOD_DIR)
+      ifeq ($(PARALLEL),$(filter $(PARALLEL), true))
+         FC = mpif90
+      else ifeq ($(PARALLEL),$(filter $(PARALLEL), false))
+         FC = gfortran
+      endif
+   # pgi
+   else ifeq ($(COMPILER),$(filter $(COMPILER), pgi))
+      USE_MOD = -module $(MOD_DIR)
+      ifeq ($(PARALLEL),$(filter $(PARALLEL), true))
+         FC = mpif90
+      else ifeq ($(PARALLEL),$(filter $(PARALLEL), false))
+         FC = pgfortran
+      endif
+   # onyx hpc
+   else ifeq ($(COMPILER),$(filter $(COMPILER), onyx))
+      USE_MOD = -module $(MOD_DIR)
+      FC      = ftn
+      # Removing -lmpi flag if defined in CLIB
+      ifneq (, $(findstring -lmpi, $(CLIB)))
+         $(warning WARNING: lmpi flag detected in CLIB, Onyx does not require explicit linking of MPI libary. Removing -lmpi from CLIB. )
+         CLIB := $(filter-out -lmpi, $(CLIB))
+      endif
+      # Removing -Bdynamic flat if defined in CLIB
+      ifneq (, $(findstring -Bdynamic, $(CLIB)))
+         $(warning WARNING: Bdynamic flag detected in CLIB, Onyx executables do not work correctly with dynamic linking of shared libaries. Removing -Bdynamic from CLIB. )
+         CLIB := $(filter-out -Bdynamic, $(CLIB))
+      endif
+
+
+   # koehr and gaffney
+   else ifeq ($(COMPILER),$(filter $(COMPILER), koehr gaffney))
+      USE_MOD = -module $(MOD_DIR)
+      FC      = ifort
+   # invalid option
+   else
+      $(error Fatal ERROR: COMPILER=$(COMPILER) and DEF_FC is empty, Please correct the COMPILER or customize the DEF_FC.)
+   endif
+endif
+
+
+#----------Debug and optimization flags---------------
+# DEBUG=true
+ifeq ($(DEBUG),$(filter $(DEBUG), true))
+   ifeq ($(COMPILER),$(filter $(COMPILER), intel onyx gaffney koehr))
+      DEBFLGS  = -g -check -warn -fPIC
+      OPT      = -O0
+   else ifeq ($(COMPILER),$(filter $(COMPILER), gnu))
+      DEBFLGS  = -g -fcheck=all -Wall -fPIC
+      OPT      = -O0
+   else ifeq ($(COMPILER),$(filter $(COMPILER), pgi))
+      DEBFLGS  = -g -fPIC
+      OPT      = -O0
+   endif
+endif
+# DEBUG=false
+ifeq ($(DEBUG),$(filter $(DEBUG), false))
+   ifeq ($(COMPILER),$(filter $(COMPILER), intel onyx gaffney koehr))
+      DEBFLGS  = -fPIC
+      OPT      = -O2
+   else ifeq ($(COMPILER),$(filter $(COMPILER), gnu))
+      DEBFLGS  = -fPIC
+      OPT      = -O3
+   else ifeq ($(COMPILER),$(filter $(COMPILER), pgi))
+      DEBFLGS  = -w -fPIC
+      OPT      = -O2
+   endif
+endif
+
+
+
+#---------------Pre-processor flags-------------------
+ifeq ($(PRECISION),$(filter $(PRECISION), double))
+   FLAG_PRECISION = -DDOUBLE_PRECISION 
+else ifeq ($(PRECISION),$(filter $(PRECISION), single))
+   FLAG_PRECISION = 
+else
+   $(error Fatal ERROR: PRECISION=$(PRECISION), should be single or double.)
+endif
+
+ifeq ($(SPHERICAL),$(filter $(SPHERICAL), true))
+   FLAG_CARTESIAN = 
+else
+   FLAG_CARTESIAN = -DCARTESIAN
+endif
+
+ifeq ($(PARALLEL),$(filter $(PARALLEL), true))
+   FLAG_PARALLEL = -DPARALLEL
+endif
+
+ifeq ($(COMPILER),$(filter $(COMPILER), intel onyx koehr gaffney))
+   FLAG_INTEL = -DINTEL
+endif
+
+ifeq ($(DEBUG),$(filter $(DEBUG), true))
+   FLAG_DEBUG = -DDEBUG
+endif
+
+
+#----------------FUNWAVE flags-----------------------
+FLAG_ARGS = $(FLAG_1) $(FLAG_2) \
+			$(FLAG_3) $(FLAG_4) $(FLAG_5) $(FLAG_6) \
+			$(FLAG_7) $(FLAG_8) $(FLAG_9) $(FLAG_10)  \
+			$(FLAG_11) $(FLAG_12) $(FLAG_13) $(FLAG_14) \
+			$(FLAG_15) $(FLAG_16) $(FLAG_17) $(FLAG_18) \
+			$(FLAG_19) $(FLAG_20) $(FLAG_21) $(FLAG_22) \
+			$(FLAG_23) $(FLAG_24)
+CPPARGS = $(CPPFLAGS) $(DEF_FLAGS) $(FLAG_ARGS) \
+			$(FLAG_PARALLEL) $(FLAG_INTEL) $(FLAG_DEBUG) \
+			$(FLAG_PRECISION) $(FLAG_CARTESIAN)
+
+# remove extra whitespace between flags
+CPPARGS := $(shell echo $(CPPARGS) | sed 's~ \+~ ~g')
+
+#--------------------EXEC name------------------------
+ifeq ($(EXEC),$(filter $(EXEC), funwave))
+   FLAG_LIST = $(patsubst -D%,%,$(strip $(FLAG_ARGS)))
+   $(foreach word,$(FLAG_LIST),$(eval FLAG_FILENAME := $(FLAG_FILENAME)$(word)-))
+
+   ifneq ($(DEF_FC),$(filter $(DEF_FC), ''))
+      EXEC_SUFFIX = $(FLAG_FILENAME)-$(DEF_FC)
+   else
+      EXEC_SUFFIX = $(FLAG_FILENAME)-$(COMPILER)
+   endif
+
+   ifeq ($(PARALLEL),$(filter $(PARALLEL), false))
+      EXEC_SUFFIX := $(EXEC_SUFFIX)-sequential
+   else ifeq ($(PARALLEL),$(filter $(PARALLEL), true))
+      EXEC_SUFFIX := $(EXEC_SUFFIX)-parallel
+   endif
+
+   ifeq ($(PRECISION),$(filter $(PRECISION), single))
+      EXEC_SUFFIX := $(EXEC_SUFFIX)-single
+   else ifeq ($(PRECISION),$(filter $(PRECISION), double))
+      EXEC_SUFFIX := $(EXEC_SUFFIX)-double
+   endif
+
+   ifeq ($(DEBUG),$(filter $(DEBUG), true))
+      EXEC_SUFFIX := $(EXEC_SUFFIX)-DEBUG
+   endif
+
+   ifeq ($(SPHERICAL),$(filter $(SPHRICAL), true))
+      EXEC_SUFFIX := $(EXEC_SUFFIX)-SPHERICAL
+   endif
+
+   EXEC := $(EXEC)-$(EXEC_SUFFIX)
+endif
+
+EXEC := $(WORK_DIR)/$(EXEC)
+
+#------------------Library name-----------------------
+ifneq ($(DEF_FC),$(filter $(DEF_FC), ''))
+   FCFLAGS := $(DEF_FC_FLAG) $(INCS) -ffree-form
+else
+   FCFLAGS := $(DEBFLGS) $(OPT) $(INCS) -ffree-form
+endif
+
+# remove extra whitespace between flags
+FCFLAGS := $(shell echo $(FCFLAGS) | sed 's~ \+~ ~g')
+
+#----------------FUNWAVE souce code-------------------
+MODS  = mod_param.F mod_global.F mod_input.F mod_vessel.F mod_bathy_correction.F \
+        mod_meteo.F mod_parallel_field_io.F mod_sediment.F mod_tide.F mod_foam.F \
+        mod_tracer.F mod_subgrid.F mod_precipitation.F mod_time_spectra.F
+
+MAIN  = main.F bc.F fluxes.F init.F io.F tridiagnal.F       \
+        breaker.F derivatives.F dispersion.F etauv_solver.F \
+        sponge.F sources.F masks.F parallel.F statistics.F \
+        wavemaker.F mixing.F nesting.F misc.F samples.F\
+
+#-----------------Compile process---------------------
+SRC_DIR   = $(FUNWAVE_DIR)/src
+PRE_DIR   = $(WORK_DIR)/build/pre
+OBJ_DIR   = $(WORK_DIR)/build/obj
+MOD_DIR   = $(WORK_DIR)/build/mod
+
+SRCS := $(MODS)  $(MAIN)
+SRCS := $(patsubst %,$(SRC_DIR)/%,$(SRCS))
+PRES := $(patsubst $(SRC_DIR)/%.F,$(PRE_DIR)/%.f90,$(SRCS))
+OBJS := $(patsubst $(PRE_DIR)/%.f90,$(OBJ_DIR)/%.o,$(PRES))
+
+# keep the *.f90 files in $(PRE_DIR) after make
+# .PRECIOUS: $(PRE_DIR)/%.f90
+
+# pre-processors
+$(PRE_DIR)/%.f90 : $(SRC_DIR)/%.F
+	$(CPP) $(CPPARGS) $< $@
+
+# compile objective files
+$(OBJ_DIR)/%.o : $(PRE_DIR)/%.f90
+	$(FC) $(FCFLAGS) -c $< -o $@ $(USE_MOD)
+
+# link and generate the exec file
+$(EXEC): $(OBJS)
+	$(FC) $(FCFLAGS) -o $(EXEC) $(OBJS) $(LIBS)
+
+$(PRES): | $(PRE_DIR)
+
+$(PRE_DIR):
+	mkdir -p $(WORK_DIR)
+	mkdir -p $(PRE_DIR)
+	mkdir -p $(OBJ_DIR)
+	mkdir -p $(MOD_DIR)
+
+#--------------Cleaning targets-----------------------
+clean:
+		/bin/rm -rf $(WORK_DIR)/build
+
+clobber: clean
+		/bin/rm -f $(EXEC)
+
+extra-clobber:	clean
+		/bin/rm -rf $(WORK_DIR)
+
+
+#--------------Print the value of Make variable-------
+print-%  : ; @echo $* = $($*)
+
+#--------------Check the compiler and mpi version-----
+check-env:
+	mpif90 --version
+	mpirun --version

@@ -37,7 +37,7 @@ class SlurmPipeline:
         all_slurm_flags = {**self.slurm_vars, **slurm_edit, **dep_flags}
 
         # Make log folders, set in slurm flags
-        all_slurm_flags = make_log_folders(self.temp_dir, 
+        all_slurm_flags = make_log_folders(self.work_dir, 
                                            self.fw_model,
                                            self.run_name,
                                            all_slurm_flags)
