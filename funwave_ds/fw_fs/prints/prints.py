@@ -73,6 +73,7 @@ def print_TS_spectra(vars):
     return {'WaveCompFile': ptr['sp_file']}
 
 ## PRINT SPECTRA
+'''
 def print_WK_TIME_SERIES_SPECTRA(var_dict):
     print('\t\tStarted printing spectra file (WaveCompFile)...')
     
@@ -81,6 +82,27 @@ def print_WK_TIME_SERIES_SPECTRA(var_dict):
     per = df_spectra['per'].values
     amp = df_spectra['amp'].values
     pha = df_spectra['pha'].values
+    ITER = var_dict['ITER']
+    
+    # Get directories
+    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
+    
+    # Print
+    np.savetxt(ptr['sp_file'], np.column_stack((per, amp, pha)), fmt='%12.8f')
+    print(f'\t\tWaveCompFile successfully saved to: {ptr["sp_file"]}')
+    
+    return {'WaveCompFile': ptr['sp_file']}
+'''
+
+## PRINT SPECTRA
+def print_WK_TIME_SERIES_SPECTRA(var_dict):
+    print('\t\tStarted printing spectra file (WaveCompFile)...')
+    
+    # Unpack variables
+    WKK = var_dict['WK_Object']
+    per = WKK['period'].values
+    amp = WKK['amp'].values
+    pha = WKK['phase'].values
     ITER = var_dict['ITER']
     
     # Get directories

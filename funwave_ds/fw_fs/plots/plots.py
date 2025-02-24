@@ -10,7 +10,7 @@ import funwave_ds.fw_hpc as fwb
 ## BATHYMETRY PLOTS
 
 def plot_1D_bathy(vars):
-    print('\t\tStarted plotting bathymetry file...')
+    print('\t\tStarted creating plot for bathymetry...')
 
     #-----------------------------------------------------------------
     # Unpack Coordinate Objects
@@ -65,14 +65,13 @@ def plot_1D_bathy(vars):
     plt.grid()
     plt.xlabel('Cross-shore Position (x)')
     plt.ylabel('Depth (z)')
-    plt.show()
+    #plt.show()
 
     # Saving
     plt.savefig(ptr['b_fig'], dpi=200, bbox_inches='tight')
-    
     # Close and exit
     plt.close()
-    print(f'\t\tBathymetry file successfully saved to: {ptr["b_fig"]}')
+    print(f'\t\tBathymetry PLOT successfully saved to: {ptr["b_fig"]}')
     return 
 
 
@@ -147,8 +146,50 @@ def plot_1D_bathy_FRF(vars):
     print(f'\t\tBathymetry file successfully saved to: {ptr["b_fig"]}')
     return 
 
+def plot_1D_TS_spectra(vars):
+    print('\t\tStarted plotting spectra...')
+
+    #-----------------------------------------------------------------
+    WKK = vars['WK_Object']
+    period = WKK.coords['period'].values
+    amp = WKK['amp'].values
+    ITER = vars['ITER']
+    NumWaveComp = WKK.attrs['NumWaveComp']
+    PeakPeriod = WKK.attrs['PeakPeriod']
+    ATmax = max(amp)
+    #-----------------------------------------------------------------
 
 
+    # Get directories
+    d = fwb.get_directories()
+    p = fpy.get_FW_paths()
+    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
+
+    
+
+    # Plot period and amplitude
+    fig,ax = plt.subplots(dpi=200)
+    ax.plot(period,amp)
+    ax.scatter(PeakPeriod,ATmax,c='RED',zorder=3)
+
+
+    # Formatting
+    ax.grid()
+    ax.set_xlabel('Period (s)')
+    ax.set_ylabel('Amplitude (m)')
+    ax.set_title('Input Spectra: ' +  f'Trial: {ITER}\nNumWaveComp: {NumWaveComp}. PeakPeriod: {PeakPeriod}')
+    #plt.show()
+
+    # Saving
+    fig.savefig(ptr['sp_fig'], dpi=300, bbox_inches='tight')
+    
+    # Close and exit
+    plt.close(fig)
+    print(f'\t\tSpectra file successfully saved to: {ptr["sp_fig"]}')
+    
+    return
+
+'''
 ## SPECTRAL PLOTS
 def plot_TS_spectra(vars):
     print('\t\tStarted plotting spectra...')
@@ -225,3 +266,4 @@ def plot_WK_TIME_SERIES(vars):
     print(f'\t\tSpectra file successfully saved to: {ptr["sp_fig"]}')
     
     return
+'''

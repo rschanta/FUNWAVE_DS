@@ -26,3 +26,15 @@ def linear_dispersion_by_roots(T,h):
     L = 2 * np.pi / k
 
     return k,L
+
+
+def get_wavelength(var_dict):
+    '''
+    Gets the wavelength and wavenumber- relies on rep period
+    '''
+    Trep = var_dict['Trep']
+
+    
+
+
+    return {}

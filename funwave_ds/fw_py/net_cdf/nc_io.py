@@ -69,9 +69,11 @@ def get_net_cdf(var_dict,ptr):
             
         # If the value is incompatible with NetCDF, store in non_nc_data
         elif not isinstance(value, (int, float, str)):
-            print(f"\tWarning: `{key}` is not a valid type for NetCDF storage. "
-                  "It will be stored in a pickable dictionary instead.")
+            #print(f"\tWarning: `{key}` is not a valid type for NetCDF storage. "
+            #      "It will be stored in a pickable dictionary instead.")
             non_nc_data[key] = value  # Add to non-NetCDF data dictionary
+    print(f'\tWarning: Types of following variables incompatible with NetCDF: ignored: {list(non_nc_data.keys())}')
+
 
     ## Merge the dataset
     try:

@@ -5,19 +5,39 @@ from ..utils.stability import get_DX_Torres
 from ...fw_py.net_cdf import DomainObject3
 import numpy as np
 
-def interpolate_stable(X,Z,DX):
+def interpolate_align(X,Z,DX):
+    '''
+    Interpolates the FUNWAVE grid to a grid given by DX
+    and aligns such that the left point is 0
+    '''
     # Make sure unique X
     unique_X, indices = np.unique(X, return_index=True)
     sorted_indices = np.sort(indices)
     bathyX = X[sorted_indices]
 
     # Interpolate to grid
-    X_FW = np.arange(0, np.max(bathyX) + DX, DX)
+    X_FW = np.arange(np.min(bathyX), np.max(bathyX) + DX, DX)
     Z_FW = np.interp(X_FW, X, Z)
+
+    # Align left
+    X_FW = X_FW - X_FW[0]
 
     return X_FW,Z_FW
 
 
+def add_flat_distance(X,Z,
+                        distance,
+                        side='left'):
+    
+    # Total distance to add
+    if side == 'left':
+        X = np.insert(X, 0, X[0]-distance) # Insert arg 3 at arg 2
+        Z = np.insert(Z, 0, Z[0])
+    elif side == 'right':
+        X = np.append(X, X[-1] + distance)
+        Z = np.append(Z, Z[-1])
+
+    return X,Z
 
 
 

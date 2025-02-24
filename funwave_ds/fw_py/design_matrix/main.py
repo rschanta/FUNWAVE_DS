@@ -9,7 +9,7 @@ import h5py
 from ..configs import get_FW_paths, make_FW_paths,get_FW_tri_paths
 from ..utils import print_input_file
 from ..configs import save_logs_to_file
-from .add_params import add_dependent_values,add_required_params
+from .add_params import add_dependent_values,add_required_params, add_load_params
 from .load import load_group_matrix
 from .filter import apply_filters
 from .save_out import make_pass_parquet, make_fail_parquet, print_supporting_file, plot_supporting_file
@@ -18,6 +18,7 @@ from ..utils import print_input_file
 
 def process_design_matrix_NC(matrix_file, 
                 print_inputs = True,
+                load_sets = None,
                 function_sets = None, 
                 filter_sets = None,
                 print_sets = None, 
@@ -38,7 +39,11 @@ def process_design_matrix_NC(matrix_file,
     
     ## Load in design matrix, parse variables, and group
     df_permutations = load_group_matrix(matrix_file,function_sets,p)
-    
+
+    ## Load in data that should only be loaded once
+    if load_sets:
+        load_vars = add_load_params({},load_sets)
+
     ## Adjust start row if set
     if start_row is not None:
         df_permutations = df_permutations.iloc[start_row:]
@@ -52,6 +57,10 @@ def process_design_matrix_NC(matrix_file,
         ptr = get_FW_tri_paths(tri_num=k)  
         # Get row as a dictionary
         var_dict = row.to_dict()
+
+        # Merge in with the load set
+        if load_sets:
+            var_dict = {**var_dict, **load_vars}
     
         ## Add on dependent parameters
         pipe = function_sets[var_dict['PIPELINE']]
@@ -96,6 +105,7 @@ def process_design_matrix_NC(matrix_file,
             k = k + 1
        
     #------------------------ End of Loop-------------------------------
+
     ## Save out failures and successes
     df_pass = make_pass_parquet(pass_data,p)     
     df_fail = make_fail_parquet(fail_data,p)

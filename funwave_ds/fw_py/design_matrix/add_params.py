@@ -33,3 +33,11 @@ def add_required_params(var_dict,k,ptr):
     var_dict['PERM_I'] = k                                  # Permutation Number
     return var_dict
 
+
+def add_load_params(var_dict,functions_to_apply):
+    load_vars = {}
+    for func in functions_to_apply:
+        result = func(var_dict)
+        load_vars.update(result)
+        var_dict = {**var_dict, **load_vars}
+    return var_dict
