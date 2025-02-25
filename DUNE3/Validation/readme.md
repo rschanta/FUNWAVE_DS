@@ -48,23 +48,3 @@ The relevant parameters for the raw and filtered data are described below:
 | `t_end` | Simulation end time- note there is some "dead time" at the end that should be excluded
 
 Clearly, the main difference between the raw/filtered difference is the separation into incident and reflected waves. But it should also be noted that the bathymetry is cleaned a bit- the raw data doesn't take into account the position of a concrete slab in the tank.
-
-## Additional Parameters
-The following parameters are used in this experimental run:
-| **Parameter Name** | **Parameter**| Significance |
-|--|--|--|
-| $\pi_2$ | `PI_2` | Distance of `Xc_WK` in terms of wavelengths |
-| $\pi_3$ | `PI_3` | Distance of `Sponge_west_width` in terms of wavelengths |
-
-
-## Dependent Parameters
-One standard pipeline is used for this process:
-
-```python
-function_sets = {'Standard' : [mod.get_spectra,
-                               mod.set_spectra,
-                               mod.get_bathy,
-                               mod.get_hydro,
-                               mod.set_bathy]}
-```
-###  Pulling out the data `get_spectra`
