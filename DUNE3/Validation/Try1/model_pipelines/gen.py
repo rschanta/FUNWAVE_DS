@@ -1,28 +1,37 @@
-import funwave_ds.fw_py as fpy   # Basic functionality
-import funwave_ds.fw_fs as fs    # Common function set tools
-import model_code as mod         # Model specific code
+# Import packages
+from dotenv import load_dotenv
+import funwave_ds.fw_py as fpy
+import funwave_ds.fw_fs as ffs
+import model_code as mod
 
-# Define the design matrix
-matrix_file = '/work/thsu/rschanta/RTS-PY/fw_models/ENUD3/G2/design_matrices/G2.csv'
+# Matrix file
+matrix_file = '/work/thsu/rschanta/RTS-PY/DUNE3/Validation/Try1/design_matrices/Try1.csv'
+# Loading parameters
+load_sets = [mod.load_DUNE3_data]
 
 # Dependent Parameters
-function_sets = {'Standard' : [mod.get_pickle_data,
+function_sets = {'Standard' : [mod.get_spectra,
+                               mod.set_spectra,
                                mod.get_bathy,
-                               mod.set_pi_vars]}
+                               mod.get_hydro,
+                               mod.set_bathy]}
 
 
 # Plot functions
-plot_functions = [fs.plot_1D_bathy]
+plot_functions = [ffs.plot_1D_bathy,
+                  ffs.plot_1D_TS_spectra]
 
 # Filter functions
 filter_functions = []
 
 # Print functions
-print_functions = [fs.print_bathy]
+print_functions = [ffs.print_bathy,
+                   ffs.print_WK_TIME_SERIES_SPECTRA]
 
 
 # Write the files
-fpy.process_design_matrix_NC2(matrix_file, 
+fpy.process_design_matrix_NC(matrix_file, 
+                load_sets = load_sets,
                 function_sets = function_sets, 
                 filter_sets = filter_functions,
                 plot_sets = plot_functions,

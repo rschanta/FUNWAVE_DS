@@ -16,7 +16,7 @@
     source /work/thsu/rschanta/RTS-PY/fw_models/DUNE3/envs/D3e.env
     
     ## Activate Python Environment
-    conda activate $CONDA_ENV
+    conda activate tf_env  
     
     ## Export out environment variables
     export $(xargs </work/thsu/rschanta/RTS-PY/fw_models/DUNE3/envs/D3e.env)

@@ -2,7 +2,7 @@ import xarray as xr
 import os
 def load_DUNE3_data(var_dict):
     # Base path
-    base_path  = r'C:\Users\rschanta\DATABASE\Dune 3\Net_CDF'
+    base_path  = r'/work/thsu/rschanta/RTS-PY/data/D3nc'
     load_dict = {}
     
     for num in range(5,25):

@@ -157,7 +157,12 @@ def get_into_netcdf():
     ds = xr.load_dataset(ptr['nc_file'])
     # Get dimensions needed from inputs
     Mglob, Nglob = ds.attrs['Mglob'], ds.attrs['Nglob']
-    NumberStations = ds.attrs['NumberStations']
+
+    # Stations
+    try:
+        NumberStations = ds.attrs['NumberStations']
+    except:
+        print('No stations specified')
 
     # Get paths to outputs
     RESULT_FOLDER = (ptr['RESULT_FOLDER'])

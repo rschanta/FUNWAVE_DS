@@ -1,13 +1,14 @@
 import funwave_ds as fwd
 import os
 
-base = r'C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\Research\FUNWAVE_DS\FUNWAVE_DS'
-lbase = r'C:/Users/rschanta/HPC_Pretend/'
+base = r'/work/thsu/rschanta/RTS-PY/'
+dbase = r'/work/thsu/rschanta/data'
+lustre = r'/lustre/scratch/rschanta/'
 
 d = {
      'WORK_DIR': os.path.join(base,'DUNE3'),
-     'DATA_DIR': os.path.join(lbase,'DUNE3_Data'),
-     'TEMP_DIR': os.path.join(lbase,'DUNE3_Temp'),
+     'DATA_DIR': os.path.join(dbase,'DUNE3'),
+     'TEMP_DIR': os.path.join(lustre,'DUNE3'),
      'FW_MODEL': 'Validation',
      'RUN_NAME': 'Try1',
      'FW_EX': "/work/thsu/rschanta/RTS-PY/funwave/FW_ds/executables/FW-STANDARD",
