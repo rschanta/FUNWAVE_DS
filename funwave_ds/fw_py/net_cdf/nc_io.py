@@ -14,33 +14,36 @@ from pathlib import Path
 
 #%% INPUT PROCESSING
 def ensure_net_cdf_type(nc_data):
+    
     '''
     Enforces type compatability for NETCDF
     '''
+
     print('\tStarting type enforcement on NETCDF')
 
     # Display Type
     #for var_name in nc_data.data_vars:
     #    print(f"Variable '{var_name}' has data type: {nc_data[var_name].dtype}")
 
-    # Work through variables
+    # VARIABLES
     for var_name in nc_data.data_vars:
+        # Make sure all floats are float32
         if nc_data[var_name].dtype == 'float64':
             nc_data[var_name] = nc_data[var_name].astype('float32')
-            #print(f"Converted '{var_name}' to float32")
 
-    # Work through coordinates
+    # COORDINATES
     for coord_name in nc_data.coords:
+        # Make sure all floats are float32
         if nc_data.coords[coord_name].dtype == 'float64':
             nc_data.coords[coord_name] = nc_data.coords[coord_name].astype('float32')
-            #print(f"Converted coordinate '{coord_name}' to float32")
 
-    # Work through attributes
+    # ATTRIBUTES
     for attr_name, attr_value in nc_data.attrs.items():
+        # If numeric, convert to float
         if isinstance(attr_value, (float, np.float64)):
-            nc_data.attrs[attr_name] = float(attr_value)  # Standardize to Python float
-            #print(f"Converted attribute '{attr_name}' to float32")
-        # Unsupported type: Convert to string
+            nc_data.attrs[attr_name] = float(attr_value)  
+
+        # If anything else, coerce into string
         elif not isinstance(attr_value, (str, int, float)):
             nc_data.attrs[attr_name] = str(attr_value)  
             print(f"\tUnsupported Type: Converted attribute '{attr_name}' to string")
@@ -55,6 +58,7 @@ def get_net_cdf(var_dict,ptr):
     Coerces input data into a NETCDF file
     '''
     print('\nStarted compressing data to NETCDF...')
+    
     ## Initialization
     xr_datasets = []  # List of xarray objects
     non_nc_data = {}  # Dictionary of non-netcdf compatible variables                
@@ -69,9 +73,9 @@ def get_net_cdf(var_dict,ptr):
             
         # If the value is incompatible with NetCDF, store in non_nc_data
         elif not isinstance(value, (int, float, str)):
-            #print(f"\tWarning: `{key}` is not a valid type for NetCDF storage. "
-            #      "It will be stored in a pickable dictionary instead.")
             non_nc_data[key] = value  # Add to non-NetCDF data dictionary
+
+            
     print(f'\tWarning: Types of following variables incompatible with NetCDF: ignored: {list(non_nc_data.keys())}')
 
 

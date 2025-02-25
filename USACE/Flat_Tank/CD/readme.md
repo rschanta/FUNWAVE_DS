@@ -1,9 +1,10 @@
 # DX_Sens: Sensitivity Analysis of `CD` 
 
 ## Description
-This is a sensitivity analysis on `Cd`, done by imposing a region of non-zero friction specified some distance away from the wavemaker with some width
+This is a sensitivity analysis on `Cd`, done by imposing a region of non-zero friction specified some distance away from the wavemaker with some width. This is specified using the `FRICTION_FILE` option in FUNWAVE-TVD.
 
 ## Definition of Key Parameters
+![friction_diagram](./doc/friction_layer.PNG)
 The following parameters are used in this experimental run, as specified in [`DX_Sens.csv`](./design_matrices/DX_Sens.csv).
 
 ### Static Parameters
@@ -25,26 +26,12 @@ Here, we dynamically range over typical periods/depths for shallow water depths 
 |--|--|--|--|
 | Period | `Tperiod` | Ordinary gravity wave range | (2,16,15)
 | Water Depth | `DEPTH_FLAT` | Standard shallow water depths | (1,20,20)
-| $\pi_6$| `DEPTH_FLAT` | Standard shallow water depths | (1,20,20)
-| $\pi_7$ | `DEPTH_FLAT` | Standard shallow water depths | (1,20,20)
-| $C_D$ | `Cd` | Standard shallow water depths | (1,20,20)
+| $\pi_6$| `FRICTION_MATRIX` | Distance east (in wavelengths) of the non-zero friction area from the wavemaker| ?
+| $\pi_7$ | `FRICTION_MATRIX` | Width (in wavelengths) of the non-zero friction area from west-east | ?
+| $C_D$ | `Cd` | Value of the bottom friction coefficient | ?
 
 ### List Parameters
-The only list parameter is $\pi_6$, which corresponds to where in the range of stable `DX` values we are. Recall that the stable range for `DX` identified by Torres is:
-
-$$ \frac{h}{15}  < \texttt{DX} < \frac{\lambda_0}{60}$$
-
-So the value of `DX` is set by:
-
-$$ \frac{h}{15} + \pi_6 \left(\frac{\lambda_0}{60} - \frac{h}{15} \right)$$
-
-where $\pi_6$ can range from 0 (lower bound) to 1 (upper bound). The following values are used:
-| **Parameter Name** | **Parameter**| Significance |Values |
-|--|--|--|--|
-| $\pi_6$ | `PI_6` | Position in the stable range of `DX`| 0.15,  0.5, 0.85 |
-
-effectively testing 3 `DX` choices at the lower, middle, and upper ends of the stable range
-
+None
 
 ### Dependent Parameters
 The following parameters are calculated dynamically for each run to meet the constraints set by the problem:

@@ -69,3 +69,7 @@ Nondimensional parameters related to wave theory are denoted by $\xi$ parameters
 - `Time_Sens`: Sensitivity analysis of `TOTAL_TIME` on the calculation of wave statistics
 - `CD`: Sensitivity analysis of the `CD` bottom friction parameters
 
+## To Do List
+
+- Effect of global CD?
+- Effect of 
