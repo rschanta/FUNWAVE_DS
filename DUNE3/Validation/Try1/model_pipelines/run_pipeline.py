@@ -5,7 +5,7 @@ env = '/work/thsu/rschanta/RTS-PY/DUNE3/Validation/Try1/envs/Try1.env'
 
 # Files in the pipeline  
 generate_file = "/work/thsu/rschanta/RTS-PY/DUNE3/Validation/Try1/model_pipelines/gen.py"
-condense_file = "/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/Time_Sens/model_pipelines/pro.py"
+condense_file = "/work/thsu/rschanta/RTS-PY/DUNE3/Validation/Try1/model_pipelines/pro.py"
 
 
 # Standard Slurm Flags

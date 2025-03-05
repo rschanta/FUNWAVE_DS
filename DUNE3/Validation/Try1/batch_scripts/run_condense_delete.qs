@@ -10,7 +10,7 @@
 #SBATCH --exclude=r03n56
 #SBATCH --array=1-20
 #SBATCH --job-name=run_condense_delete
-#SBATCH --dependency=29761563
+#SBATCH --dependency=29774532
 #SBATCH --output=/work/thsu/rschanta/RTS-PY/DUNE3/Validation/Try1/logs/run_condense_delete/out/out%a.out
 #SBATCH --error=/work/thsu/rschanta/RTS-PY/DUNE3/Validation/Try1/logs/run_condense_delete/err/err%a.out
 #
@@ -37,7 +37,7 @@
     export FUNC_NAME=run_condense_delete
     
     ## Run the Compression File
-    python "/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/Time_Sens/model_pipelines/pro.py"
+    python "/work/thsu/rschanta/RTS-PY/DUNE3/Validation/Try1/model_pipelines/pro.py"
 
     ## Run the Raw Output Deletions
     #echo "Deleting Input File(s)"
