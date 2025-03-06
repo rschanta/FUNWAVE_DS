@@ -29,7 +29,7 @@ pipeline = pipe.SlurmPipeline(slurm_vars = slurm_defaults,
 # Steps of the pipeline
 steps = {
     pipe.generate_files: {"file": generate_file},
-    pipe.run_condense_delete: {"file": condense_file,"slurm_edit": {"array": "7-780"}}
+    pipe.run_condense_delete: {"file": condense_file,"slurm_edit": {"array": "1-780"}}
 }
 
 

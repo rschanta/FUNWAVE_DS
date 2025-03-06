@@ -8,9 +8,9 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --export=ALL
 #SBATCH --exclude=r03n56
-#SBATCH --array=7-780
+#SBATCH --array=1-780
 #SBATCH --job-name=run_condense_delete
-#SBATCH --dependency=29709103
+#SBATCH --dependency=29804011
 #SBATCH --output=/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/DX_Sens/logs/run_condense_delete/out/out%a.out
 #SBATCH --error=/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/DX_Sens/logs/run_condense_delete/err/err%a.out
 #
