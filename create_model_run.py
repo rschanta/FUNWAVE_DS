@@ -7,11 +7,11 @@ dbase = r'C:\Users\rschanta\HPC_Pretend'
 lustre = r'C:\Users\rschanta\HPC_Pretend'
 
 d = {
-     'WORK_DIR': os.path.join(base,'USACE'),
-     'DATA_DIR': os.path.join(dbase,'USACE'),
-     'TEMP_DIR': os.path.join(lustre,'USACE'),
-     'FW_MODEL': 'TRAP_BW',
-     'RUN_NAME': '_',
+     'WORK_DIR': os.path.join(base,'CIEG_682'),
+     'DATA_DIR': os.path.join(dbase,'CIEG_682'),
+     'TEMP_DIR': os.path.join(lustre,'CIEG_682'),
+     'FW_MODEL': 'BASE',
+     'RUN_NAME': 'Try1',
      'FW_EX': "/work/thsu/rschanta/RTS-PY/funwave/FW_ds/executables/FW-STANDARD",
      'CONDA_ENV': "tf_env"}
 

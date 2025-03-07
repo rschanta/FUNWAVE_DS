@@ -161,6 +161,13 @@ class DomainObject3(xr.Dataset):
         else:
             raise ValueError(f"Array dimensions {array.shape} do not match expected "
                              f"dimension: ({self.attrs['Mglob']})")
+            
+    def z_from_2D_array(self, bathy_array):
+        """Get Z from a 2D array, which will be tiled along the Y-axis. Must be 0 aligned"""
+
+        self['Z'] = (('X', 'Y'), bathy_array)  
+            
+        return
 
     def add_stations(self,
                      Mglob_pos=None,

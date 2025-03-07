@@ -58,7 +58,7 @@ def set_domain(var_dict):
                             DY = DX,
                             Mglob = Mglob,
                             Nglob = 3)
-    DOM.z_flat(DEPTH_FLAT)
+    DOM.z_from_2D_array(DEPTH_FLAT)
 
 
     # Return
