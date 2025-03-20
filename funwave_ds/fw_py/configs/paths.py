@@ -99,6 +99,10 @@ def get_FW_paths():
         'ani': os.path.join(data_dir, fw_model, run_name, 'animations'),
         'anie': os.path.join(data_dir, fw_model, run_name, 'animations','eta'),
         'eta_ani': os.path.join(data_dir, fw_model, run_name, 'animations', 'eta', 'eta_'),
+        'aniu': os.path.join(data_dir, fw_model, run_name, 'animations','u'),
+        'u_ani': os.path.join(data_dir, fw_model, run_name, 'animations', 'u', 'u_'),
+        'aniv': os.path.join(data_dir, fw_model, run_name, 'animations','v'),
+        'v_ani': os.path.join(data_dir, fw_model, run_name, 'animations', 'v', 'v_'),
         'aniunder': os.path.join(data_dir, fw_model, run_name, 'animations','U_undertow'),
         'undertow_ani': os.path.join(data_dir, fw_model, run_name, 'animations', 'U_undertow', 'U_undertow_'),
         
@@ -143,6 +147,8 @@ def make_FW_paths():
     # ANIMATIONS
     os.makedirs(p['ani'], exist_ok=True)
     os.makedirs(p['anie'], exist_ok=True)
+    os.makedirs(p['aniu'], exist_ok=True)
+    os.makedirs(p['aniv'], exist_ok=True)
     os.makedirs(p['aniunder'], exist_ok=True)
     
 
@@ -196,6 +202,8 @@ def get_FW_tri_paths(tri_num=None):
         ## ANIMATIONS
         # Path to bathymetry figure
             'eta_ani': f"{p['eta_ani']}{tri_num:05d}.avi",
+            'u_ani': f"{p['u_ani']}{tri_num:05d}.avi",
+            'v_ani': f"{p['v_ani']}{tri_num:05d}.avi",
             'undertow_ani': f"{p['undertow_ani']}{tri_num:05d}.avi",
     }
 

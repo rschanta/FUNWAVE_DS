@@ -243,8 +243,9 @@ def get_into_netcdf():
             # Add variable
             ds = ds.assign( {var_name: ( ['t_AVE','Y','X'], var_value)})
 
-        
-
-    ds.to_netcdf(ptr['nc_file'],mode='w')
+    # EDIT 3-17
+    comp = dict(zlib=True, complevel=4)  # Compression level 1 (low) to 9 (high)
+    encoding = {var: comp for var in ds.data_vars}  # Apply to all variables
+    ds.to_netcdf(ptr['nc_file'],mode='w', encoding=encoding)
     print('NET-CDF Successfully saved!')
     return ds

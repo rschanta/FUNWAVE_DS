@@ -195,6 +195,7 @@ def make_contour_plot(var_dict):
     Sponge_west_width = var_dict['Sponge_west_width']
     a = var_dict['AMP_WK']
     Tperiod = var_dict['Tperiod']
+    Theta_WK = var_dict['Theta_WK']
     # [END] UNPACK ------------------------------------------------------------
     
     
@@ -213,7 +214,7 @@ def make_contour_plot(var_dict):
     
     # Add wavemaker/sponge
     ax.axvline(Xc_WK,
-               label=f'WK: a = {a:.2f} m, T = {Tperiod:.2f} s',
+               label=f'WK: a = {a:.2f} m, T = {Tperiod:.2f} s, $\theta$ = {Theta_WK:.1f}',
                lw=2,c='MidnightBlue',ls='--')
     ax.axvline(Sponge_west_width,
                label='Sponge',

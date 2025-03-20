@@ -10,20 +10,21 @@ from ..configs import get_FW_paths, make_FW_paths,get_FW_tri_paths
 from ..utils import print_input_file
 from ..configs import save_logs_to_file
 from .add_params import add_dependent_values,add_required_params, add_load_params
-from .load import load_group_matrix
+from .load import load_group_matrix,group_matrix_df
 from .filter import apply_filters
 from .save_out import make_pass_parquet, make_fail_parquet, print_supporting_file, plot_supporting_file
 from ..net_cdf import get_net_cdf
 from ..utils import print_input_file
 
 def process_design_matrix_NC(matrix_file, 
-                print_inputs = True,
-                load_sets = None,
-                function_sets = None, 
-                filter_sets = None,
-                print_sets = None, 
-                plot_sets = None,
-                start_row = None):
+                            matrix_dict=None,
+                            print_inputs = True,
+                            load_sets = None,
+                            function_sets = None, 
+                            filter_sets = None,
+                            print_sets = None, 
+                            plot_sets = None,
+                            start_row = None):
     
     '''
     Works through the design matrix process
@@ -38,7 +39,10 @@ def process_design_matrix_NC(matrix_file,
     k = 1                       # trial number counter
     
     ## Load in design matrix, parse variables, and group
-    df_permutations = load_group_matrix(matrix_file,function_sets,p)
+    if matrix_dict is None:
+        df_permutations = load_group_matrix(matrix_file,function_sets,p)
+    else:
+        df_permutations = group_matrix_df(matrix_dict,function_sets,p)
 
     ## Load in data that should only be loaded once
     if load_sets:
@@ -116,6 +120,6 @@ def process_design_matrix_NC(matrix_file,
     save_logs_to_file(f"{p['L']}/generation_function_log.txt")
 
     # Save copy of design matrix (to logs)
-    shutil.copy(matrix_file, f"{p['L']}/design_matrix.csv")
+    #shutil.copy(matrix_file, f"{p['L']}/design_matrix.csv")
 
     return df_pass, fail_data

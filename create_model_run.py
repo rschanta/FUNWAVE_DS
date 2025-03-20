@@ -2,16 +2,16 @@ import funwave_ds as fwd
 import os
 
 
-base = r'C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\Research\FUNWAVE_DS\FUNWAVE_DS'
-dbase = r'C:\Users\rschanta\HPC_Pretend'
-lustre = r'C:\Users\rschanta\HPC_Pretend'
+base = r'/work/thsu/rschanta/RTS-PY'
+dbase = r'/lustre/scratch/rschanta'
+lustre = r'/lustre/scratch/rschanta'
 
 d = {
-     'WORK_DIR': os.path.join(base,'CIEG_682'),
-     'DATA_DIR': os.path.join(dbase,'CIEG_682'),
-     'TEMP_DIR': os.path.join(lustre,'CIEG_682'),
-     'FW_MODEL': 'BASE',
-     'RUN_NAME': 'Try1',
+     'WORK_DIR': os.path.join(base,'USACE'),
+     'DATA_DIR': os.path.join(dbase,'USACE'),
+     'TEMP_DIR': os.path.join(lustre,'USACE'),
+     'FW_MODEL': 'Flat_Tank',
+     'RUN_NAME': 'Cd_Study',
      'FW_EX': "/work/thsu/rschanta/RTS-PY/funwave/FW_ds/executables/FW-STANDARD",
      'CONDA_ENV': "tf_env"}
 

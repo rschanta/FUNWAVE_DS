@@ -1,4 +1,4 @@
-
+import numpy as np
 import pandas as pd
 import sys
 from itertools import product
@@ -77,6 +77,70 @@ def load_group_matrix(matrix_file,function_sets,p):
     # Read in design matrix, ensure formatting, raise warnings
     df = read_design_matrix(matrix_file)
     
+    # Get ranged/nonranged parameters sorted out
+    di_ranged = ranged_variables(df)
+    di_nonranged = nonranged_variables(df)
+    
+    # Merge, and add in function sets
+    di_params = combine_all_vars(di_ranged,di_nonranged,function_sets)
+    
+    # Get all permutations of variables/pipelines
+    
+    df_permutations = pd.DataFrame(
+        product(*di_params.values()), columns=di_params.keys()
+        )
+    
+    df_permutations.to_parquet(p['I_perm'],index=False)
+    
+    return df_permutations
+
+
+def design_matrix_from_dict(input_dict):
+    all_rows = []
+    # Loop through each category
+    for category, category_dict in input_dict.items():
+        # Loop through each FUNWAVE parameter
+        for FW_PARAM_NAME, FW_PARAM_VALUES in category_dict.items():
+            
+            # New Dictionary for each row
+            dict_i = {}
+            
+            # Deal with list parameters
+            if "LIST" in FW_PARAM_VALUES:
+                # Add a row for each list parameter
+                for FW_PARAM_VAL in FW_PARAM_VALUES["LIST"]:
+                    dict_i['VAR'] = FW_PARAM_NAME
+                    dict_i['CON'] = FW_PARAM_VAL
+                    dict_i['LO'] = np.nan
+                    dict_i['HI'] = np.nan
+                    dict_i['NUM'] = np.nan
+                    # Convert to dataframe and add row
+                    df_i = pd.DataFrame([dict_i])
+                    all_rows.append(df_i)
+                    
+                    
+            # Non-List Parameters
+            else:
+                # Add on variable name
+                dict_i['VAR'] = FW_PARAM_NAME
+                # Loop through each other column
+                for col in ['CON','LO','HI','NUM']:
+                    dict_i[col] = FW_PARAM_VALUES.get(col, np.nan)
+                # Convert to dataframe and add row
+                df_i = pd.DataFrame([dict_i])
+                all_rows.append(df_i)
+            
+    df = pd.concat(all_rows)
+    
+    return df
+
+def group_matrix_df(input_dict,function_sets,p):
+    # Convert dict to dataframe
+    df = design_matrix_from_dict(input_dict)
+    # Read in design matrix, ensure formatting, raise warnings
+    df = process_dataframe(df)
+    df['CON'] = df['CON'].apply(convert_to_number)
+
     # Get ranged/nonranged parameters sorted out
     di_ranged = ranged_variables(df)
     di_nonranged = nonranged_variables(df)

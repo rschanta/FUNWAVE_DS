@@ -6,7 +6,7 @@ import os
 
 
 # Define the design matrix
-matrix_file = '/work/thsu/rschanta/RTS-PY/CIEG_682/BASE/Try1/design_matrices/RIP.csv'
+matrix_file = '/work/thsu/rschanta/RTS-PY/CIEG_682/BASE/Try2/design_matrices/RIP.csv'
 #load_dotenv(r'C:/Users/rschanta/OneDrive - University of Delaware - o365/Desktop/Research/FUNWAVE_DS/FUNWAVE_DS/CIEG_682/BASE/Try1/envs/Try1.env')
 
 # Pipeline: Get bathy_df, make stable
