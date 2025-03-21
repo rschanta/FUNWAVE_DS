@@ -140,6 +140,9 @@ def group_matrix_df(input_dict,function_sets,p):
     # Read in design matrix, ensure formatting, raise warnings
     df = process_dataframe(df)
     df['CON'] = df['CON'].apply(convert_to_number)
+    df['LO'] = df['LO'].apply(convert_to_number)
+    df['HI'] = df['HI'].apply(convert_to_number)
+    df['NUM'] = df['NUM'].apply(convert_to_number)
 
     # Get ranged/nonranged parameters sorted out
     di_ranged = ranged_variables(df)

@@ -2,9 +2,9 @@ import funwave_ds as fwd
 import os
 
 
-base = r'/work/thsu/rschanta/RTS-PY'
-dbase = r'/lustre/scratch/rschanta'
-lustre = r'/lustre/scratch/rschanta'
+base = r'C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\Research\FUNWAVE_DS\FUNWAVE_DS'
+dbase = r'C:\Users\rschanta\HPC_Pretend'
+lustre = r'C:\Users\rschanta\HPC_Pretend'
 
 d = {
      'WORK_DIR': os.path.join(base,'USACE'),
