@@ -1,7 +1,6 @@
 import funwave_ds.fw_py as fpy   # Basic functionality
 import funwave_ds.fw_fs as fs    # Common function set tools
 import model_code as mod         # Model specific code
-from dotenv import load_dotenv
 
 #%% Define the Inputs
 inputs = {
