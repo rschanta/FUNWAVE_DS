@@ -20,8 +20,8 @@ def design_matrix():
       },
 
       "Time": {
-            "TOTAL_TIME": "150.0",
-            "PLOT_INTV": "0.1",
+            "TOTAL_TIME": "20.0",
+            "PLOT_INTV": "1.0",
             "PLOT_INTV_STATION": "0.1",
             "SCREEN_INTV": "10.0"
       },
@@ -35,7 +35,7 @@ def design_matrix():
             "WAVEMAKER": "WK_REG",
             "Tperiod": ["2.0","9.0"],
             "Xc_WK": "DYNAMIC",
-            "AMP_WK": "DYNAMIC",
+            "AMP_WK": "0.5",
             "DEP_WK": "DYNAMIC",
             "Yc_WK": "0.0",
             "Theta_WK": ["0.0" ,"5.0","10.0","15.0","20.0"],

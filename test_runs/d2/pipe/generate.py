@@ -5,8 +5,8 @@ import funwave_ds.fw_py as fpy   # Basic functionality
 import funwave_ds.fw_fs as fs    # Common function set tools
 
 # Section if running just script
-sys.path.append(r'C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\Research\FUNWAVE_DS\FUNWAVE_DS\test_runs\d2')
-load_dotenv(r'C:/Users/rschanta/OneDrive - University of Delaware - o365/Desktop/Research/FUNWAVE_DS/FUNWAVE_DS/test_runs/d2/pipe/work/thsu/rschanta/RTS-PY/test_runs/d2/envs/Try1.env')
+#sys.path.append(r'/work/thsu/rschanta/RTS-PY/test_runs/d2')
+#load_dotenv(r'/work/thsu/rschanta/RTS-PY/test_runs/d2/envs/Try1.env')
 
 
 #%%

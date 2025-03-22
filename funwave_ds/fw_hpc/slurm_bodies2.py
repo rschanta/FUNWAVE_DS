@@ -53,10 +53,10 @@ def run_condense(file=None,env=None):
     ## Construct name of file
         input_dir="$in"
         task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
-        input_file="${{input_dir}}input_${{task_id}}.txt"
+        input_file="${{input_dir}}/input_${{task_id}}.txt"
     
     ## Run FUNWAVE
-        ${{UD_MPIRUN}} $FW_EX "$input_file"
+        ${{UD_MPIRUN}} $FW_ex "$input_file"
 
     ## Activate Python Environment
     conda activate $conda

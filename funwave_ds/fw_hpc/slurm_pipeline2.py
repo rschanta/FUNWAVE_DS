@@ -4,7 +4,7 @@ import re
 import subprocess
 import sys
 from dotenv import load_dotenv
-from .slurm_utils import *
+from .slurm_utils2 import *
 
 ###############################################################
 

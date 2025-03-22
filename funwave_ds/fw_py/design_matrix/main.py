@@ -94,7 +94,7 @@ def process_design_matrix_NC(matrix_csv=None,
             pass_data.append(ds.attrs)
 
             ## End loop iteration
-            print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
+            print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}',flush=True)
             print('#'*40)
             k = k + 1
        

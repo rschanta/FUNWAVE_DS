@@ -22,8 +22,8 @@ def make_log_folders(log_dir,all_slurm_flags):
         # Construct the actual name of the path to an error/out file
         all_slurm_flags['output'] =  os.path.join(out_err_dir,'out.out')
         all_slurm_flags['error'] =  os.path.join(out_err_dir, 'err.out') 
-        print(f'Slurm output log folder created: {out_dir}')
-        print(f'Slurm error log folder created: {err_dir}')
+        print(f'Slurm output log folder created in: {out_err_dir}')
+        print(f'Slurm error log folder created in : {out_err_dir}')
 
     # If array, need to do slurm flags with %- add an extra folder layer for clarity
     else:
@@ -45,20 +45,6 @@ def make_log_folders(log_dir,all_slurm_flags):
 
 
 
-
-#%%
-def get_directories():
-    env_vars = {
-        "WORK_DIR": os.getenv("WORK_DIR"),
-        "DATA_DIR": os.getenv("DATA_DIR"),
-        "TEMP_DIR": os.getenv("TEMP_DIR"),
-        "FW_MODEL": os.getenv("FW_MODEL"),
-        "RUN_NAME": os.getenv("RUN_NAME")
-    }
-    
-    return env_vars
-
-#%%
 def write_slurm_script(batch_dir,
                        all_slurm_flags,
                        script_body=None):
