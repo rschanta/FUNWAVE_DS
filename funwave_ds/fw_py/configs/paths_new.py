@@ -130,8 +130,10 @@ def get_key_dirs(tri_num=None):
     # Specify file names and extensions of the key files
     name_ext = {'in': ['input','.txt'], 
           'ba': ['bathy','.txt'],
+          'fr': ['friction','.txt'],
           'or': ['out_raw','/'],
           'sp': ['spectra','.txt'],
+          'st': ['stations','.txt'],
           'nc': ['tri','.nc'],
           'ns': ['tri_sta_','.nc']
           }

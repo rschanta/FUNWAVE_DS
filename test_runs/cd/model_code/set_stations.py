@@ -1,5 +1,4 @@
 import numpy as np
-
 def set_stations(var_dict):
     # Unpack Variables-------------------------------------------------
     DOM = var_dict['DOM']

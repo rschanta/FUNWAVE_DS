@@ -101,8 +101,8 @@ def save_out_summary(success_dict,fail_dict,summary_formats):
     if 'csv' in summary_formats:
         pass_name = f'{name}_input_summary.csv'
         fail_name = f'{name}_failure_summary.csv'
-        df_pass.to_csv(os.path.join(base_path,pass_name))
-        df_fail.to_csv(os.path.join(base_path,fail_name))
+        df_pass.to_csv(os.path.join(base_path,pass_name), index=False)
+        df_fail.to_csv(os.path.join(base_path,fail_name), index=False)
 
 
     return df_pass,df_fail

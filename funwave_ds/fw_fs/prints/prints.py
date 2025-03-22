@@ -22,7 +22,23 @@ def print_bathy(vars):
     print(f'\t\tDEPTH_FILE file successfully saved to: {bathy_path}')
     return {'DEPTH_FILE': bathy_path}
 
+## PRINT FRICTION
+def print_friction(vars):
+    print('\t\tStarted printing friction file (FRICTION_FILE)...')
 
+    # Unpack variables
+    friction_array = vars['DOM']['friction'].values.T
+    ITER = int(vars['ITER'])
+
+    # Get path for bathymetry file- this is DEPTH_FILE
+    ptr = fpy.get_key_dirs(tri_num = ITER)
+    friction_path = ptr['fr']
+
+    # Print
+    np.savetxt(friction_path, friction_array, delimiter=' ', fmt='%f')
+    
+    print(f'\t\tFRICTION_FILE file successfully saved to: {friction_path}')
+    return {'FRICTION_FILE': friction_path}
 
 
 ## PRINT STATION
@@ -38,15 +54,15 @@ def print_stations(var_dict):
     ITER = int(var_dict['ITER'])
 
     # Get directories
-    d = fwb.get_directories()
-    p = fpy.get_FW_paths()
-    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
+    # Get path for bathymetry file- this is DEPTH_FILE
+    ptr = fpy.get_key_dirs(tri_num = ITER)
+    station_path = ptr['st']
 
     # Print
-    np.savetxt(ptr['st_file'], station_array, delimiter=' ', fmt='%d')
+    np.savetxt(station_path, station_array, delimiter=' ', fmt='%d')
     
-    print(f'\t\tSTATION file successfully saved to: {ptr["st_file"]}')
-    return {'STATIONS_FILE': ptr['st_file']}
+    print(f'\t\tSTATION file successfully saved to: {station_path}')
+    return {'STATIONS_FILE':station_path}
 
 
 
