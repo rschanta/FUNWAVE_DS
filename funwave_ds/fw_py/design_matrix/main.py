@@ -58,22 +58,22 @@ def process_design_matrix_NC(matrix_csv=None,
     
         ## Add on dependent parameters
         var_dict = add_dependent_values(var_dict,function_set)
-
-        ##  Add on required parameters
-        var_dict = add_required_params(var_dict,perm_i)
         
         ## Filtering conditions
         failed_params = apply_filters(var_dict,filter_sets)      
         
         # Failure Cases:
         if failed_params is not None:
+            # Add on required parameters (just combo num)
+            failed_params['COMBO_NUM'] = perm_i
+            # Append to list
             fail_data.append(failed_params)
             print(f'Permutation {perm_i:05} FAILED. Moving on.')
     
         ## No failures: proceed to output
         elif failed_params is None:    
-            # Progress iteration
-            var_dict['ITER'] = k
+            ##  Add on required parameters
+            var_dict = add_required_params(var_dict,k,perm_i)
             
             # Create files other than input.txt 
             if print_sets:                                                                                    

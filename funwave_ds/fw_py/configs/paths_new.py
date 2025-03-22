@@ -116,7 +116,9 @@ def add_dirs_to_path(env_file,dirs_to_add):
 ## WITHIN EACH
 
 def get_key_dirs(tri_num=None):
-
+    if tri_num is None:
+        tri_num = os.getenv('TRI_NUM')
+        
     # Get the base path files
     base_paths = {}
     for file_type in ['in','ba','or','sp','st','fr','bw','nc','ncs']:
@@ -139,5 +141,8 @@ def get_key_dirs(tri_num=None):
         if key in base_paths:
                 name = f'{name_ext[0]}_{tri_num:05}{name_ext[1]}'
                 trial_paths[key] = os.path.join(base_paths[key],name)
+
+    # Add on time_dt
+    trial_paths['time_dt'] = os.path.join(f"{trial_paths['or']}","time_dt.txt")
         
     return trial_paths

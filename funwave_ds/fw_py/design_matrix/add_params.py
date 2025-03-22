@@ -35,7 +35,7 @@ def add_dependent_values(var_dict,
 
 
 
-def add_required_params(var_dict,k):
+def add_required_params(var_dict,iter_num,comb_i):
     '''
     Add in parameters that FUNWAVE either needs or that we need to keep track
     of everything. This is applied to each ROW of the design matrix
@@ -45,9 +45,11 @@ def add_required_params(var_dict,k):
     # Title of Run- use iteration number to keep things tidy
     var_dict['TITLE'] = f'input_{k:05}'
     # Result Folder
-    var_dict['RESULT_FOLDER'] = ptr['or']        
-    # Permutation Number
-    var_dict['COMBO_NUM'] = k                                  
+    var_dict['RESULT_FOLDER'] = ptr['or']    
+    # ITERATION NUMBER  
+    var_dict['ITER'] = iter_num   
+    # COMBINATION NUMBER
+    var_dict['COMBO_NUM'] = comb_i                                  
     
     return var_dict
 

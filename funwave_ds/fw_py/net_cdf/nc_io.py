@@ -139,10 +139,10 @@ def load_and_stack_to_tensors(Mglob,Nglob,all_var_dict):
 
 def get_into_netcdf():
     # Acess necessary paths
-    ptr = fpy.get_FW_tri_paths()
+    ptr = fpy.get_key_dirs()
     
     # Get the NETCDF Created in the input phase
-    ds = xr.load_dataset(ptr['nc_file'])
+    ds = xr.load_dataset(ptr['nc'])
     # Get dimensions needed from inputs
     Mglob, Nglob = ds.attrs['Mglob'], ds.attrs['Nglob']
 
@@ -153,9 +153,11 @@ def get_into_netcdf():
         print('No stations specified')
 
     # Get paths to outputs
-    RESULT_FOLDER = (ptr['RESULT_FOLDER'])
+    RESULT_FOLDER = ptr['or']
+
     # Get list of all variables found in the result folder (eta, u, sta, time_dt, etc.)
     var_list = fpy.find_prefixes_path(RESULT_FOLDER)
+    
     # Dictionary with keys for each variable type (eta,u,sta,etc.) and values a sorted list of all files
         # for each one (ie- {'eta': ['eta_00000','eta_00001', 'eta_00002' ...]})
     var_paths = fpy.get_vars_out_paths(RESULT_FOLDER, var_list)
@@ -213,7 +215,8 @@ def get_into_netcdf():
             )
 
             ds_station.attrs = ds.attrs.copy()
-            ds_station.to_netcdf(ptr['nc_station'])
+            # Save to netcdf
+            ds_station.to_netcdf(ptr['ns'])
             print(f"Printed station .nc to {ptr['nc_station']}")
 
         # TIME AVERAGE FILES
@@ -230,6 +233,8 @@ def get_into_netcdf():
     # EDIT 3-17
     comp = dict(zlib=True, complevel=4)  # Compression level 1 (low) to 9 (high)
     encoding = {var: comp for var in ds.data_vars}  # Apply to all variables
-    ds.to_netcdf(ptr['nc_file'],mode='w', encoding=encoding)
+
+    # Save to netcdf
+    ds.to_netcdf(ptr['nc'],mode='w', encoding=encoding)
     print('NET-CDF Successfully saved!')
     return ds
