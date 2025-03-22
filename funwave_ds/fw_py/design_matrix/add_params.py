@@ -41,9 +41,9 @@ def add_required_params(var_dict,iter_num,comb_i):
     of everything. This is applied to each ROW of the design matrix
     '''
     
-    ptr = get_key_dirs(k)
+    ptr = get_key_dirs(iter_num)
     # Title of Run- use iteration number to keep things tidy
-    var_dict['TITLE'] = f'input_{k:05}'
+    var_dict['TITLE'] = f'input_{iter_num:05}'
     # Result Folder
     var_dict['RESULT_FOLDER'] = ptr['or']    
     # ITERATION NUMBER  

@@ -1,6 +1,3 @@
-
-
-
 ## GENERATE FILES
 def generate_files(file=None,env=None):
 
@@ -29,12 +26,12 @@ def run_FW(file=None,env=None):
     . /opt/shared/slurm/templates/libexec/openmpi.sh
     
     ## Construct name of file
-        input_dir="$TEMP_DIR/$FW_MODEL/$RUN_NAME/inputs/"
+        input_dir="$in"
         task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
         input_file="${{input_dir}}input_${{task_id}}.txt"
     
     ## Run FUNWAVE
-        ${{UD_MPIRUN}} $FW_EX "$input_file"
+        ${{UD_MPIRUN}} $FW_ex "$input_file"
 
 
     """
@@ -51,15 +48,15 @@ def run_condense(file=None,env=None):
     . /opt/shared/slurm/templates/libexec/openmpi.sh
     
     ## Construct name of file
-        input_dir="$TEMP_DIR/$FW_MODEL/$RUN_NAME/inputs/"
+        input_dir="$in"
         task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
-        input_file="${{input_dir}}input_${{task_id}}.txt"
+        input_file="${{input_dir}}/input_${{task_id}}.txt"
     
     ## Run FUNWAVE
-        ${{UD_MPIRUN}} $FW_EX "$input_file"
+        ${{UD_MPIRUN}} $FW_ex "$input_file"
 
     ## Activate Python Environment
-    conda activate $CONDA_ENV
+    conda activate $conda
 
     ## Export out environment variables
     export $(xargs <{env})
@@ -121,15 +118,15 @@ def run_condense_delete(file=None,env=None):
     . /opt/shared/slurm/templates/libexec/openmpi.sh
     
     ## Construct name of file
-        input_dir="$TEMP_DIR/$FW_MODEL/$RUN_NAME/inputs/"
+        input_dir="$in"
         task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
-        input_file="${{input_dir}}input_${{task_id}}.txt"
-        echo "Running ${{input_file}}"
+        input_file="${{input_dir}}/input_${{task_id}}.txt"
+
     ## Run FUNWAVE
-        ${{UD_MPIRUN}} $FW_EX "$input_file"
+        ${{UD_MPIRUN}} $FW_ex "$input_file"
 
     ## Activate Python Environment
-    conda activate $CONDA_ENV
+    conda activate $conda
 
     ## Export out environment variables
     export $(xargs <{env})
@@ -140,12 +137,9 @@ def run_condense_delete(file=None,env=None):
     python "{file}"
 
     ## Run the Raw Output Deletions
-    #echo "Deleting Input File(s)"
-    #rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/inputs/input_${{task_id}}.txt"
-    #rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/inputs/input_${{task_id}}.txt"
-
-    #echo "Deleting Raw Outputs from: ${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
-    rm -rf "${{TEMP_DIR}}/${{FW_MODEL}}/${{RUN_NAME}}/outputs-raw/out_${{task_id}}"
+    
+    echo "Deleting Raw Outputs from: ${{or}}/out_raw_${{task_id}}"
+    rm -rf "${{or}}/out_raw_${{task_id}}"
   
     """
     return text_content

@@ -142,6 +142,7 @@ def get_into_netcdf():
     ptr = fpy.get_key_dirs()
     
     # Get the NETCDF Created in the input phase
+    print(ptr['nc'])
     ds = xr.load_dataset(ptr['nc'])
     # Get dimensions needed from inputs
     Mglob, Nglob = ds.attrs['Mglob'], ds.attrs['Nglob']
@@ -170,7 +171,7 @@ def get_into_netcdf():
         output_variables.pop(key, None)
         
     ## Get time and add
-    time_dt = np.loadtxt(ptr['t_file'])
+    time_dt = np.loadtxt(ptr['time_dt'])
 
 
     t_FW = time_dt[:,0]

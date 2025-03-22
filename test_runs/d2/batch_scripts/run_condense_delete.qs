@@ -9,10 +9,10 @@
 #SBATCH --export=ALL
 #SBATCH --exclude=r03n56
 #SBATCH --array=1-5
-#SBATCH --job-name=run_condense
-#SBATCH --dependency=29917494
-#SBATCH --output=/lustre/scratch/rschanta/test_runs/d2/logs/run_condense/out/out%a.out
-#SBATCH --error=/lustre/scratch/rschanta/test_runs/d2/logs/run_condense/err/err%a.out
+#SBATCH --job-name=run_condense_delete
+#SBATCH --dependency=29917734
+#SBATCH --output=/lustre/scratch/rschanta/test_runs/d2/logs/run_condense_delete/out/out%a.out
+#SBATCH --error=/lustre/scratch/rschanta/test_runs/d2/logs/run_condense_delete/err/err%a.out
 #
 
     ## Access environment variables
@@ -24,7 +24,7 @@
         input_dir="$in"
         task_id=$(printf "%05d" $SLURM_ARRAY_TASK_ID)
         input_file="${input_dir}/input_${task_id}.txt"
-    
+
     ## Run FUNWAVE
         ${UD_MPIRUN} $FW_ex "$input_file"
 
@@ -34,7 +34,14 @@
     ## Export out environment variables
     export $(xargs </work/thsu/rschanta/RTS-PY/test_runs/d2/envs/Try1.env)
     export TRI_NUM=$SLURM_ARRAY_TASK_ID
+    export FUNC_NAME=run_condense_delete
     
+    ## Run the Compression File
     python "/work/thsu/rschanta/RTS-PY/test_runs/d2/pipe/pro.py"
 
+    ## Run the Raw Output Deletions
+    
+    echo "Deleting Raw Outputs from: ${or}/out_raw_${task_id}"
+    rm -rf "${or}/out_raw_${task_id}"
+  
     

@@ -117,7 +117,8 @@ def add_dirs_to_path(env_file,dirs_to_add):
 
 def get_key_dirs(tri_num=None):
     if tri_num is None:
-        tri_num = os.getenv('TRI_NUM')
+        tri_num = int(os.getenv('TRI_NUM'))
+        print(tri_num)
         
     # Get the base path files
     base_paths = {}
