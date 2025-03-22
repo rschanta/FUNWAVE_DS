@@ -19,7 +19,8 @@ path_tools
             or something similarly descriptive
 
 '''
-
+'''
+DEPRECATED
 
 #%% Path functions from global key variables
 def get_FW_paths():
@@ -208,7 +209,7 @@ def get_FW_tri_paths(tri_num=None):
     }
 
     return ptr
-
+'''
 
 
 #%% Path functions useful in compression stages

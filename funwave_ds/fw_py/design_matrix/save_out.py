@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from itertools import product
 import xarray as xr
-
+import os
 ## NOTE: These must be here for compatibility reasons
 from netCDF4 import Dataset
 import h5py
@@ -62,16 +62,14 @@ def print_supporting_file(var_dict,functions_to_apply):
     print(f'All PRINT functions completed successfully!')
     return var_dict
 
-def plot_supporting_file(var_dict,functions_to_apply):
+def plot_supporting_file(var_dict,
+                         functions_to_apply):
     '''
     Applies the functions of plot functions for supporting files
 
     Arguments:
     - var_dict (dictionary): dictionary of FUNWAVE parameters
     - functions_to_apply (list): list of plot functions
-
-    Returns:
-    - var_dict (df_failed_vars/None): DataFrame of failed variables
     '''
 
     print(f'\nApplying PLOT functions')
@@ -81,3 +79,30 @@ def plot_supporting_file(var_dict,functions_to_apply):
     print(f'All PLOT functions completed successfully!')
     
     return
+
+
+def save_out_summary(success_dict,fail_dict,summary_formats):
+    # Pass data
+    df_pass = pd.DataFrame(success_dict)
+    # Failure data
+    df_fail = pd.DataFrame(fail_dict)
+
+    # File Paths
+    base_path = os.getenv('is')
+    name = os.getenv('name')
+
+    # Save out as parquet
+    if 'parquet' in summary_formats:
+        pass_name = f'{name}_input_summary.parquet'
+        fail_name = f'{name}_failure_summary.parquet'
+        df_pass.to_parquet(os.path.join(base_path,pass_name))
+        df_fail.to_parquet(os.path.join(base_path,fail_name))
+
+    if 'csv' in summary_formats:
+        pass_name = f'{name}_input_summary.csv'
+        fail_name = f'{name}_failure_summary.csv'
+        df_pass.to_csv(os.path.join(base_path,pass_name))
+        df_fail.to_csv(os.path.join(base_path,fail_name))
+
+
+    return df_pass,df_fail

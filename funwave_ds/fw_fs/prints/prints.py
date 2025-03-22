@@ -1,30 +1,28 @@
-import os
-import sys
+
 import numpy as np
 
 import funwave_ds.fw_py as fpy
 import funwave_ds.fw_hpc as fwb
-
 
 ## PRINT BATHYMETRY
 def print_bathy(vars):
     print('\t\tStarted printing bathymetry file (DEPTH_FILE)...')
 
     # Unpack variables
-    DOM = vars['DOM']
-    bathy_array = DOM['Z'].values.T
+    bathy_array = vars['DOM']['Z'].values.T
     ITER = int(vars['ITER'])
 
-    # Get directories
-    d = fwb.get_directories()
-    p = fpy.get_FW_paths()
-    ptr = fpy.get_FW_tri_paths(tri_num = ITER)
+    # Get path for bathymetry file- this is DEPTH_FILE
+    ptr = fpy.get_key_dirs(tri_num = ITER)
+    bathy_path = ptr['ba']
 
     # Print
-    np.savetxt(ptr['b_file'], bathy_array, delimiter=' ', fmt='%f')
+    np.savetxt(bathy_path, bathy_array, delimiter=' ', fmt='%f')
     
-    print(f'\t\tDEPTH_FILE file successfully saved to: {ptr["b_file"]}')
-    return {'DEPTH_FILE': ptr['b_file']}
+    print(f'\t\tDEPTH_FILE file successfully saved to: {bathy_path}')
+    return {'DEPTH_FILE': bathy_path}
+
+
 
 
 ## PRINT STATION

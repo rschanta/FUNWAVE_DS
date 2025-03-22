@@ -1,16 +1,8 @@
-import pickle
-import shutil
 import numpy as np
-import pandas as pd
-from itertools import product
-## NOTE: The order in which these are imported DOES matter
-# due to a tangled web of dependencies
 import xarray as xr
-from netCDF4 import Dataset
-import h5py
-
 import funwave_ds.fw_py as fpy
 from pathlib import Path
+
 
 #%% INPUT PROCESSING
 def ensure_net_cdf_type(nc_data):
@@ -53,51 +45,43 @@ def ensure_net_cdf_type(nc_data):
     return nc_data
 
 
-def get_net_cdf(var_dict,ptr):
+def get_net_cdf(var_dict):
     '''
     Coerces input data into a NETCDF file
     '''
     print('\nStarted compressing data to NETCDF...')
     
-    ## Initialization
-    xr_datasets = []  # List of xarray objects
-    non_nc_data = {}  # Dictionary of non-netcdf compatible variables                
-    
+    # Initialize a list of xarray objects
+    xr_datasets = []  
+
     # Loop through all variables
     for key, value in var_dict.items():
-        
-        # If the value is an xarray Dataset, add it directly to the list
+        # Make list of xarrays (ie- domain, spectra, etc.)
         if isinstance(value, xr.Dataset):
             xr_datasets.append(value)
-
-            
-        # If the value is incompatible with NetCDF, store in non_nc_data
+        # Raise warning for things that aren't xarrays/ints/floats/strings
         elif not isinstance(value, (int, float, str)):
-            non_nc_data[key] = value  # Add to non-NetCDF data dictionary
+            print(f'Warning: {key} cannot be saved to NetCDF since it is of type {type(value)}')
 
-            
-    print(f'\tWarning: Types of following variables incompatible with NetCDF: ignored: {list(non_nc_data.keys())}')
-
-
-    ## Merge the dataset
-    try:
-        nc_data = xr.merge(xr_datasets)
-    except ValueError as e:
-        print("Error during merging: ", e)
-        return None, non_nc_data  
+    # Merge any datasets that may exist
+    nc_data = xr.merge(xr_datasets) 
     
-    ## Add attributes as strings to the dataset
+    # Add ints,floats,strings as attributes to the xarray
     for key, value in var_dict.items():
         if isinstance(value, (int, float, str)):
             nc_data.attrs[key] = value
 
     # Ensure type compatability for everything
     nc_data = ensure_net_cdf_type(nc_data)
-    # Note: It's really finicky about the h5netcdf engine, this gets weird quickly
-    nc_data.to_netcdf(ptr['nc_file'])
+    ITER = int(var_dict['ITER'])
+    
+    # Get the file path and save
+    ptr = fpy.get_key_dirs(tri_num = ITER)
+    nc_path = ptr['nc']
+    nc_data.to_netcdf(nc_path)
     
     print('NETCDF for input data successful!')
-    return (nc_data, non_nc_data)
+    return nc_data
 
 
 

@@ -1,10 +1,5 @@
 import pandas as pd
-#%% FILTERING
-'''
-The functions in this section are used to discard trials
-of an ensemble that do not meet some criteria set by a 
-filter function.
-'''
+
 def apply_filters(var_dict,functions_to_apply):
     '''
     Applies the defined filter functions to knock out trials that are not 
@@ -33,9 +28,8 @@ def apply_filters(var_dict,functions_to_apply):
             # Record function name and what the iteration would have been
             print(f'\tFailed FILTER function: {func.__name__}')
             failed_checks.append(func.__name__)  
-            failed_vars['PERM_I'] = var_dict['PERM_I']
 
-            # Loop through variables
+            # Loop through (valid) variables
             for k, v in var_dict.items():
                 if isinstance(v, (str, int, float)):
                     failed_vars[k] = v
@@ -45,11 +39,8 @@ def apply_filters(var_dict,functions_to_apply):
         # Record which functions trigger the failure
         failed_vars['failed_checks'] = ', '.join(failed_checks)
 
-        # Create the dataframe
-        df_failed_vars = pd.DataFrame(failed_vars, index=[0])
 
-        return df_failed_vars
-
+        return failed_vars
 
     else:
         print("All FILTER functions passed successfully!")

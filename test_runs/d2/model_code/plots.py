@@ -58,11 +58,12 @@ def make_surf_plot(var_dict):
     )
     fig.tight_layout()
     
-    # Get path to save, add `a` in front
-    ptr = fpy.get_FW_tri_paths(tri_num=ITER)
-    savepath = ptr['b_fig']
-    new_path = f"{os.path.splitext(savepath)[0]}a.png"
-    plt.savefig(new_path,dpi=300)
+    # Make path
+    path_base = os.getenv('ba_fig')
+    file_name = f'surf_{ITER}.png'
+    file_path =  os.path.join(path_base,file_name)
+    print(file_path)
+    plt.savefig(file_path,dpi=300)
     plt.close()
     return 
 

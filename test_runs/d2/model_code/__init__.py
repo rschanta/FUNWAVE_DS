@@ -6,3 +6,4 @@ from .add_domain import *
 from .set_stuff import *
 from .animate import *
 from .design_matrix import *
+from .filters import *

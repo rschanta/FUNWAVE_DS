@@ -1,84 +1,74 @@
-import shutil
-
-
-## NOTE: These must be here for compatibility reasons
-from netCDF4 import Dataset
-import h5py
-
 # In-module imports
-from ..configs import get_FW_paths, make_FW_paths,get_FW_tri_paths
 from ..utils import print_input_file
-from ..configs import save_logs_to_file
 from .add_params import add_dependent_values,add_required_params, add_load_params
-from .load import load_group_matrix,group_matrix_df
 from .filter import apply_filters
-from .save_out import make_pass_parquet, make_fail_parquet, print_supporting_file, plot_supporting_file
 from ..net_cdf import get_net_cdf
-from ..utils import print_input_file
+from ..configs import get_key_dirs
+from .save_out import  print_supporting_file, plot_supporting_file,save_out_summary
+from .combinations import find_combinations
 
-def process_design_matrix_NC(matrix_file, 
+
+#%%
+def process_design_matrix_NC(matrix_csv=None, 
                             matrix_dict=None,
                             print_inputs = True,
                             load_sets = None,
-                            function_sets = None, 
+                            function_set = None, 
                             filter_sets = None,
                             print_sets = None, 
                             plot_sets = None,
-                            start_row = None):
+                            summary_formats = ['parquet','csv']):
     
     '''
     Works through the design matrix process
+        - Loads in and checks data from either csv or dictionary
+        - Finds all possible combinations of parameters (cartesian product)
+        - Loads in any other data that should be accesible (load_vars)
+        - Loops through each possible combination
+            - Merge each combination with load_vars
+            - add on dependent values from pipeline
+            - add on required parameters
+            - apply filtering conditions
     '''
 
-    ## Paths needed
-    make_FW_paths()
-    p = get_FW_paths()
-    
+
     ## Initialization
-    fail_data,pass_data = {},{} # For valid and failed combinations
-    k = 1                       # trial number counter
+    fail_data,pass_data = [],[] 
+    k = 1                       
     
     ## Load in design matrix, parse variables, and group
-    if matrix_dict is None:
-        df_permutations = load_group_matrix(matrix_file,function_sets,p)
-    else:
-        df_permutations = group_matrix_df(matrix_dict,function_sets,p)
+    df_permutations = find_combinations(matrix_csv= matrix_csv,
+                                        matrix_dict= matrix_dict)
+
 
     ## Load in data that should only be loaded once
     if load_sets:
         load_vars = add_load_params({},load_sets)
 
-    ## Adjust start row if set
-    if start_row is not None:
-        df_permutations = df_permutations.iloc[start_row:]
-
     #------------------------ Beginning of Loop-----------------------------#   
     for perm_i, row in df_permutations.iterrows():
-        
-        
         print(f'\nStarted processing permutation: {perm_i:05}...',flush=True)
-        # Paths needed
-        ptr = get_FW_tri_paths(tri_num=k)  
-        # Get row as a dictionary
+        
+        # Convert row to dictionary form
         var_dict = row.to_dict()
 
-        # Merge in with the load set
+        # Merge with load set
         if load_sets:
             var_dict = {**var_dict, **load_vars}
     
         ## Add on dependent parameters
-        pipe = function_sets[var_dict['PIPELINE']]
-        var_dict = add_dependent_values(var_dict,pipe)
+        var_dict = add_dependent_values(var_dict,function_set)
 
-        ##  Add on others
-        var_dict = add_required_params(var_dict,perm_i,ptr)
+        ##  Add on required parameters
+        var_dict = add_required_params(var_dict,perm_i)
         
         ## Filtering conditions
         failed_params = apply_filters(var_dict,filter_sets)      
         
+        # Failure Cases:
         if failed_params is not None:
-            fail_data[f'trial_{perm_i:05}'] = failed_params
-            print(f'Permutation {perm_i:05} failed. Moving on.')
+            fail_data.append(failed_params)
+            print(f'Permutation {perm_i:05} FAILED. Moving on.')
     
         ## No failures: proceed to output
         elif failed_params is None:    
@@ -93,15 +83,15 @@ def process_design_matrix_NC(matrix_file,
             if plot_sets:                                               
                 plot_supporting_file(var_dict,plot_sets)
 
-            # Create netcdf
-            data_proc,non_cdf_stuff = get_net_cdf(var_dict,ptr)       
+            # Create xarray
+            ds = get_net_cdf(var_dict)       
 
             ## Print `input.txt` for this given trial
             if print_inputs:
-                print_input_file(data_proc.attrs,ptr)
+                print_input_file(ds.attrs)
                 
             # Get data for summary
-            pass_data[f'trial_{k:05}'] = data_proc
+            pass_data.append(ds.attrs)
 
             ## End loop iteration
             print(f'SUCCESSFULLY PRINTED FILES FOR TRIAL: {k:05}')
@@ -110,16 +100,7 @@ def process_design_matrix_NC(matrix_file,
        
     #------------------------ End of Loop-------------------------------
 
-    ## Save out failures and successes
-    df_pass = make_pass_parquet(pass_data,p)     
-    df_fail = make_fail_parquet(fail_data,p)
-
-
-    # Save record of function calls (to logs)
-    save_logs_to_file(f"{p['L']}/generation_function_log.py")
-    save_logs_to_file(f"{p['L']}/generation_function_log.txt")
-
-    # Save copy of design matrix (to logs)
-    #shutil.copy(matrix_file, f"{p['L']}/design_matrix.csv")
-
-    return df_pass, fail_data
+    ## Save out summaries
+    df_pass,df_fail = save_out_summary(pass_data,fail_data,summary_formats)
+    print('FILE GENERATION SUCCESSFUL!')
+    return df_pass,df_fail
