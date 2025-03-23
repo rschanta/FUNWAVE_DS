@@ -1,11 +1,11 @@
 import funwave_ds.fw_hpc as pipe
 
 # Inputs to Change
-env = '/work/thsu/rschanta/RTS-PY/test_runs/cd/envs/Fric1.env'
+env = 'RTS-PY/USACE/Flat_Tank/CD_Study/envs/FRICTION1.env'
 
 # Files in the pipeline  
-generate_file = "/work/thsu/rschanta/RTS-PY/test_runs/cd/pipe/generate.py"
-condense_file = "/work/thsu/rschanta/RTS-PY/test_runs/cd/pipe/pro.py"
+generate_file = "/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/CD_Study/pipe/generate.py"
+condense_file = "/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/CD_Study/pipe/pro.py"
 
 
 # Standard Slurm Flags
@@ -29,7 +29,7 @@ pipeline = pipe.SlurmPipeline(slurm_vars = slurm_defaults,
 # Steps of the pipeline
 steps = {
     pipe.generate_files: {"file": generate_file},
-    pipe.run_condense_delete: {"file": condense_file,"slurm_edit": {"array": "1-5"}}
+    pipe.run_condense_delete: {"file": condense_file,"slurm_edit": {"array": "1-1250"}}
 }
 
 

@@ -1,11 +1,11 @@
 import funwave_ds.fw_hpc as pipe
 
 # Inputs to Change
-env = '/work/thsu/rschanta/RTS-PY/test_runs/cd/envs/Fric1.env'
+env = '/work/thsu/rschanta/RTS-PY/test_runs/d2/envs/Try1.env'
 
 # Files in the pipeline  
-generate_file = "/work/thsu/rschanta/RTS-PY/test_runs/cd/pipe/generate.py"
-condense_file = "/work/thsu/rschanta/RTS-PY/test_runs/cd/pipe/pro.py"
+generate_file = "/work/thsu/rschanta/RTS-PY/test_runs/d2/pipe/generate.py"
+condense_file = "/work/thsu/rschanta/RTS-PY/test_runs/d2/pipe/pro.py"
 
 
 # Standard Slurm Flags

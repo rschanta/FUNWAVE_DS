@@ -122,7 +122,7 @@ def get_key_dirs(tri_num=None):
         
     # Get the base path files
     base_paths = {}
-    for file_type in ['in','ba','or','sp','st','fr','bw','nc','ncs']:
+    for file_type in ['in','ba','or','sp','st','fr','bw','nc','ns']:
         base_path = os.getenv(file_type)
         if base_path:
             base_paths[file_type] = base_path
@@ -135,7 +135,7 @@ def get_key_dirs(tri_num=None):
           'sp': ['spectra','.txt'],
           'st': ['stations','.txt'],
           'nc': ['tri','.nc'],
-          'ns': ['tri_sta_','.nc']
+          'ns': ['tri_sta','.nc']
           }
     
     # Construct the path

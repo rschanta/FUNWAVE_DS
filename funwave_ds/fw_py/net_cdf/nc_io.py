@@ -140,9 +140,8 @@ def load_and_stack_to_tensors(Mglob,Nglob,all_var_dict):
 def get_into_netcdf():
     # Acess necessary paths
     ptr = fpy.get_key_dirs()
-    
+    print(ptr)
     # Get the NETCDF Created in the input phase
-    print(ptr['nc'])
     ds = xr.load_dataset(ptr['nc'])
     # Get dimensions needed from inputs
     Mglob, Nglob = ds.attrs['Mglob'], ds.attrs['Nglob']
@@ -195,8 +194,7 @@ def get_into_netcdf():
             eta_station = np.squeeze(var_value[:,:,1])
             u_station = np.squeeze(var_value[:,:,2])
             v_station = np.squeeze(var_value[:,:,3])
-            print(t_station.shape)
-            print(eta_station.shape)
+
             # Create a station NetCDF
             ds_station= xr.Dataset(
                 coords={
@@ -218,7 +216,7 @@ def get_into_netcdf():
             ds_station.attrs = ds.attrs.copy()
             # Save to netcdf
             ds_station.to_netcdf(ptr['ns'])
-            print(f"Printed station .nc to {ptr['nc_station']}")
+            print(f"Printed station .nc to {ptr['ns']}")
 
         # TIME AVERAGE FILES
         elif (var_value.ndim == 3 and var_value.shape[1:] == (Nglob,Mglob)):

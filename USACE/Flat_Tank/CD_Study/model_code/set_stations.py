@@ -1,5 +1,4 @@
 import numpy as np
-
 def set_stations(var_dict):
     # Unpack Variables-------------------------------------------------
     DOM = var_dict['DOM']
@@ -9,9 +8,6 @@ def set_stations(var_dict):
     L = var_dict['L']
 
     DX = var_dict['DX'] 
-
-    PI_1 = var_dict['PI_1']  
-    PI_2 = var_dict['PI_2']  
     PI_3 = var_dict['PI_3'] 
 
     #-----------------------------------------------------------------
@@ -29,10 +25,7 @@ def set_stations(var_dict):
     stations_M = np.round(stations_M).astype(int)
 
 
-    print(f'\t\t Number of Stations Created: {len(stations_M)}')
-
-    # Assert that there are 50 stations
-    assert len(stations_M) == 50, "Not 50 stations for each!"
+    print(f'\t\t\t Number of Stations Created: {len(stations_M)}')
 
     # Make Nglob
     stations_N = np.ones(50)
