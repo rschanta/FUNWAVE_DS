@@ -1,2 +1,3 @@
 from .nc_io import *
-from .nc_objects import *
+from .domain_object import *
+from .WK_object import *

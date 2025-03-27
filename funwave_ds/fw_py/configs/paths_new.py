@@ -17,7 +17,8 @@ def setup_key_dirs(name='NAME',
                     nc_sta_dir = None,
                     conda = None,
                     input_sum_dir = None,
-                    FW_ex = None):
+                    FW_ex = None,
+                    dir_add_ons = None):
     
     
     # main_dir
@@ -93,6 +94,12 @@ def setup_key_dirs(name='NAME',
                   print(f'\tSpecifying {key}: {path_name}')
                   os.makedirs(path_name, exist_ok=True)
             
+    # 
+    if dir_add_ons:
+        for key,path_name in dir_add_ons.items():
+            print(f'\Making {key}: {path_name}')
+            os.makedirs(path_name, exist_ok=True)
+
 
     # Write to Environment File
     env_path = os.path.join(env_dir,f'{name}.env')
@@ -101,6 +108,11 @@ def setup_key_dirs(name='NAME',
         for key,path_name in paths.items():
             if path_name:
                 f.write(f"{key}={path_name}\n")
+        
+        if dir_add_ons:
+            for key,path_name in dir_add_ons.items():
+                if path_name:
+                    f.write(f"{key}={path_name}\n")
 
 
     return paths
