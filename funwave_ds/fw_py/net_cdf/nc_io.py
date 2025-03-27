@@ -140,7 +140,7 @@ def load_and_stack_to_tensors(Mglob,Nglob,all_var_dict):
 def get_into_netcdf():
     # Acess necessary paths
     ptr = fpy.get_key_dirs()
-    print(ptr)
+
     # Get the NETCDF Created in the input phase
     ds = xr.load_dataset(ptr['nc'])
     # Get dimensions needed from inputs

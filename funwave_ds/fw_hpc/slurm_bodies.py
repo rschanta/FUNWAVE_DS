@@ -105,6 +105,25 @@ def condense(file=None,env=None):
     """
     return text_content
 
+## RUN SOME POSTPROCESSING ON EACH OUTPUT
+def postprocess_individual(file=None,env=None):
+
+    text_content = f"""
+    ## Access environment variables
+    source {env}
+
+    ## Activate Python Environment
+    conda activate $CONDA_ENV
+
+    ## Export out environment variables
+    export $(xargs <{env})
+    export TRI_NUM=$SLURM_ARRAY_TASK_ID
+    
+    python "{file}"
+
+    """
+    return text_content
+
 
 ## RUN CONDENSE AND DELETE
 def run_condense_delete(file=None,env=None):

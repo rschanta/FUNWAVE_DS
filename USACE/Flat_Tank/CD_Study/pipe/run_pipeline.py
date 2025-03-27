@@ -6,8 +6,8 @@ env = 'RTS-PY/USACE/Flat_Tank/CD_Study/envs/FRICTION1.env'
 # Files in the pipeline  
 generate_file = "/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/CD_Study/pipe/generate.py"
 condense_file = "/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/CD_Study/pipe/pro.py"
-
-
+post2_file =   "/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/CD_Study/pipe/pro.py"
+postc_file = '/work/thsu/rschanta/RTS-PY/USACE/Flat_Tank/CD_Study/pipe/postprocess_compress.py'
 # Standard Slurm Flags
 slurm_defaults = {
     "nodes": 1,
@@ -28,8 +28,10 @@ pipeline = pipe.SlurmPipeline(slurm_vars = slurm_defaults,
 
 # Steps of the pipeline
 steps = {
-    pipe.generate_files: {"file": generate_file},
-    pipe.run_condense_delete: {"file": condense_file,"slurm_edit": {"array": "1-1250"}}
+    #pipe.generate_files: {"file": generate_file},
+    #pipe.run_condense_delete: {"file": condense_file,"slurm_edit": {"array": "1-1250"}}
+    #pipe.postprocess_individual: {"file": post2_file,"slurm_edit": {"array": "1-1250"}}
+    pipe.postprocess_individual: {"file": postc_file}
 }
 
 

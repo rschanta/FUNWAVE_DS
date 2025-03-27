@@ -1,15 +1,13 @@
 ## FUNWAVE_DS Modules
 import funwave_ds.fw_py as fpy
-import sys
-import os
-from dotenv import load_dotenv
-import xarray as xr
+import funwave_ds.fw_py as fpy
 import processing_code as pcode
-#sys.path.append(r'C:\Users\rschanta\OneDrive - University of Delaware - o365\Desktop\Research\FUNWAVE_DS\FUNWAVE_DS\test_runs\d2')
-#load_dotenv(r'C:/Users/rschanta/OneDrive - University of Delaware - o365/Desktop/Research/FUNWAVE_DS/FUNWAVE_DS/test_runs/d2/envs/Try1.env')
+import xarray as xr
+import os
+# Get into NetCDF -------------------------------------------------------------
+fpy.get_into_netcdf()
+# -----------------------------------------------------------------------------
 
-
-#fpy.get_into_netcdf()
 
 # Post-process -------------------------------------------------------------
 ptr = fpy.get_key_dirs()

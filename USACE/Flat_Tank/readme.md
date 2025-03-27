@@ -64,12 +64,3 @@ Nondimensional parameters related to wave theory are denoted by $\xi$ parameters
 |$\mu=kh$|$\xi_2$|$<\pi$| Within the limits of FUNWAVE-TVD|
 
 
-## Directory of Experiments
-- `DX_Sens`: Sensitivity anlaysis of grid spacing `DX`
-- `Time_Sens`: Sensitivity analysis of `TOTAL_TIME` on the calculation of wave statistics
-- `CD`: Sensitivity analysis of the `CD` bottom friction parameters
-
-## To Do List
-
-- Effect of global CD?
-- Effect of 
